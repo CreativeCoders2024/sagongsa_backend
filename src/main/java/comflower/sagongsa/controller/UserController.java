@@ -1,11 +1,13 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.form.FormLogin;
-import comflower.sagongsa.form.FormSignup;
+import comflower.sagongsa.dto.EditUserDTO;
+import comflower.sagongsa.dto.LoginDTO;
+import comflower.sagongsa.dto.SignupDTO;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,16 +19,23 @@ public class UserController {
 
     // 회원가입 -> OK !!
     @PostMapping("/signup")
-    public String signup(@RequestBody FormSignup formSignup) {
-        userService.signup(formSignup);
-        return "Success Signup : " + formSignup.getId() + " return";
+    public String signup(@RequestBody SignupDTO signupDTO) {
+        userService.signup(signupDTO);
+        return "Success Signup : " + signupDTO.getId() + " return";
     }
 
-    // 로그인 -> 보류
+    // 로그인 -> OK...?
     @PostMapping("/login")
-    public String login(@RequestBody FormLogin formLogin) {
-        String return_code =  userService.login(formLogin);
+    public String login(@RequestBody LoginDTO loginDTO) {
+        String return_code =  userService.login(loginDTO);
         return return_code;
+    }
+
+    // 회원 정보 수정
+    @PutMapping("/user")
+    public String editUser(@RequestBody EditUserDTO editUserDTO) {
+        userService.editUser(editUserDTO);
+        return "Success Edit User : " + editUserDTO.getUserId() + " return";
     }
 
 }

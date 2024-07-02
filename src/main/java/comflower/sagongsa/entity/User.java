@@ -13,7 +13,7 @@ import org.hibernate.annotations.ColumnDefault;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long userId;
 
     @Column(nullable = false)
     private String id;
@@ -44,4 +44,9 @@ public class User {
 
     @Column(nullable = true)
     private String profile_img;  //blob 형식을 spring에서 어떻게 쓰는지..
+
+    public void update(String pw, String nickname) {
+        this.pw = pw;
+        this.nickname = nickname;
+    }
 }
