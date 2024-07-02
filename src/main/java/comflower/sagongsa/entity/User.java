@@ -1,9 +1,13 @@
 package comflower.sagongsa.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 생성해주는 친구
+@AllArgsConstructor  //
+@Builder  // Builder Pattern
+@Getter
 @Entity
 @Table(name = "user")
 public class User {
