@@ -1,6 +1,5 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.entity.User;
 import comflower.sagongsa.form.FormLogin;
 import comflower.sagongsa.form.FormSignup;
 import comflower.sagongsa.repository.UserRepository;
@@ -16,16 +15,18 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    // 회원가입 -> OK
+    // 회원가입 -> OK !!
     @PostMapping("/signup")
-    public void signup(@RequestBody FormSignup formSignup) {
+    public String signup(@RequestBody FormSignup formSignup) {
         userService.signup(formSignup);
+        return "Success Signup : " + formSignup.getId() + " return";
     }
 
     // 로그인 -> 보류
     @PostMapping("/login")
-    public void login(@RequestBody FormLogin formLogin) {
-        userService.login(formLogin);
+    public String login(@RequestBody FormLogin formLogin) {
+        String return_code =  userService.login(formLogin);
+        return return_code;
     }
 
 }
