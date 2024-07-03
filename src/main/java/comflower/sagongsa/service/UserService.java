@@ -28,8 +28,6 @@ public class UserService {
         userRepository.save(signupUser);
     }
 
-    //aaaaaaa-sh
-
     // 회원가입 - ID 중복 체크
     private void validateDuplicateUser(SignupDTO signupDTO) {
         userRepository.findById(signupDTO.getId())
@@ -60,7 +58,13 @@ public class UserService {
     public void editUser(EditUserDTO editUserDTO) {
         User editUser = userRepository.findByUserId(editUserDTO.getUserId()).orElseThrow(() ->
                 new IllegalStateException("User with id : " + editUserDTO.getUserId() + " not found"));
-        editUser.update(editUserDTO.getPw(), editUserDTO.getNickname());
-        userRepository.save(editUser);
+        if (editUserDTO.getPw() != null) {
+            editUser.setPw(editUserDTO.getPw());
+        }
+        if (editUserDTO.getNickname() != null) {
+            editUser.setNickname(editUserDTO.getNickname());
+        }
+        //userRepository.save(editUser);
+        // save를 굳이 안써도 영속성 컨텍스트가 자동으로 변경사항을 인지하여 데이터베이스에 반영
     }
 }

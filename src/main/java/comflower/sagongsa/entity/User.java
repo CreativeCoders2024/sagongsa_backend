@@ -8,6 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 @AllArgsConstructor  //
 @Builder  // Builder Pattern
 @Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class User {
@@ -44,9 +45,4 @@ public class User {
 
     @Column(nullable = true)
     private String profile_img;  //blob 형식을 spring에서 어떻게 쓰는지..
-
-    public void update(String pw, String nickname) {
-        this.pw = pw;
-        this.nickname = nickname;
-    }
 }
