@@ -33,16 +33,16 @@ public class User {
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean is_manager;
+    private boolean isManager;
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean is_withdrawn;
+    private boolean isWithdrawn;
 
     @Column(nullable = false)
     @ColumnDefault("0")
     private int field;
 
     @Column(nullable = true)
-    private String profile_img;  //blob 형식을 spring에서 어떻게 쓰는지..
+    private String profileImg;  //blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
 }

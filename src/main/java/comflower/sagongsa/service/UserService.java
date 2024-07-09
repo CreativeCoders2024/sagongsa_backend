@@ -67,4 +67,20 @@ public class UserService {
         //userRepository.save(editUser);
         // save를 굳이 안써도 영속성 컨텍스트가 자동으로 변경사항을 인지하여 데이터베이스에 반영
     }
+
+    // 리턴이나 service 로직 부분 싹 다 내일 깔끔하게 수정!!
+    @Transactional
+    public void inquiryOfUserInfo(Long userId) {
+        Optional<User> findUser = userRepository.findById(userId);
+        // return은 내일
+    }
+
+    @Transactional
+    public void withDraw(Long userId) {
+        User editUser = userRepository.findByUserId(userId).orElseThrow(() ->
+                new IllegalStateException("User with id : " + userId + " not found"));
+        if (editUser.getUserId().equals(userId)) {
+            editUser.setWithdrawn(true);
+        }
+    }
 }

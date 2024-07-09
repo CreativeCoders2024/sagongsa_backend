@@ -38,4 +38,15 @@ public class UserController {
         return "Success Edit User : " + editUserDTO.getUserId() + " return";
     }
 
+    @PostMapping("/user")
+    public String inquiryOfUserInfo(@RequestBody Long userId) {
+        userService.inquiryOfUserInfo(userId);
+        return "Success Inquiry Of User : " + userId + " return";
+    }
+
+    @PutMapping("/withdraw")
+    public String withDraw(@RequestBody Long userId) {
+        userService.withDraw(userId);
+        return "Success Withdraw Of User : " + userId + " return";
+    }
 }
