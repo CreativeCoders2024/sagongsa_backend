@@ -16,4 +16,5 @@ public class CheckPostDTO {
     private int desiredField;
     private LocalDateTime createdAt;
     private LocalDateTime endedAt;
+    // api랑 이름이 다르고 컬럼 값도 다름
 }

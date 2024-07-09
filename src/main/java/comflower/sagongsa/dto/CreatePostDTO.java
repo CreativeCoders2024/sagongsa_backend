@@ -15,7 +15,8 @@ public class CreatePostDTO {
     private String content;
     private int max;
     private int ppl;
-    private int desiredField;
+    private int desired_field;
     private LocalDateTime createdAt;
     private LocalDateTime endedAt;
+    // api랑 이름이 다름
 }

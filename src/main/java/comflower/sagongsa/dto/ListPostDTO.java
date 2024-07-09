@@ -14,4 +14,5 @@ public class ListPostDTO {
     private LocalDateTime createdAt;
     private LocalDateTime endedAt;
     private int desiredField; //분야정보까지 추가
+    // api랑 다름
 }

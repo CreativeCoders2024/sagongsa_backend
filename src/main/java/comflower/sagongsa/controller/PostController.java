@@ -23,7 +23,7 @@ public class PostController {
         return "Success: Post created with title - " + createPostDTO.getTitle();
     }
     //게시글 목록
-    @GetMapping("/liposts")
+    @GetMapping("/liposts")  //url이 api랑 다름
     public List<ListPostDTO> getAllPosts() {
         return postService.getAllPosts();
     }
@@ -34,13 +34,13 @@ public class PostController {
     }
 
     //게시글 수정
-    @PutMapping("/posts/{postId}")
+    @PutMapping("/posts/{postId}")  //url이 api랑 다름 -> 혹시 이렇게 한 이유가 있을까???? (진짜 몰라서 궁금해서 묻는 거임!)
     public String editPost(@PathVariable Long postId, @RequestBody EditPostDTO editPostDTO) {
         postService.editPost(postId, editPostDTO);
         return "Success Edit Post : " + postId;
     }
     //게시글 삭제
-    @DeleteMapping("/posts/delete/{postId}")
+    @DeleteMapping("/posts/delete/{postId}")  //url이 api랑 다름 -> api를 수정해야 되는거야 얘를 수정해야 되는거야 ㅠ
     public String deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
         return "Success Delete Post: " + postId;
