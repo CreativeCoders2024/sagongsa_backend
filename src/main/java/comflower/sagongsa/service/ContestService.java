@@ -61,12 +61,32 @@ public class ContestService {
 
     }
     //수정
-   @Transactional
-           public void editContest(EditContestDTO editContestDTO){
-   Contest editContest = contestRepository.findByContestId(editContestDTO.getUserId()).orElseThrow(() ->
-           new IllegalStateException("User with id : " + editContestDTO.getUserId() + " not found"));
-    editContest.update(editContestDTO.getTitle(), editContestDTO.getImg(), editContestDTO.getPrize(), editContestDTO.getStartedAt(), editContestDTO.getEndedAt(), editContestDTO.getLink(), editContestDTO.getField());
-        contestRepository.save(editContest);
+    @Transactional
+    public void editContest(EditContestDTO editContestDTO) {
+        Contest contest = contestRepository.findById(editContestDTO.getContestId())
+                .orElseThrow(() -> new IllegalStateException("Contest with id : " + editContestDTO.getContestId() + " not found"));
+
+        if (editContestDTO.getTitle() != null) {
+            contest.setTitle(editContestDTO.getTitle());
+        }
+        if (editContestDTO.getImg() != null) {
+            contest.setImg(editContestDTO.getImg());
+        }
+        if (editContestDTO.getPrize() != null) {
+            contest.setPrize(editContestDTO.getPrize());
+        }
+        if (editContestDTO.getStartedAt() != null) {
+            contest.setStartedAt(editContestDTO.getStartedAt());
+        }
+        if (editContestDTO.getEndedAt() != null) {
+            contest.setEndedAt(editContestDTO.getEndedAt());
+        }
+        if (editContestDTO.getLink() != null) {
+            contest.setLink(editContestDTO.getLink());
+        }
+        if (editContestDTO.getField() != null) {
+            contest.setField(editContestDTO.getField());
+        }
     }
     //삭제
     @Transactional

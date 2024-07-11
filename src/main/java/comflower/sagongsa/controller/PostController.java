@@ -33,11 +33,12 @@ public class PostController {
         return postService.getPostById(postId);
     }
 
-    //게시글 수정
-    @PutMapping("/posts/{postId}")  //url이 api랑 다름 -> 혹시 이렇게 한 이유가 있을까???? (진짜 몰라서 궁금해서 묻는 거임!)
-    public String editPost(@PathVariable Long postId, @RequestBody EditPostDTO editPostDTO) {
-        postService.editPost(postId, editPostDTO);
-        return "Success Edit Post : " + postId;
+
+    // 게시글 수정
+    @PutMapping("/editPost")
+    public String editPost(@RequestBody EditPostDTO editPostDTO) {
+        postService.editPost(editPostDTO);
+        return "Success Edit Post : " + editPostDTO.getUserId() + " return";
     }
     //게시글 삭제
     @DeleteMapping("/posts/delete/{postId}")  //url이 api랑 다름 -> api를 수정해야 되는거야 얘를 수정해야 되는거야 ㅠ

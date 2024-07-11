@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
     @AllArgsConstructor  // 모든 필드를 매개변수로 받는 생성자를 생성해주는 친구
     @Builder  // 빌더 패턴을 적용
     @Getter
+    @Setter
     @Entity  // JPA 엔티티
     @Table(name = "contest")  // 데이터베이스의 contest 테이블과 매핑됨을 나타내는 어노테이션
     public class Contest {
@@ -45,16 +46,7 @@ import java.time.LocalDateTime;
         @ColumnDefault("0")
         private Long field;
 
-        public void update(String title, String img, String prize, LocalDateTime startedAt, LocalDateTime endedAt, String link, Long field) {
-            this.title = title;
-            this.img = img;
-            this.prize = prize;
-            this.startedAt = startedAt;
-            this.endedAt = endedAt;
-            this.link = link;
-            this.field = field;
 
-        }
 
 
 }

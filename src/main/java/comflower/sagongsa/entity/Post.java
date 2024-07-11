@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor  // 모든 필드를 매개변수로 받는 생성자를 생성해주는 친구
 @Builder  // 빌더 패턴을 적용
 @Getter
+@Setter
 @Entity  // JPA 엔티티
 @Table(name = "post")  // 데이터베이스의 post 테이블과 매핑됨을 나타내는 어노테이션
 public class Post {
@@ -43,5 +44,7 @@ public class Post {
 
     @Column(nullable = false)
     private LocalDateTime endedAt;
+
+
 }
 

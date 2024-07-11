@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class EditContestDTO {
+    private Long contestId;
     private  Long userId; //수정 불가지만 식별용??
     private String title;
     private String img;
