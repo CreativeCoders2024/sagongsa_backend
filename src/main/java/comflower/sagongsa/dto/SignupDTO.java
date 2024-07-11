@@ -10,5 +10,4 @@ public class SignupDTO {
     private String pw;
     private String nickname;
     private String email;
-
 }
