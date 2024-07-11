@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 생성해주는 친구
-@AllArgsConstructor  //
+@AllArgsConstructor  //모든 필드를 매개변수로 가지는 생성자를 생성해주는 친구
 @Builder  // Builder Pattern
 @Getter
 @Setter
