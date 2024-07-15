@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class EditPostDTO {
-    private Long postId;
     private Long userId;
     private Long contestId;
     private String title;

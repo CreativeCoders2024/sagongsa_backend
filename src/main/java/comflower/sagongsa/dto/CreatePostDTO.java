@@ -18,5 +18,4 @@ public class CreatePostDTO {
     private int desired_field;
     private LocalDateTime createdAt;
     private LocalDateTime endedAt;
-    // api랑 이름이 다름
 }

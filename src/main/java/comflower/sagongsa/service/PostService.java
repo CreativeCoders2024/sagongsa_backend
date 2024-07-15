@@ -1,7 +1,6 @@
 package comflower.sagongsa.service;
 
 
-import comflower.sagongsa.dto.CheckPostDTO;
 import comflower.sagongsa.dto.CreatePostDTO;
 import comflower.sagongsa.dto.EditPostDTO;
 import comflower.sagongsa.entity.Post;
@@ -33,36 +32,28 @@ public class PostService {
                 .build();
         postRepository.save(post);
     }
+
     //게시글 목록
     @Transactional(readOnly = true)
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
+
     // 게시글 상세조회
     @Transactional(readOnly = true)
-    public CheckPostDTO getPostById(Long postId) {
+    public Post getPostById(Long postId) {
         Post post = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new IllegalStateException("Post with id : " + postId + " not found"));
 
-        return CheckPostDTO.builder()
-                .postId(post.getPostId())
-                .userId(post.getUserId())
-                .contestId(post.getContestId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .max(post.getMax())
-                .ppl(post.getPpl())
-                .desiredField(post.getDesiredField())
-                .createdAt(post.getCreatedAt())
-                .endedAt(post.getEndedAt())
-                .build();
+        return post;
     }
+
 
     //게시글 수정
     @Transactional
-    public void editPost(EditPostDTO editPostDTO) {
-        Post post = postRepository.findById(editPostDTO.getPostId())
-                .orElseThrow(() -> new IllegalStateException("Post with id : " + editPostDTO.getPostId() + " not found"));
+    public void editPost(long postId, EditPostDTO editPostDTO) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalStateException("Post with id : " + postId + " not found"));
 
         if (editPostDTO.getTitle() != null) {
             post.setTitle(editPostDTO.getTitle());
