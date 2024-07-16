@@ -1,6 +1,5 @@
 package comflower.sagongsa.dto;
 
-
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,6 +15,5 @@ public class EditPostDTO {
     private Integer max;
     private Integer ppl;
     private Integer desiredField;
-    private LocalDateTime createdAt;
     private LocalDateTime endedAt;
 }

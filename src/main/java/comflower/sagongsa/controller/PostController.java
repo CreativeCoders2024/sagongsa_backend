@@ -31,7 +31,7 @@ public class PostController {
     }
 
     @PutMapping("/posts/{id}")
-    public String editPost(@RequestBody EditPostDTO editPostDTO, @PathVariable("id") Long postId) {
+    public String editPost(@PathVariable("id") Long postId, @RequestBody EditPostDTO editPostDTO ) {
         postService.editPost(postId, editPostDTO);
         return "Success Edit Post : " + editPostDTO.getUserId() + " return";
     }

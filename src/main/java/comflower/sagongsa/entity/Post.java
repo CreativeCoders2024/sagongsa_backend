@@ -1,6 +1,5 @@
 package comflower.sagongsa.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +10,6 @@ import java.time.LocalDateTime;
 @Builder  // 빌더 패턴을 적용
 @Getter
 @Setter
-
 @Entity  // JPA 엔티티
 @Table(name = "post")  // 데이터베이스의 post 테이블과 매핑됨을 나타내는 어노테이션
 public class Post {
@@ -45,7 +43,4 @@ public class Post {
 
     @Column(nullable = false)
     private LocalDateTime endedAt;
-
-
 }
-
