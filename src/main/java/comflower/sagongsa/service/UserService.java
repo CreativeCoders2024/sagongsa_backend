@@ -16,21 +16,25 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    // 회원가입 - ID 중복 체크
-    public Optional<User> validateDuplicateUser(SignupDTO signupDTO) {
-        return userRepository.findById(signupDTO.getId());
-    }
-
     @Transactional
-    public User signup(SignupDTO signupDTO) {
-        //validateDuplicateUser(signupDTO);
+    public void signup(SignupDTO signupDTO) {
+        validateDuplicateUser(signupDTO);
         User signupUser = User.builder()
                 .id(signupDTO.getId())
                 .pw(signupDTO.getPw())
                 .nickname(signupDTO.getNickname())
                 .email((signupDTO.getEmail()))
                 .build();
-        return userRepository.save(signupUser);
+        userRepository.save(signupUser);
+    }
+
+    // 회원가입 - ID 중복 체크
+    private void validateDuplicateUser(SignupDTO signupDTO) {
+        userRepository.findById(signupDTO.getId())
+                .ifPresent(u -> {
+                    throw new IllegalStateException("User with id : " + u.getId() + " already exists");
+                    //여기서 아예 500 에러로 떠버리는데 어떻게 에러 메세지를 보내지?
+                });
     }
 
     @Transactional
