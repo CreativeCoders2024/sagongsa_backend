@@ -17,7 +17,7 @@ public class ContestController {
     @PostMapping("/contests")
     public String createContest(@RequestBody CreateContestDTO createContestDTO) {
         throw new UnsupportedOperationException("승희님 일해요");
-// \       contestService.createContest(createContestDTO);
+//        contestService.createContest(createContestDTO);
 //        return "Success Signup : " + createContestDTO.getUserId() + " return";
     }
 
