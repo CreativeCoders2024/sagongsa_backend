@@ -45,8 +45,4 @@ public class Contest {
     @Column(nullable = false)
     @ColumnDefault("0")
     private Long field;
-
-
-
-
 }
