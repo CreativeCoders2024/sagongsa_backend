@@ -3,7 +3,6 @@ package comflower.sagongsa.controller;
 import comflower.sagongsa.dto.EditUserDTO;
 import comflower.sagongsa.dto.LoginDTO;
 import comflower.sagongsa.dto.SignupDTO;
-import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor  //얘 찾아보기
 public class UserController {
     private final UserService userService;
-    private final UserRepository userRepository;
 
     // 회원가입 -> OK !!
     @PostMapping("/signup")
@@ -27,8 +25,7 @@ public class UserController {
     // 로그인 -> OK...?
     @PostMapping("/login")
     public String login(@RequestBody LoginDTO loginDTO) {
-        String return_code =  userService.login(loginDTO);
-        return return_code;
+        return userService.login(loginDTO);
     }
 
     // 회원 정보 수정
@@ -38,4 +35,15 @@ public class UserController {
         return "Success Edit User : " + editUserDTO.getUserId() + " return";
     }
 
+    @PostMapping("/user")
+    public String inquiryOfUserInfo(@RequestBody Long userId) {
+        userService.inquiryOfUserInfo(userId);
+        return "Success Inquiry Of User : " + userId + " return";
+    }
+
+    @PutMapping("/withdraw")
+    public String withDraw(@RequestBody Long userId) {
+        userService.withDraw(userId);
+        return "Success Withdraw Of User : " + userId + " return";
+    }
 }

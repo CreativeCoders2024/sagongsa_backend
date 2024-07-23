@@ -5,9 +5,10 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 생성해주는 친구
-@AllArgsConstructor  //
+@AllArgsConstructor  //모든 필드를 매개변수로 가지는 생성자를 생성해주는 친구
 @Builder  // Builder Pattern
 @Getter
+@Setter
 @Entity
 @Table(name = "user")
 public class User {
@@ -32,21 +33,16 @@ public class User {
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean is_manager;
+    private boolean isManager;
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean is_withdrawn;
+    private boolean isWithdrawn;
 
     @Column(nullable = false)
     @ColumnDefault("0")
     private int field;
 
     @Column(nullable = true)
-    private String profile_img;  //blob 형식을 spring에서 어떻게 쓰는지..
-
-    public void update(String pw, String nickname) {
-        this.pw = pw;
-        this.nickname = nickname;
-    }
+    private String profileImg;  //blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
 }
