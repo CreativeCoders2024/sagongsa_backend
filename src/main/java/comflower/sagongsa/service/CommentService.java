@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class CommentService {
                 .userId(1L) // 임의로 설성 userId
                 .content(createCommentDTO.getContent())
                 .createdAt(LocalDateTime.now())
-                .parent(createCommentDTO.getParent())
+                .parentId(createCommentDTO.getParent())
                 .build();
 
         commentRepository.save(comment);
@@ -41,13 +42,17 @@ public class CommentService {
 
     @Transactional
     public void editComment(Long postId, Long commentId, EditCommentDTO editCommentDTO) {
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findByCommentId(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment with id : " + commentId + " not found"));
 
         comment.setContent(editCommentDTO.getContent());
-        comment.setParent(editCommentDTO.getParent());
         comment.setEditedAt(LocalDateTime.now());
 
         commentRepository.save(comment);
+    }
+
+    @Transactional
+    public List<Comment> getComment(Long postId) {
+        return commentRepository.findByPostId(postId);
     }
 }

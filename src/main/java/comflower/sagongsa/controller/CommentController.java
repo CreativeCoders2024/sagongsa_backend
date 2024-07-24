@@ -2,9 +2,13 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.CreateCommentDTO;
 import comflower.sagongsa.dto.EditCommentDTO;
+import comflower.sagongsa.entity.Comment;
+import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,12 +31,10 @@ public class CommentController {
         commentService.deleteComment(commentId);
         return "Success Delete Contest with id: " + commentId;
     }
-//    @GetMapping("/posts/{post_id}/comments")
-//    public String getComment(@PathVariable long post_id){
-//
-//    }
+    @GetMapping("/posts/{postId}/comments/{commentId}")
+    public List<Comment> getComment(@PathVariable long postId, @PathVariable long commentId) {
+       return commentService.getComment(postId);
 
-
-
+    }
 
 }
