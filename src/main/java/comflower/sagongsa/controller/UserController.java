@@ -7,61 +7,75 @@ import comflower.sagongsa.entity.User;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.response.ResponseDTO;
 import comflower.sagongsa.service.UserService;
+import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@RestController
+import static org.springframework.http.ResponseEntity.status;
+
+@RestController("/user")
 @RequiredArgsConstructor  //얘 찾아보기
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
     // 회원가입
+//    @PostMapping("/signup")
+//    public ResponseDTO signup(@RequestBody SignupDTO signupDTO) {
+//        // 중복 체크
+//        Optional<User> validateDuplicateSignUp = userService.validateDuplicateUser(signupDTO);
+//
+//        // 중복이 있다면 -> 에러 코드 리턴
+//        if (validateDuplicateSignUp.isPresent()) {
+//
+//            return ResponseDTO.builder()
+//                    .status(HttpStatus.BAD_REQUEST)
+//                    .message("Validation failed for ID")
+//                    .data(validateDuplicateSignUp.get().getId())
+//                    .build();
+//        }
+//        // 중복이 없다면 -> 회원가입 로직 실행
+//        else {
+//            User SignUpResponse = userService.signup(signupDTO);
+//
+//            // 실행 후 리턴
+//            return ResponseDTO.builder()
+//                    .status(HttpStatus.CREATED)
+//                    .message("Sign up successful")
+//                    .data(SignUpResponse)
+//                    .build();
+//        }
+//    }
+
     @PostMapping("/signup")
-    public ResponseDTO signup(@RequestBody SignupDTO signupDTO) {
-        // 중복 체크
-        Optional<User> validateDuplicateSignUp = userService.validateDuplicateUser(signupDTO);
-
-        // 중복이 있다면 -> 에러 코드 리턴
-        if (validateDuplicateSignUp.isPresent()) {
-
-            return ResponseDTO.builder()
-                    .status(HttpStatus.BAD_REQUEST)
-                    .message("Validation failed for ID")
-                    .data(validateDuplicateSignUp.get().getId())
-                    .build();
+    public ResponseEntity<ResponseDTO> signup(@RequestBody SignupDTO signupDTO) {
+        Optional<User> existingId = userService.validateDuplicateUser(signupDTO);
+        if (existingId.isPresent()) {
+            return status(HttpStatus.CONFLICT).build();
         }
-        // 중복이 없다면 -> 회원가입 로직 실행
-        else {
-            User SignUpResponse = userService.signup(signupDTO);
-
-            // 실행 후 리턴
-            return ResponseDTO.builder()
-                    .status(HttpStatus.CREATED)
-                    .message("Sign up successful")
-                    .data(SignUpResponse)
-                    .build();
-        }
+        return null;
     }
 
     // 로그인
     @PostMapping("/login")
     public String login(@RequestBody LoginDTO loginDTO) {
-        String return_code =  userService.login(loginDTO);
+        String return_code = userService.login(loginDTO);
         return return_code;
     }
 
     // 회원 정보 수정
-    @PutMapping("/user")
-    public String editUser(@RequestBody EditUserDTO editUserDTO) {
-        userService.editUser(editUserDTO);
-        return "Success Edit User : " + editUserDTO.getUserId() + " return";
+    @PostMapping("/edit")
+    public ResponseEntity<String> editUser(EditUserDTO editUserDTO) {
+        try {
+            userService.editUser(editUserDTO);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Success Edit User : " + editUserDTO.getUserId() + " return", HttpStatus.OK);
     }
 
     @PostMapping("/user")
