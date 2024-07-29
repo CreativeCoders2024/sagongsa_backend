@@ -1,7 +1,7 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.CreatePostDTO;
-import comflower.sagongsa.dto.EditPostDTO;
+import comflower.sagongsa.dto.request.CreatePostDTO;
+import comflower.sagongsa.dto.request.EditPostDTO;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.service.PostService;
 import lombok.RequiredArgsConstructor;

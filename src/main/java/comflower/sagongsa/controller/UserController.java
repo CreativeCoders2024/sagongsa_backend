@@ -1,21 +1,20 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.EditUserDTO;
-import comflower.sagongsa.dto.LoginDTO;
-import comflower.sagongsa.dto.SignupDTO;
-import comflower.sagongsa.entity.User;
+import comflower.sagongsa.dto.response.ErrorType;
+import comflower.sagongsa.dto.request.EditUserDTO;
+import comflower.sagongsa.dto.request.LoginDTO;
+import comflower.sagongsa.dto.request.SignupDTO;
+import comflower.sagongsa.dto.response.ErrorResponse;
+import comflower.sagongsa.dto.response.SignupResponse;
+import comflower.sagongsa.error.UserAlreadyExistsException;
 import comflower.sagongsa.repository.UserRepository;
-import comflower.sagongsa.response.ResponseDTO;
 import comflower.sagongsa.service.UserService;
-import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
-import static org.springframework.http.ResponseEntity.status;
+import java.net.URI;
 
 @RestController("/user")
 @RequiredArgsConstructor  //얘 찾아보기
@@ -52,12 +51,28 @@ public class UserController {
 //    }
 
     @PostMapping("/signup")
-    public ResponseEntity<ResponseDTO> signup(@RequestBody SignupDTO signupDTO) {
-        Optional<User> existingId = userService.validateDuplicateUser(signupDTO);
-        if (existingId.isPresent()) {
-            return status(HttpStatus.CONFLICT).build();
+    public ResponseEntity<SignupResponse> signup(@RequestBody SignupDTO signupDTO) {
+        if (userService.isUserPresentById(signupDTO.getId())) {
+            throw new UserAlreadyExistsException(signupDTO.getId());
         }
-        return null;
+
+        // TODO: 실제로 사용자 생성 ..
+
+        long userId = 1L;
+        SignupResponse body = SignupResponse
+                .builder()
+                .userId(userId)
+                .token("JWT Token")
+                .build();
+
+        return ResponseEntity
+                .created(URI.create(String.valueOf(userId)))
+                .body(body);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(UserAlreadyExistsException e) {
+        return ErrorResponse.entity(ErrorType.USER_ALREADY_EXISTS, e.getId());
     }
 
     // 로그인
