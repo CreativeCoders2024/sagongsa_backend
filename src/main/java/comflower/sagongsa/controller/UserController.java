@@ -7,7 +7,6 @@ import comflower.sagongsa.entity.User;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.response.ResponseDTO;
 import comflower.sagongsa.service.UserService;
-import jdk.jfr.ContentType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
