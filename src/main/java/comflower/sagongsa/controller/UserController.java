@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static org.springframework.http.ResponseEntity.status;
 
-@RestController("/user")
+@RestController
 @RequiredArgsConstructor  //얘 찾아보기
 public class UserController {
     private final UserService userService;
@@ -67,7 +67,7 @@ public class UserController {
     }
 
     // 회원 정보 수정
-    @PostMapping("/edit")
+    @PostMapping("/user/edit/info")
     public ResponseEntity<String> editUser(EditUserDTO editUserDTO) {
         try {
             userService.editUser(editUserDTO);
@@ -77,12 +77,14 @@ public class UserController {
         return new ResponseEntity<>("Success Edit User : " + editUserDTO.getUserId() + " return", HttpStatus.OK);
     }
 
-    @PostMapping("/user")
+    // 회원 정보 조회
+    @PostMapping("/user/inquiry")
     public String inquiryOfUserInfo(@RequestBody Long userId) {
         userService.inquiryOfUserInfo(userId);
         return "Success Inquiry Of User : " + userId + " return";
     }
 
+    // 회원 탈퇴
     @PutMapping("/withdraw")
     public String withDraw(@RequestBody Long userId) {
         userService.withDraw(userId);
