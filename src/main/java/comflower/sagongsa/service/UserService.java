@@ -29,7 +29,8 @@ public class UserService {
                 .nickname(signupDTO.getNickname())
                 .email((signupDTO.getEmail()))
                 .build();
-        userRepository.save(signupUser);
+        User createUser = userRepository.save(signupUser);
+        return createUser;
     }
 
     public boolean isUserPresentById(String id) {
