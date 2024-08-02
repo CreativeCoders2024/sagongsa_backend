@@ -1,7 +1,7 @@
 package comflower.sagongsa.controller;
 
 
-import comflower.sagongsa.dto.EditUserDTO;
+import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.service.MypageService;
 import lombok.RequiredArgsConstructor;

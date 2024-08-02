@@ -33,8 +33,10 @@ public class UserService {
         return createUser;
     }
 
+    // ID 확인하는 Service 로직
     public boolean isUserPresentById(String id) {
         return userRepository.findById(id).isPresent();
+        // ID가 있으면 true를 반환함
     }
 
 //    @Transactional

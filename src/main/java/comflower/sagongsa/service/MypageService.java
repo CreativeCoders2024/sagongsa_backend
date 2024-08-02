@@ -1,7 +1,7 @@
 package comflower.sagongsa.service;
 
 
-import comflower.sagongsa.dto.EditUserDTO;
+import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.repository.MypageRepository;
 import comflower.sagongsa.repository.UserRepository;
