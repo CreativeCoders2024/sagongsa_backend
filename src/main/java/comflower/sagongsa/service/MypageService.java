@@ -15,8 +15,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MypageService {
 
-    // 내일 다시 작업 (8.1)
-
     private final MypageRepository mypageRepository;
     private final UserRepository userRepository;
 

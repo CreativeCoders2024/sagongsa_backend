@@ -17,8 +17,6 @@ import java.util.Optional;
 public class MypageController {
     private final MypageService mypageService;
 
-    // 내일 다시 작업 (8.1)
-
     // 소개글 수정을 위해 불러오는 로직
     @PostMapping("/import/intro")
     public ResponseEntity<Optional<User>> importIntroduction(@RequestBody EditUserDTO editUserDTO) {

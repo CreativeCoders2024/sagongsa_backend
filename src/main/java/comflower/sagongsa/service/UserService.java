@@ -16,14 +16,13 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    // 회원가입 - ID 중복 체크
-    public Optional<User> validateDuplicateUser(SignupDTO signupDTO) {
-        return userRepository.findById(signupDTO.getId());
+    // ID 중복 체크
+    public Optional<User> validateDuplicateUser(String id) {
+        return userRepository.findById(id);
     }
 
     @Transactional
     public User signup(SignupDTO signupDTO) {
-        //validateDuplicateUser(signupDTO);
         User signupUser = User.builder()
                 .id(signupDTO.getId())
                 .pw(signupDTO.getPw())
@@ -33,22 +32,12 @@ public class UserService {
         return userRepository.save(signupUser);
     }
 
-    @Transactional
-    public String login(LoginDTO loginDTO) {
-        Optional<User> findUser = userRepository.findById(loginDTO.getId());
-        if (findUser.isPresent()) {
-            if(findUser.get().getPw().equals(loginDTO.getPw())) {
-                return "Success Login : " + findUser.get().getUserId();
-            }
-            else {
-                return "Wrong Password";
-            }
-        }
-        else {
-            return "User not found : " + loginDTO.getId();
-        }
-        // 이 리턴 처리를 service에서 하는게 맞나?
-    }
+//    @Transactional
+//    public String login(LoginDTO loginDTO, Optional<User> findUser) {
+////            if(findUser.get().getPw().equals(loginDTO.getPw())) {
+////                return "Success Login : " + findUser.get().getUserId();
+//        //findUser.getPw().equals(loginDTO.getPw());
+//    }
 
     @Transactional
     public void editUser(EditUserDTO editUserDTO) {
