@@ -40,7 +40,7 @@ public class CommentService {
 
     @Transactional
     public Comment editComment(Long commentId, EditCommentDTO editCommentDTO) {
-        Comment comment = commentRepository.findByCommentId(commentId)
+        Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment with id : " + commentId + " not found"));
 
         comment.setContent(editCommentDTO.getContent());
