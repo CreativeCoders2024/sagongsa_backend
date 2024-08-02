@@ -19,40 +19,38 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public void createComment(Long postId, CreateCommentDTO createCommentDTO) {
-        Comment comment = Comment.builder()
-                .postId(postId)
-                .userId(1L) // 임의로 설성 userId
-                .content(createCommentDTO.getContent())
-                .createdAt(LocalDateTime.now())
-                .parentId(createCommentDTO.getParent())
-                .build();
-
-        commentRepository.save(comment);
-
+    public Comment createComment(Long postId, CreateCommentDTO createCommentDTO) {
+        throw new UnsupportedOperationException("로그인 화이팅");
+//        Comment comment = Comment.builder()
+//                .postId(postId)
+//                .userId(1L) // 임의로 설성 userId
+//                .content(createCommentDTO.getContent())
+//                .createdAt(LocalDateTime.now())
+//                .parentId(createCommentDTO.getParent())
+//                .build();
+//        commentRepository.save(comment);
     }
+
     @Transactional
-    public void deleteComment(Long commentId){
+    public void deleteComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Contest with id : " + commentId + " not found"));
         commentRepository.delete(comment);
-
-
     }
 
     @Transactional
-    public void editComment(Long postId, Long commentId, EditCommentDTO editCommentDTO) {
+    public Comment editComment(Long commentId, EditCommentDTO editCommentDTO) {
         Comment comment = commentRepository.findByCommentId(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment with id : " + commentId + " not found"));
 
         comment.setContent(editCommentDTO.getContent());
         comment.setEditedAt(LocalDateTime.now());
 
-        commentRepository.save(comment);
+        return commentRepository.save(comment);
     }
 
     @Transactional
-    public List<Comment> getComment(Long postId) {
+    public List<Comment> getComments(Long postId) {
         return commentRepository.findByPostId(postId);
     }
 }
