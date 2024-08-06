@@ -1,9 +1,9 @@
 package comflower.sagongsa.error;
 
-public class WrongId extends IllegalArgumentException {
+public class WrongIdException extends IllegalArgumentException {
     private final String id;
 
-    public WrongId(String id) {
+    public WrongIdException(String id) {
         this.id = id;
     }
 

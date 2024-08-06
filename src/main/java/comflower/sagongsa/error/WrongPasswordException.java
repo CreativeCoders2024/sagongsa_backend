@@ -1,9 +1,9 @@
 package comflower.sagongsa.error;
 
-public class WrongPassword extends IllegalArgumentException {
+public class WrongPasswordException extends IllegalArgumentException {
     private final String password;
 
-    public WrongPassword(String password) {
+    public WrongPasswordException(String password) {
         this.password = password;
     }
 

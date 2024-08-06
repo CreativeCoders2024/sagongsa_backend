@@ -1,23 +1,21 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.response.ErrorType;
+import comflower.sagongsa.dto.response.*;
 import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.dto.request.LoginDTO;
 import comflower.sagongsa.dto.request.SignupDTO;
-import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.dto.response.SignupResponse;
 import comflower.sagongsa.entity.User;
-import comflower.sagongsa.error.UserAlreadyExistsException;
-import comflower.sagongsa.error.WrongId;
-import comflower.sagongsa.error.WrongPassword;
+import comflower.sagongsa.error.*;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.apache.coyote.Response;
+import org.hibernate.query.sql.internal.ResultSetMappingProcessor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor  //얘 찾아보기
@@ -61,59 +59,101 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<SignupResponse> login(@RequestBody LoginDTO loginDTO) {
         // ID 판별
-        if(userService.isUserPresentById(loginDTO.getId())) {
-            User findLoginUser = userRepository.findById(loginDTO.getId()).get();
+        if(!userService.isUserPresentById(loginDTO.getId())) {
+            throw new WrongIdException(loginDTO.getId());
+        }
+        User findLoginUser = userRepository.findById(loginDTO.getId()).get();
 
-            // PW 판별
-            if(userService.login(loginDTO, findLoginUser)) {
-                SignupResponse body = SignupResponse
-                        .builder()
-                        .userId(findLoginUser.getUserId())
-                        .token("JWT Token")
-                        .build();
-                return ResponseEntity.ok().body(body);
-            }
-            else {  // 비밀번호 오류
-                throw new WrongPassword(loginDTO.getPw());
-            }
+        // PW 판별
+        if(!userService.login(loginDTO, findLoginUser)) {
+            throw new WrongPasswordException(loginDTO.getPw());
         }
-        else {  // 존재하지 않는 ID
-            throw new WrongId(loginDTO.getId());
-        }
+
+        SignupResponse body = SignupResponse
+                .builder()
+                .userId(findLoginUser.getUserId())
+                .token("JWT Token")
+                .build();
+        return ResponseEntity.ok().body(body);
     }
 
     // 로그인 에러처리
-    @ExceptionHandler(WrongPassword.class)
-    public ResponseEntity<ErrorResponse> handleWrongPassword(WrongPassword e) {
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleWrongPassword(WrongPasswordException e) {
         return ErrorResponse.entity(ErrorType.WRONG_PASSWORD, e.getPassword());
     }
-    @ExceptionHandler(WrongId.class)
-    public ResponseEntity<ErrorResponse> handleWrongId(WrongId e) {
+    @ExceptionHandler(WrongIdException.class)
+    public ResponseEntity<ErrorResponse> handleWrongId(WrongIdException e) {
         return ErrorResponse.entity(ErrorType.WRONG_ID, e.getId());
     }
 
     // 회원 정보 수정
     @PostMapping("/user/edit/info")
-    public ResponseEntity<String> editUser(EditUserDTO editUserDTO) {
-        try {
-            userService.editUser(editUserDTO);
-        } catch (Exception e) {  // 예외처리
-            //return new ResponseEntity<ErrorResponse>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<UserIdResponse> editUser(@RequestBody EditUserDTO editUserDTO) {
+        if(!userService.isUserPresentByUserId(editUserDTO.getUserId())) {
+            throw new UserNotFoundException(editUserDTO.getUserId());
         }
-        return new ResponseEntity<>("Success Edit User : " + editUserDTO.getUserId() + " return", HttpStatus.OK);
+        User findEditUser = userRepository.findByUserId(editUserDTO.getUserId()).get();
+        try {
+            userService.editUser(editUserDTO, findEditUser);
+        } catch (Exception e) {
+            throw new ErrorInUserProcessing(e.getMessage(), editUserDTO.getUserId());
+            //뭔가 처리 로직에서 발생하는 에러라서 이름을 저렇게 해뒀는데 별로면 바꿈 !
+        }
+
+        UserIdResponse body = UserIdResponse
+                .builder()
+                .userId(editUserDTO.getUserId())
+                .build();
+        return ResponseEntity.ok().body(body);
     }
 
-    // 회원 정보 조회
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
+        return ErrorResponse.entity(ErrorType.USER_NOT_FOUND, e.getUserId());
+    }
+    @ExceptionHandler(ErrorInUserProcessing.class)
+    public ResponseEntity<ErrorResponse> handleUserException(ErrorInUserProcessing e) {
+        return ErrorResponse.entity(ErrorType.ERROR_IN_PROCESSING, e.getUserId());
+    }
+
+    // 회원 정보 조회 -> 여기만 좀 더 ,,,
     @PostMapping("/user/inquiry")
-    public String inquiryOfUserInfo(@RequestBody Long userId) {
-        userService.inquiryOfUserInfo(userId);
-        return "Success Inquiry Of User : " + userId + " return";
+    public ResponseEntity<InquiryOfUserResponse> inquiryOfUserInfo(@RequestBody Long userId) {
+        if(!userService.isUserPresentByUserId(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+        try {
+            Optional<User> userInfo = userService.inquiryOfUserInfo(userId);
+        } catch (Exception e) {
+            throw new ErrorInUserProcessing(e.getMessage(), userId);
+        }
+
+        InquiryOfUserResponse body = InquiryOfUserResponse
+                .builder().build();  //userInfo 안의 값들이 Optional 때문에 접근이 안됨
+        return ResponseEntity.ok().body(body);
     }
 
     // 회원 탈퇴
     @PutMapping("/withdraw")
-    public String withDraw(@RequestBody Long userId) {
-        userService.withDraw(userId);
-        return "Success Withdraw Of User : " + userId + " return";
+    public ResponseEntity<UserIdResponse> withDraw(@RequestBody Long userId) {
+        if(!userService.isUserPresentByUserId(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+        User withDrawUser = userRepository.findByUserId(userId).get();
+        if(!withDrawUser.getUserId().equals(userId)) {  //굳?이 두개나?
+            throw new UserNotFoundException(userId);
+        }
+        try {
+            userService.withDraw(withDrawUser);
+        } catch (Exception e) {
+            throw new ErrorInUserProcessing(e.getMessage(), userId);
+        }
+
+        UserIdResponse body = UserIdResponse
+                .builder()
+                .userId(withDrawUser.getUserId())
+                .build();
+        return ResponseEntity.ok().body(body);
     }
 }
