@@ -16,11 +16,6 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    // ID 중복 체크
-    public Optional<User> validateDuplicateUser(String id) {
-        return userRepository.findById(id);
-    }
-
     @Transactional
     public User signup(SignupDTO signupDTO) {
         User signupUser = User.builder()
@@ -39,12 +34,14 @@ public class UserService {
         // ID가 있으면 true를 반환함
     }
 
-//    @Transactional
-//    public String login(LoginDTO loginDTO, Optional<User> findUser) {
-////            if(findUser.get().getPw().equals(loginDTO.getPw())) {
-////                return "Success Login : " + findUser.get().getUserId();
-//        //findUser.getPw().equals(loginDTO.getPw());
-//    }
+    @Transactional
+    public boolean login(LoginDTO loginDTO, User user) {
+        if(user.getPw().equals(loginDTO.getPw())) {
+            return true;
+        }
+        else
+            return false;
+    }
 
     @Transactional
     public void editUser(EditUserDTO editUserDTO) {

@@ -1,7 +1,9 @@
 package comflower.sagongsa.dto.response;
 
+import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 
+@Getter
 public class ErrorResponse {
     private final int code;
     private final String message;

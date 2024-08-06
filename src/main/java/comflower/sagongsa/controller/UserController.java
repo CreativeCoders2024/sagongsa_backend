@@ -8,6 +8,8 @@ import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.dto.response.SignupResponse;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.UserAlreadyExistsException;
+import comflower.sagongsa.error.WrongId;
+import comflower.sagongsa.error.WrongPassword;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,22 +36,19 @@ public class UserController {
             throw new UserAlreadyExistsException(signupDTO.getId());  // 에러처리를 해주는 함수 실행 (53번 줄) -> 지금 여기서 에러남 ㅠ
         }
 
-        // 실제 회원가입 로직 실행 !!
         User createUser = userService.signup(signupDTO);
 
-        // 성공했을 때 반환할 response를 만들어주는 부분
-        long userId = 1L;
         SignupResponse body = SignupResponse
                 .builder()
                 .userId(createUser.getUserId())
                 .token("JWT Token")
                 .build();
         return ResponseEntity
-                .created(URI.create(String.valueOf(userId)))
+                .created(URI.create(String.valueOf(createUser.getUserId())))  // header - Location에 추가해줌
                 .body(body);
     }
 
-    // 여기 부분이 중복 ID 에러 처리하는 부분 !!
+    // 회원가입 에러처리
     @ExceptionHandler(UserAlreadyExistsException.class)  // error/UserAlreadyExistsException.java 파일 같이 보기
     public ResponseEntity<ErrorResponse> handleIllegalStateException(UserAlreadyExistsException e) {
         // ErrorType에 있는 USER_ALREADY_EXISTS 를 토대로 반환값이 나옴
@@ -59,14 +58,39 @@ public class UserController {
     }
 
     // 로그인
-//    @PostMapping("/login")
-//    public ResponseEntity<ResponseDTO> login(@RequestBody LoginDTO loginDTO) {
-//         Optional<User> existingId = userService.validateDuplicateUser(loginDTO.getId());
-//         if (existingId.isPresent()) {  // 아이디가 존재함 -> PW랑 맞춰보기
-//             userService.login(loginDTO, existingId);
-//
-//         }
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<SignupResponse> login(@RequestBody LoginDTO loginDTO) {
+        // ID 판별
+        if(userService.isUserPresentById(loginDTO.getId())) {
+            User findLoginUser = userRepository.findById(loginDTO.getId()).get();
+
+            // PW 판별
+            if(userService.login(loginDTO, findLoginUser)) {
+                SignupResponse body = SignupResponse
+                        .builder()
+                        .userId(findLoginUser.getUserId())
+                        .token("JWT Token")
+                        .build();
+                return ResponseEntity.ok().body(body);
+            }
+            else {  // 비밀번호 오류
+                throw new WrongPassword(loginDTO.getPw());
+            }
+        }
+        else {  // 존재하지 않는 ID
+            throw new WrongId(loginDTO.getId());
+        }
+    }
+
+    // 로그인 에러처리
+    @ExceptionHandler(WrongPassword.class)
+    public ResponseEntity<ErrorResponse> handleWrongPassword(WrongPassword e) {
+        return ErrorResponse.entity(ErrorType.WRONG_PASSWORD, e.getPassword());
+    }
+    @ExceptionHandler(WrongId.class)
+    public ResponseEntity<ErrorResponse> handleWrongId(WrongId e) {
+        return ErrorResponse.entity(ErrorType.WRONG_ID, e.getId());
+    }
 
     // 회원 정보 수정
     @PostMapping("/user/edit/info")
@@ -74,7 +98,7 @@ public class UserController {
         try {
             userService.editUser(editUserDTO);
         } catch (Exception e) {  // 예외처리
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            //return new ResponseEntity<ErrorResponse>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("Success Edit User : " + editUserDTO.getUserId() + " return", HttpStatus.OK);
     }
