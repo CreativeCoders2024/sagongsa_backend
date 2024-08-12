@@ -54,6 +54,7 @@ public class UserService {
         if (editUserDTO.getNickname() != null) {
             editUser.setNickname(editUserDTO.getNickname());
         }
+        userRepository.save(editUser);  // 이거 안써주니까 수정이 안됨
     }
 
     @Transactional
@@ -65,5 +66,6 @@ public class UserService {
     @Transactional
     public void withDraw(User withDrawUser) {
         withDrawUser.setWithdrawn(true);
+        userRepository.save(withDrawUser); // 얘도
     }
 }
