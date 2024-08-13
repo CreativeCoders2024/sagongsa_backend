@@ -1,7 +1,9 @@
 package comflower.sagongsa.service;
 
 
+import comflower.sagongsa.dto.request.EditIntroductionDTO;
 import comflower.sagongsa.dto.request.EditUserDTO;
+import comflower.sagongsa.dto.request.UserIdDTO;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.repository.MypageRepository;
 import comflower.sagongsa.repository.UserRepository;
@@ -19,12 +21,15 @@ public class MypageService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Optional<User> importingIntroduction(EditUserDTO editUserDTO) {
-        return userRepository.findById(editUserDTO.getUserId());
+    public Optional<User> importingIntroduction(UserIdDTO userIdDTO) {
+        return userRepository.findByUserId(userIdDTO.getUserId());
     }
 
     @Transactional
-    public void editUserIntroduction(EditUserDTO editUserDTO) {
-
+    public void editUserIntroduction(User user, EditIntroductionDTO editIntroDTO) {
+        if(editIntroDTO.getIntroduction() != null) {
+            user.setIntroduction(editIntroDTO.getIntroduction());
+        }
+        userRepository.save(user);
     }
 }
