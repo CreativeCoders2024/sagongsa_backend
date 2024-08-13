@@ -129,13 +129,8 @@ public class UserController {
     // 회원 탈퇴
     @PutMapping("/withdraw")
     public UserIdResponse withDraw(@RequestBody UserIdDTO userIdDTO) {
-        if(!userService.isUserPresentByUserId(userIdDTO.getUserId())) {
-            throw new UserNotFoundException(userIdDTO.getUserId());
-        }
-        User withDrawUser = userRepository.findByUserId(userIdDTO.getUserId()).get();
-        if(!withDrawUser.getUserId().equals(userIdDTO.getUserId())) {  //굳?이 두개나?
-            throw new UserNotFoundException(userIdDTO.getUserId());
-        }
+        User withDrawUser = userRepository.findByUserId(userIdDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
         userService.withDraw(withDrawUser);
 
         UserIdResponse withDrawResponse = UserIdResponse
