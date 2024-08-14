@@ -33,7 +33,8 @@ public class ContestService {
 
     @Transactional(readOnly = true)
     public Contest getContestById(Long contestId) {
-        return contestRepository.findById(contestId).orElseThrow(() -> new IllegalStateException("Contest with id : " + contestId + " not found"));
+        return contestRepository.findById(contestId)
+                .orElseThrow(() -> new IllegalStateException("Contest with id : " + contestId + " not found"));
     }
 
     @Transactional

@@ -10,13 +10,10 @@ import comflower.sagongsa.error.*;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.hibernate.query.sql.internal.ResultSetMappingProcessor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor  //얘 찾아보기
@@ -35,8 +32,7 @@ public class UserController {
 
         User createUser = userService.signup(signupDTO);
 
-        SignupResponse body = SignupResponse
-                .builder()
+        SignupResponse body = SignupResponse.builder()
                 .userId(createUser.getUserId())
                 .token("JWT Token")
                 .build();
@@ -60,46 +56,44 @@ public class UserController {
     public SignupResponse login(@RequestBody LoginDTO loginDTO) {
         // 객체 반환 여부 판별 후 null 이면 바로 오류 처리 -> ID 판별
         User findLoginUser = userRepository.findById(loginDTO.getId())
-                .orElseThrow(() -> new WrongIdException(loginDTO.getId()));
+                .orElseThrow(() -> new InvalidIdException(loginDTO.getId()));
 
         // PW 판별
-        if(!userService.login(loginDTO, findLoginUser)) {
-            throw new WrongPasswordException(loginDTO.getPw());
+        if (!userService.login(loginDTO, findLoginUser)) {
+            throw new InvalidPasswordException(loginDTO.getPw());
         }
 
-        SignupResponse loginResponse = SignupResponse
-                .builder()
+        return SignupResponse
+               .builder()
                 .userId(findLoginUser.getUserId())
                 .token("JWT Token")
                 .build();
-        return loginResponse;
     }
 
     // 로그인 에러처리
-    @ExceptionHandler(WrongPasswordException.class)
-    public ResponseEntity<ErrorResponse> handleWrongPassword(WrongPasswordException e) {
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleWrongPassword(InvalidPasswordException e) {
         return ErrorResponse.entity(ErrorType.WRONG_PASSWORD, e.getPassword());
     }
-    @ExceptionHandler(WrongIdException.class)
-    public ResponseEntity<ErrorResponse> handleWrongId(WrongIdException e) {
+
+    @ExceptionHandler(InvalidIdException.class)
+    public ResponseEntity<ErrorResponse> handleWrongId(InvalidIdException e) {
         return ErrorResponse.entity(ErrorType.WRONG_ID, e.getId());
     }
-
 
     // 회원 정보 수정
     @PostMapping("/user/edit/info")
     public UserIdResponse editUser(@RequestBody EditUserDTO editUserDTO) {
-        if(!userService.isUserPresentByUserId(editUserDTO.getUserId())) {
+        if (!userService.isUserPresentByUserId(editUserDTO.getUserId())) {
             throw new UserNotFoundException(editUserDTO.getUserId());
         }
+
         User findEditUser = userRepository.findByUserId(editUserDTO.getUserId()).get();
         userService.editUser(editUserDTO, findEditUser);
 
-        UserIdResponse editInfoResponse = UserIdResponse
-                .builder()
+        return UserIdResponse.builder()
                 .userId(editUserDTO.getUserId())
                 .build();
-        return editInfoResponse;
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -107,22 +101,18 @@ public class UserController {
         return ErrorResponse.entity(ErrorType.USER_NOT_FOUND, e.getUserId());
     }
 
-
     // 회원 정보 조회
     @PostMapping("/user/inquiry")
     public InquiryOfUserResponse inquiryOfUserInfo(@RequestBody UserIdDTO userIdDTO) {
         User userInfo = userService.inquiryOfUserInfo(userIdDTO.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
 
-        InquiryOfUserResponse inquiryResponse = InquiryOfUserResponse
-                .builder()
+        return InquiryOfUserResponse.builder()
                 .profile_img(userInfo.getProfileImg())
                 .field(userInfo.getField())
                 .introduction(userInfo.getIntroduction())
                 .build();
-        return inquiryResponse;
     }
-
 
     // 회원 탈퇴
     @PutMapping("/withdraw")
@@ -131,10 +121,8 @@ public class UserController {
                 .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
         userService.withDraw(withDrawUser);
 
-        UserIdResponse withDrawResponse = UserIdResponse
-                .builder()
+        return UserIdResponse.builder()
                 .userId(withDrawUser.getUserId())
                 .build();
-        return withDrawResponse;
     }
 }
