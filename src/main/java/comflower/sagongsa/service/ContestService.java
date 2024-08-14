@@ -1,8 +1,8 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.dto.CreateContestDTO;
+import comflower.sagongsa.dto.request.CreateContestDTO;
 import comflower.sagongsa.entity.Contest;
-import comflower.sagongsa.dto.EditContestDTO;
+import comflower.sagongsa.dto.request.EditContestDTO;
 import org.springframework.transaction.annotation.Transactional;
 import comflower.sagongsa.repository.ContestRepository;
 
@@ -33,7 +33,8 @@ public class ContestService {
 
     @Transactional(readOnly = true)
     public Contest getContestById(Long contestId) {
-        return contestRepository.findById(contestId).orElseThrow(() -> new IllegalStateException("Contest with id : " + contestId + " not found"));
+        return contestRepository.findById(contestId)
+                .orElseThrow(() -> new IllegalStateException("Contest with id : " + contestId + " not found"));
     }
 
     @Transactional
