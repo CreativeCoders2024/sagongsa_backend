@@ -1,17 +1,15 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.EditUserDTO;
-import comflower.sagongsa.dto.LoginDTO;
-import comflower.sagongsa.dto.SignupDTO;
+import comflower.sagongsa.dto.request.EditUserDTO;
+import comflower.sagongsa.dto.request.LoginDTO;
+import comflower.sagongsa.dto.request.SignupDTO;
 import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor  //얘 찾아보기
+@RequiredArgsConstructor //얘 찾아보기
+@RestControllerAdvice//모든 Controller에 대해 ExceptionHandler를 설정합니다.
 public class UserController {
     private final UserService userService;
 

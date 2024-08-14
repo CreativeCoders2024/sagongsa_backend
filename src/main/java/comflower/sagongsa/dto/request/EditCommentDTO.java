@@ -1,7 +1,6 @@
-package comflower.sagongsa.dto;
+package comflower.sagongsa.dto.request;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class EditCommentDTO {

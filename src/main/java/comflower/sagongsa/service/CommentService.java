@@ -1,7 +1,7 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.dto.CreateCommentDTO;
-import comflower.sagongsa.dto.EditCommentDTO;
+import comflower.sagongsa.dto.request.CreateCommentDTO;
+import comflower.sagongsa.dto.request.EditCommentDTO;
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.repository.CommentRepository;
 

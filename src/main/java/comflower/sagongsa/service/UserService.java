@@ -1,10 +1,10 @@
 package comflower.sagongsa.service;
 
 import comflower.sagongsa.entity.User;
-import comflower.sagongsa.dto.EditUserDTO;
-import comflower.sagongsa.dto.SignupDTO;
+import comflower.sagongsa.dto.request.EditUserDTO;
+import comflower.sagongsa.dto.request.SignupDTO;
 import comflower.sagongsa.repository.UserRepository;
-import comflower.sagongsa.dto.LoginDTO;
+import comflower.sagongsa.dto.request.LoginDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

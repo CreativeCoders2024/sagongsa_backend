@@ -1,12 +1,13 @@
-package comflower.sagongsa.dto;
+package comflower.sagongsa.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class EditUserDTO {
-    private Long userId;  //토큰 시 수정 필요
+public class SignupDTO {
+    private String id;
     private String pw;
     private String nickname;
+    private String email;
 }

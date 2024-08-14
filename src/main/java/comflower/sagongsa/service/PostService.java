@@ -1,7 +1,7 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.dto.CreatePostDTO;
-import comflower.sagongsa.dto.EditPostDTO;
+import comflower.sagongsa.dto.request.CreatePostDTO;
+import comflower.sagongsa.dto.request.EditPostDTO;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.repository.PostRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,11 +39,9 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Post getPostById(Long postId) {
-        return postRepository.findByPostId(postId)
-                .orElseThrow(() -> new IllegalStateException("Post with id : " + postId + " not found"));
+    public Optional<Post> getPostById(Long postId) {
+        return postRepository.findByPostId(postId);
     }
-
     @Transactional
     public void editPost(long postId, EditPostDTO editPostDTO) {
         Post post = postRepository.findById(postId)

@@ -1,7 +1,7 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.CreateContestDTO;
-import comflower.sagongsa.dto.EditContestDTO;
+import comflower.sagongsa.dto.request.CreateContestDTO;
+import comflower.sagongsa.dto.request.EditContestDTO;
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.service.ContestService;
 import lombok.RequiredArgsConstructor;
