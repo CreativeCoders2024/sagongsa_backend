@@ -35,7 +35,7 @@ public class Comment {
     private LocalDateTime editedAt;
 
     @Column(nullable = true)
-    private int parentId;
+    private Long parentId;
     
 
 }

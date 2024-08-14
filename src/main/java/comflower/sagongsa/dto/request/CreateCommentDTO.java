@@ -7,6 +7,6 @@ import lombok.Getter;
 public class CreateCommentDTO {
 
     private String content;
-    private int parent;
+    private Long parentId;
 
 }

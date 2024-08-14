@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class CommentService {
                 .userId(1L) // 임의로 설성 userId
                 .content(createCommentDTO.getContent())
                 .createdAt(LocalDateTime.now())
-                .parentId(createCommentDTO.getParent())
+                .parentId(createCommentDTO.getParentId())
                 .build();
 
         commentRepository.save(comment);
@@ -54,5 +55,12 @@ public class CommentService {
     @Transactional
     public List<Comment> getComment(Long postId) {
         return commentRepository.findByPostId(postId);
+    }
+    // existsById 메서드 추가
+    public boolean existsById(Long commentId) {
+        return commentRepository.existsById(commentId);
+    }
+    public Optional<Comment> getCommentById(Long commentId) {
+        return commentRepository.findById(commentId);
     }
 }

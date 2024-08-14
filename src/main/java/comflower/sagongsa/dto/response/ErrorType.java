@@ -10,7 +10,9 @@ public enum ErrorType {
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, 10000, "User already exists"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, 10001, "Post not found"),
     INVALID_POST_DATA(HttpStatus.BAD_REQUEST, 10005, "Invalid post data"),
-    UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, 10006, "Unauthorized access");
+    UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, 10006, "Unauthorized access"),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, 10007, "Comment not found"),
+    INVALID_COMMENT_DATA(HttpStatus.BAD_REQUEST, 10008, "Invalid comment data");
     // 나열중 ....
 
     private final HttpStatus httpStatus;

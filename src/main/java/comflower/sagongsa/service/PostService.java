@@ -61,4 +61,8 @@ public class PostService {
                 .orElseThrow(() -> new IllegalStateException("Post with id : " + postId + " not found"));
         postRepository.delete(post);
     }
+    // 댓글 생성 게시글 존재하는지 메서드 추가
+    public boolean existsById(Long postId) {
+        return postRepository.existsById(postId);
+    }
 }
