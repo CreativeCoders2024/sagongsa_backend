@@ -1,13 +1,10 @@
 package comflower.sagongsa.error;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public class UserNotFoundException extends IllegalArgumentException {
-    private final Long user_id;
-
-    public UserNotFoundException(Long user_id) {
-        this.user_id = user_id;
-    }
-
-    public Long getUserId() {
-        return user_id;
-    }
+    private final Long userId;
 }

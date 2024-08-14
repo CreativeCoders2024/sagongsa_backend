@@ -24,8 +24,7 @@ public class UserService {
                 .nickname(signupDTO.getNickname())
                 .email((signupDTO.getEmail()))
                 .build();
-        User createUser = userRepository.save(signupUser);
-        return createUser;
+        return userRepository.save(signupUser);
     }
 
     public boolean isUserPresentById(String id) {
@@ -35,11 +34,7 @@ public class UserService {
 
     @Transactional
     public boolean login(LoginDTO loginDTO, User user) {
-        if(user.getPw().equals(loginDTO.getPw())) {
-            return true;
-        }
-        else
-            return false;
+        return user.getPw().equals(loginDTO.getPw());
     }
 
     public boolean isUserPresentByUserId(Long userId) {
@@ -59,8 +54,7 @@ public class UserService {
 
     @Transactional
     public Optional<User> inquiryOfUserInfo(Long userId) {
-        Optional<User> findUser = userRepository.findById(userId);
-        return findUser;
+        return userRepository.findById(userId);
     }
 
     @Transactional

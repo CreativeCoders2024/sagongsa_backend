@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class UserAlreadyExistsException extends IllegalArgumentException {
-    private final String id;
+public class InvalidPasswordException extends IllegalArgumentException {
+    private final String password;
 }
