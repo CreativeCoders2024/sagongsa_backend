@@ -29,8 +29,6 @@ public class UserController {
     public ResponseEntity<SignupResponse> signup(@RequestBody SignupDTO signupDTO) {
         // 우선, 존재하는 ID인지 확인함
         if (userService.isUserPresentById(signupDTO.getId())) {
-            System.out.println("여기로 들어옴?\n");
-            System.out.println(userService.isUserPresentById((signupDTO.getId())));
             // 위의 조건문이 true라면 = ID가 이미 존재함 = 중복 ID !! = 에러처리 해야함
             throw new UserAlreadyExistsException(signupDTO.getId());  // 에러처리를 해주는 함수 실행 (53번 줄) -> 지금 여기서 에러남 ㅠ
         }
