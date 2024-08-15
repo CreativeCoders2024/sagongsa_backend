@@ -60,18 +60,30 @@ public class CommentController {
     }
 
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
-    public String deleteComment(@PathVariable long postId, @PathVariable long commentId){
+    public String deleteComment(@PathVariable long postId, @PathVariable long commentId) {
+        // 1. 댓글이 존재하는지 확인
+        Comment comment = commentService.getCommentById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException(commentId));
+
+        // 2. 댓글 삭제 로직
         commentService.deleteComment(commentId);
-        return "Success Delete Contest with id: " + commentId;
+        return "Success: Deleted comment with id: " + commentId;
     }
+    @GetMapping("/posts/{postId}/comments")
+    public List<Comment> getCommentsByPostId(@PathVariable long postId) {
+        // 1. 게시글이 존재하는지 확인
+        if (!postService.existsById(postId)) {
+            throw new PostNotFoundException(postId);
+        }
+        // 2. 해당 게시글의 댓글 리스트 반환
+        return commentService.getComment(postId);
+    }
+
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
         return ErrorResponse.entity(ErrorType.POST_NOT_FOUND, e.getPostId());
     }
-    @GetMapping("/posts/{postId}/comments/")
-    public List<Comment> getComment(@PathVariable long postId) {
-       return commentService.getComment(postId);
-    }
+
     @ExceptionHandler(CommentNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleCommentNotFoundException(CommentNotFoundException e) {
         return ErrorResponse.entity(ErrorType.COMMENT_NOT_FOUND, e.getCommentId());
