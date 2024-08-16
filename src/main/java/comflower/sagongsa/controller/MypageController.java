@@ -3,6 +3,7 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.request.EditIntroductionDTO;
 import comflower.sagongsa.dto.request.EditUserDTO;
+import comflower.sagongsa.dto.request.EditUserFieldDTO;
 import comflower.sagongsa.dto.request.UserIdDTO;
 import comflower.sagongsa.dto.response.*;
 import comflower.sagongsa.entity.User;
@@ -15,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RequestMapping("/user")
 @RestController
@@ -42,11 +41,9 @@ public class MypageController {
             introduction = "null";
         }
 
-        MypageImportIntroductionResponse importIntro = MypageImportIntroductionResponse
-                .builder()
+        return MypageImportIntroductionResponse.builder()
                 .introduction(introduction)
                 .build();
-        return importIntro;
     }
 
     // 소개글 작성 및 수정
@@ -58,12 +55,9 @@ public class MypageController {
         User findEditUserIntro = userRepository.findByUserId(editIntroDTO.getUserId()).get();
         mypageService.editUserIntroduction(findEditUserIntro, editIntroDTO);
 
-        UserIdResponse editintroResponse = UserIdResponse
-                .builder()
+        return UserIdResponse.builder()
                 .userId(editIntroDTO.getUserId())
                 .build();
-
-        return editintroResponse;
     }
 
     // 관리자 권한 수정
@@ -73,11 +67,9 @@ public class MypageController {
                 .orElseThrow(() -> new UserNotFoundException(editManagerDTO.getUserId()));
         mypageService.editUserManager(findEditUserManager);
 
-        UserIdResponse editManagerResponse = UserIdResponse
-                .builder()
+        return UserIdResponse.builder()
                 .userId(findEditUserManager.getUserId())
                 .build();
-        return editManagerResponse;
     }
 
     // 분야 불러오기
@@ -86,17 +78,20 @@ public class MypageController {
         User findImportField = mypageService.importField(userIdDTO.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
 
-        ImportFieldResponse importField = ImportFieldResponse
-                .builder()
+        return ImportFieldResponse.builder()
                 .field(findImportField.getField())
                 .build();
-
-        return importField;
     }
 
     // 분야 수정
     @PutMapping("/edit/field")
-    public void editField(@RequestBody UserIdDTO editFieldDTO) {
+    public UserIdResponse editField(@RequestBody EditUserFieldDTO editFieldDTO) {
+        User findEditUserField = userRepository.findByUserId(editFieldDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(editFieldDTO.getUserId()));
+        mypageService.editUserField(findEditUserField, editFieldDTO);
 
+        return UserIdResponse.builder()
+                .userId(editFieldDTO.getUserId())
+                .build();
     }
 }

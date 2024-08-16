@@ -3,6 +3,7 @@ package comflower.sagongsa.service;
 
 import comflower.sagongsa.dto.request.EditIntroductionDTO;
 import comflower.sagongsa.dto.request.EditUserDTO;
+import comflower.sagongsa.dto.request.EditUserFieldDTO;
 import comflower.sagongsa.dto.request.UserIdDTO;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.repository.MypageRepository;
@@ -27,21 +28,25 @@ public class MypageService {
 
     @Transactional
     public void editUserIntroduction(User user, EditIntroductionDTO editIntroDTO) {
-        if(editIntroDTO.getIntroduction() != null) {
-            user.setIntroduction(editIntroDTO.getIntroduction());
-        }
+        user.setIntroduction(editIntroDTO.getIntroduction());
         userRepository.save(user);
     }
 
     @Transactional
-    public void editUserManager(User manageUser) {
-        manageUser.setManager(true);
-        userRepository.save(manageUser);
+    public void editUserManager(User editManageUser) {
+        editManageUser.setManager(true);
+        userRepository.save(editManageUser);
     }
 
     @Transactional
     public Optional<User> importField(Long userId) {
-        Optional<User> user = userRepository.findByUserId(userId);
-        return user;
+        Optional<User> importFieldUser = userRepository.findByUserId(userId);
+        return importFieldUser;
+    }
+
+    @Transactional
+    public void editUserField(User editFieldUser, EditUserFieldDTO editFieldDTO) {
+        editFieldUser.setField(editFieldDTO.getField());
+        userRepository.save(editFieldUser);
     }
 }
