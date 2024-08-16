@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ImportFieldResponse {
+public class UserFieldResponse {
     private int field;
 }

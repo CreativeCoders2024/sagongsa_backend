@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class MypageImportIntroductionResponse {
+public class UserIntroductionResponse {
     private String introduction;
 }

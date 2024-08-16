@@ -27,69 +27,57 @@ public class MypageController {
 
     // 소개글 수정을 위해 불러오는 로직
     @GetMapping("/introduction")
-    public MypageImportIntroductionResponse importIntroduction() {
+    public UserIntroductionResponse getIntroduction() {
         // Use user id from authentication
         long userId = 1L;
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        return MypageImportIntroductionResponse.builder()
+        return UserIntroductionResponse.builder()
                 .introduction(user.getIntroduction())
                 .build();
     }
 
     // 소개글 작성 및 수정
     @PutMapping("/introduction")
-    public UserIdResponse editUserIntroduction(@RequestBody EditIntroductionDTO editIntroDTO) {
+    public void setIntroduction(@RequestBody EditIntroductionDTO editIntroDTO) {
         // Use user id from authentication
         long userId = 1L;
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         mypageService.setIntroduction(user, editIntroDTO.getIntroduction());
-
-        return UserIdResponse.builder()
-                .userId(userId)
-                .build();
     }
 
     // 관리자 권한 수정
     @PutMapping("/manager")
-    public UserIdResponse editUserManager() {
+    public void editUserManager() {
         // Use user id from authentication
         long userId = 1L;
         User findEditUserManager = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         mypageService.editUserManager(findEditUserManager);
-
-        return UserIdResponse.builder()
-                .userId(findEditUserManager.getUserId())
-                .build();
     }
 
     // 분야 불러오기
     @GetMapping("/field")
-    public ImportFieldResponse importField() {
+    public UserFieldResponse getField() {
         // Use user id from authentication
         long userId = 1L;
         User findImportField = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        return ImportFieldResponse.builder()
+        return UserFieldResponse.builder()
                 .field(findImportField.getField())
                 .build();
     }
 
     // 분야 수정
     @PutMapping("/field")
-    public UserIdResponse editField(@RequestBody EditUserFieldDTO editFieldDTO) {
+    public void setField(@RequestBody EditUserFieldDTO editFieldDTO) {
         // Use user id from authentication
         long userId = 1L;
         User findEditUserField = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         mypageService.setField(findEditUserField, editFieldDTO.getField());
-
-        return UserIdResponse.builder()
-                .userId(userId)
-                .build();
     }
 }
