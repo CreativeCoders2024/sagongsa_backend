@@ -84,12 +84,8 @@ public class UserController {
     // 회원 정보 수정
     @PostMapping("/user/edit/info")
     public UserIdResponse editUser(@RequestBody EditUserDTO editUserDTO) {
-        if (!userService.isUserPresentByUserId(editUserDTO.getUserId())) {
-            throw new UserNotFoundException(editUserDTO.getUserId());
-        }
-
-        User findEditUser = userRepository.findByUserId(editUserDTO.getUserId()).get();
-        userService.editUser(editUserDTO, findEditUser);
+        User user = userService.findUserById(editUserDTO.getUserId());
+        userService.editUser(editUserDTO, user);
 
         return UserIdResponse.builder()
                 .userId(editUserDTO.getUserId())
@@ -104,13 +100,11 @@ public class UserController {
     // 회원 정보 조회
     @PostMapping("/user/inquiry")
     public InquiryOfUserResponse inquiryOfUserInfo(@RequestBody UserIdDTO userIdDTO) {
-        User userInfo = userService.inquiryOfUserInfo(userIdDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
-
+        User user = userService.findUserById(userIdDTO.getUserId());
         return InquiryOfUserResponse.builder()
-                .profile_img(userInfo.getProfileImg())
-                .field(userInfo.getField())
-                .introduction(userInfo.getIntroduction())
+                .profile_img(user.getProfileImg())
+                .field(user.getField())
+                .introduction(user.getIntroduction())
                 .build();
     }
 

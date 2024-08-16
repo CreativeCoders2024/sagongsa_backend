@@ -7,6 +7,7 @@ import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.UserNotFoundException;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.service.MypageService;
+import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MypageController {
     private final MypageService mypageService;
+    private final UserService userService;
     private final UserRepository userRepository;
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -30,8 +32,7 @@ public class MypageController {
     public UserIntroductionResponse getIntroduction() {
         // Use user id from authentication
         long userId = 1L;
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        User user = userService.findUserById(userId);
 
         return UserIntroductionResponse.builder()
                 .introduction(user.getIntroduction())
@@ -43,8 +44,7 @@ public class MypageController {
     public void setIntroduction(@RequestBody EditUserIntroductionDTO editIntroDTO) {
         // Use user id from authentication
         long userId = 1L;
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        User user = userService.findUserById(userId);
         mypageService.setIntroduction(user, editIntroDTO.getIntroduction());
     }
 
@@ -53,9 +53,8 @@ public class MypageController {
     public void editUserManager() {
         // Use user id from authentication
         long userId = 1L;
-        User findEditUserManager = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-        mypageService.editUserManager(findEditUserManager);
+        User user = userService.findUserById(userId);
+        mypageService.editUserManager(user);
     }
 
     // 분야 불러오기
@@ -63,11 +62,10 @@ public class MypageController {
     public UserFieldResponse getField() {
         // Use user id from authentication
         long userId = 1L;
-        User findImportField = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        User user = userService.findUserById(userId);
 
         return UserFieldResponse.builder()
-                .field(findImportField.getField())
+                .field(user.getField())
                 .build();
     }
 
