@@ -3,18 +3,21 @@ package comflower.sagongsa.service;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.dto.request.SignupDTO;
+import comflower.sagongsa.error.UserNotFoundException;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.dto.request.LoginDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+
+    public User findUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    }
 
     @Transactional
     public User signup(SignupDTO signupDTO) {
@@ -37,10 +40,6 @@ public class UserService {
         return user.getPw().equals(loginDTO.getPw());
     }
 
-    public boolean isUserPresentByUserId(Long userId) {
-        return userRepository.findByUserId(userId).isPresent();
-    }
-
     @Transactional
     public void editUser(EditUserDTO editUserDTO, User editUser) {
         if (editUserDTO.getPw() != null) {
@@ -50,11 +49,6 @@ public class UserService {
             editUser.setNickname(editUserDTO.getNickname());
         }
         userRepository.save(editUser);  // 이거 안써주니까 수정이 안됨
-    }
-
-    @Transactional
-    public Optional<User> inquiryOfUserInfo(Long userId) {
-        return userRepository.findById(userId);
     }
 
     @Transactional
