@@ -1,6 +1,5 @@
 package comflower.sagongsa.service;
 
-
 import comflower.sagongsa.dto.request.EditIntroductionDTO;
 import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.dto.request.EditUserFieldDTO;
@@ -17,8 +16,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MypageService {
-
-    private final MypageRepository mypageRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -40,8 +37,7 @@ public class MypageService {
 
     @Transactional
     public Optional<User> importField(Long userId) {
-        Optional<User> importFieldUser = userRepository.findByUserId(userId);
-        return importFieldUser;
+        return userRepository.findByUserId(userId);
     }
 
     @Transactional

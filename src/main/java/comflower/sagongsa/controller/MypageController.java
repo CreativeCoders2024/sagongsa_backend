@@ -1,6 +1,5 @@
 package comflower.sagongsa.controller;
 
-
 import comflower.sagongsa.dto.request.EditIntroductionDTO;
 import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.dto.request.EditUserFieldDTO;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MypageController {
     private final MypageService mypageService;
-    private final UserService userService;
     private final UserRepository userRepository;
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -37,7 +35,7 @@ public class MypageController {
                 .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
 
         String introduction = importIntroductionUser.getIntroduction();
-        if(introduction == null) {
+        if (introduction == null) {
             introduction = "null";
         }
 
@@ -49,10 +47,8 @@ public class MypageController {
     // 소개글 작성 및 수정
     @PutMapping("/edit/intro")
     public UserIdResponse editUserIntroduction(@RequestBody EditIntroductionDTO editIntroDTO) {
-        if(!userService.isUserPresentByUserId(editIntroDTO.getUserId())) {
-            throw new UserNotFoundException(editIntroDTO.getUserId());
-        }
-        User findEditUserIntro = userRepository.findByUserId(editIntroDTO.getUserId()).get();
+        User findEditUserIntro = userRepository.findByUserId(editIntroDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(editIntroDTO.getUserId()));
         mypageService.editUserIntroduction(findEditUserIntro, editIntroDTO);
 
         return UserIdResponse.builder()

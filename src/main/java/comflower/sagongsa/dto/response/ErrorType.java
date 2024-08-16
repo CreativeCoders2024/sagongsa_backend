@@ -15,6 +15,7 @@ public enum ErrorType {
     private final HttpStatus httpStatus;
     private final int code;
     private final String message;
+
     // 프론트쪽에 반환되는 형식 !
     ErrorType(HttpStatus httpStatus, int code, String message) {
         this.httpStatus = httpStatus;
