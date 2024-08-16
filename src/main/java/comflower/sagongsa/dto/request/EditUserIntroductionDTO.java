@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class EditIntroductionDTO {
+public class EditUserIntroductionDTO {
     private String introduction;
 }

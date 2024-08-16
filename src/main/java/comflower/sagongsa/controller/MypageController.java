@@ -1,6 +1,6 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.request.EditIntroductionDTO;
+import comflower.sagongsa.dto.request.EditUserIntroductionDTO;
 import comflower.sagongsa.dto.request.EditUserFieldDTO;
 import comflower.sagongsa.dto.response.*;
 import comflower.sagongsa.entity.User;
@@ -40,7 +40,7 @@ public class MypageController {
 
     // 소개글 작성 및 수정
     @PutMapping("/introduction")
-    public void setIntroduction(@RequestBody EditIntroductionDTO editIntroDTO) {
+    public void setIntroduction(@RequestBody EditUserIntroductionDTO editIntroDTO) {
         // Use user id from authentication
         long userId = 1L;
         User user = userRepository.findByUserId(userId)
