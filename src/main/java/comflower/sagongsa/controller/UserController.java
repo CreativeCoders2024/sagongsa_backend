@@ -50,7 +50,6 @@ public class UserController {
         return ErrorResponse.entity(ErrorType.USER_ALREADY_EXISTS, e.getId());
     }
 
-
     // 로그인
     @PostMapping("/login")
     public SignupResponse login(@RequestBody LoginDTO loginDTO) {
@@ -90,11 +89,6 @@ public class UserController {
         return UserIdResponse.builder()
                 .userId(editUserDTO.getUserId())
                 .build();
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
-        return ErrorResponse.entity(ErrorType.USER_NOT_FOUND, e.getUserId());
     }
 
     // 회원 정보 조회

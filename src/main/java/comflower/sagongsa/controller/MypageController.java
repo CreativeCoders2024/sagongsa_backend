@@ -9,7 +9,6 @@ import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.service.MypageService;
 import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,11 +20,6 @@ public class MypageController {
     private final MypageService mypageService;
     private final UserService userService;
     private final UserRepository userRepository;
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
-        return ErrorResponse.entity(ErrorType.USER_NOT_FOUND, e.getUserId());
-    }
 
     // 소개글 수정을 위해 불러오는 로직
     @GetMapping("/introduction")
