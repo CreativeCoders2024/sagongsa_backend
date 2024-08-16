@@ -6,6 +6,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class EditIntroductionDTO {
-    private Long userId;
     private String introduction;
 }

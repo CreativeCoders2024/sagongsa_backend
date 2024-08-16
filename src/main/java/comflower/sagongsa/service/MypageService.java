@@ -1,17 +1,10 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.dto.request.EditIntroductionDTO;
-import comflower.sagongsa.dto.request.EditUserDTO;
-import comflower.sagongsa.dto.request.EditUserFieldDTO;
-import comflower.sagongsa.dto.request.UserIdDTO;
 import comflower.sagongsa.entity.User;
-import comflower.sagongsa.repository.MypageRepository;
 import comflower.sagongsa.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,13 +12,14 @@ public class MypageService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Optional<User> importingIntroduction(UserIdDTO userIdDTO) {
-        return userRepository.findByUserId(userIdDTO.getUserId());
+    public void setIntroduction(User user, String introduction) {
+        user.setIntroduction(introduction);
+        userRepository.save(user);
     }
 
     @Transactional
-    public void editUserIntroduction(User user, EditIntroductionDTO editIntroDTO) {
-        user.setIntroduction(editIntroDTO.getIntroduction());
+    public void setField(User user, int field) {
+        user.setField(field);
         userRepository.save(user);
     }
 
@@ -33,16 +27,5 @@ public class MypageService {
     public void editUserManager(User editManageUser) {
         editManageUser.setManager(true);
         userRepository.save(editManageUser);
-    }
-
-    @Transactional
-    public Optional<User> importField(Long userId) {
-        return userRepository.findByUserId(userId);
-    }
-
-    @Transactional
-    public void editUserField(User editFieldUser, EditUserFieldDTO editFieldDTO) {
-        editFieldUser.setField(editFieldDTO.getField());
-        userRepository.save(editFieldUser);
     }
 }

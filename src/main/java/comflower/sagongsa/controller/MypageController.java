@@ -1,15 +1,12 @@
 package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.request.EditIntroductionDTO;
-import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.dto.request.EditUserFieldDTO;
-import comflower.sagongsa.dto.request.UserIdDTO;
 import comflower.sagongsa.dto.response.*;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.UserNotFoundException;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.service.MypageService;
-import comflower.sagongsa.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,38 +26,39 @@ public class MypageController {
     }
 
     // 소개글 수정을 위해 불러오는 로직
-    @PostMapping("/import/intro")
-    public MypageImportIntroductionResponse importIntroduction(@RequestBody UserIdDTO userIdDTO) {
-        User importIntroductionUser = mypageService.importingIntroduction(userIdDTO)
-                .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
-
-        String introduction = importIntroductionUser.getIntroduction();
-        if (introduction == null) {
-            introduction = "null";
-        }
+    @GetMapping("/introduction")
+    public MypageImportIntroductionResponse importIntroduction() {
+        // Use user id from authentication
+        long userId = 1L;
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         return MypageImportIntroductionResponse.builder()
-                .introduction(introduction)
+                .introduction(user.getIntroduction())
                 .build();
     }
 
     // 소개글 작성 및 수정
-    @PutMapping("/edit/intro")
+    @PutMapping("/introduction")
     public UserIdResponse editUserIntroduction(@RequestBody EditIntroductionDTO editIntroDTO) {
-        User findEditUserIntro = userRepository.findByUserId(editIntroDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(editIntroDTO.getUserId()));
-        mypageService.editUserIntroduction(findEditUserIntro, editIntroDTO);
+        // Use user id from authentication
+        long userId = 1L;
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        mypageService.setIntroduction(user, editIntroDTO.getIntroduction());
 
         return UserIdResponse.builder()
-                .userId(editIntroDTO.getUserId())
+                .userId(userId)
                 .build();
     }
 
     // 관리자 권한 수정
-    @PutMapping("/edit/manager")
-    public UserIdResponse editUserManager(@RequestBody UserIdDTO editManagerDTO) {
-        User findEditUserManager = userRepository.findByUserId(editManagerDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(editManagerDTO.getUserId()));
+    @PutMapping("/manager")
+    public UserIdResponse editUserManager() {
+        // Use user id from authentication
+        long userId = 1L;
+        User findEditUserManager = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
         mypageService.editUserManager(findEditUserManager);
 
         return UserIdResponse.builder()
@@ -69,10 +67,12 @@ public class MypageController {
     }
 
     // 분야 불러오기
-    @PostMapping("/import/field")
-    public ImportFieldResponse importField(@RequestBody UserIdDTO userIdDTO) {
-        User findImportField = mypageService.importField(userIdDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
+    @GetMapping("/field")
+    public ImportFieldResponse importField() {
+        // Use user id from authentication
+        long userId = 1L;
+        User findImportField = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         return ImportFieldResponse.builder()
                 .field(findImportField.getField())
@@ -80,14 +80,16 @@ public class MypageController {
     }
 
     // 분야 수정
-    @PutMapping("/edit/field")
+    @PutMapping("/field")
     public UserIdResponse editField(@RequestBody EditUserFieldDTO editFieldDTO) {
-        User findEditUserField = userRepository.findByUserId(editFieldDTO.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(editFieldDTO.getUserId()));
-        mypageService.editUserField(findEditUserField, editFieldDTO);
+        // Use user id from authentication
+        long userId = 1L;
+        User findEditUserField = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        mypageService.setField(findEditUserField, editFieldDTO.getField());
 
         return UserIdResponse.builder()
-                .userId(editFieldDTO.getUserId())
+                .userId(userId)
                 .build();
     }
 }
