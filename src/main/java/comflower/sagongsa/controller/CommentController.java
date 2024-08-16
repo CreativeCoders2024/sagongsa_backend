@@ -33,10 +33,8 @@ public class CommentController {
         validateCreateCommentDTO(createCommentDTO);
 
         // 부모 댓글이 존재하는지 확인 (대댓글인 경우)
-        if (createCommentDTO.getParentId() != null) {
-            if (!commentService.existsById(createCommentDTO.getParentId())) {
-                throw new CommentNotFoundException(createCommentDTO.getParentId());
-            }
+        if (createCommentDTO.getParentId() != null && !commentService.existsById(createCommentDTO.getParentId())) {
+            throw new CommentNotFoundException(createCommentDTO.getParentId());
         }
 
         // 댓글 생성 로직
