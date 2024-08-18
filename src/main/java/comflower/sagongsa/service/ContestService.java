@@ -9,6 +9,7 @@ import comflower.sagongsa.repository.ContestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,24 +18,25 @@ public class ContestService {
 
     @Transactional
     public void createContest(CreateContestDTO createContestDTO) {
-        throw new UnsupportedOperationException("승희님 일해요");
-//        Contest contest = Contest.builder()
-//                .userId(0L)
-//                .title(createContestDTO.getTitle())
-//                .img(createContestDTO.getImg())
-//                .prize(createContestDTO.getPrize())
-//                .startedAt(createContestDTO.getStartedAt())
-//                .endedAt(createContestDTO.getEndedAt())
-//                .link(createContestDTO.getLink())
-//                .field(createContestDTO.getField())
-//                .build();
-//        contestRepository.save(contest);
+        //승희 일해요 부분
+        Contest contest = Contest.builder()
+                .userId(0L)
+                .title(createContestDTO.getTitle())
+                .img(createContestDTO.getImg())
+                .prize(createContestDTO.getPrize())
+                .startedAt(createContestDTO.getStartedAt())
+                .endedAt(createContestDTO.getEndedAt())
+                .link(createContestDTO.getLink())
+                .field(createContestDTO.getField())
+                .build();
+        contestRepository.save(contest);
     }
 
-    @Transactional(readOnly = true)
-    public Contest getContestById(Long contestId) {
-        return contestRepository.findById(contestId).orElseThrow(() -> new IllegalStateException("Contest with id : " + contestId + " not found"));
+    @Transactional
+    public Optional<Contest> getContestById(Long contestId) {
+        return contestRepository.findById(contestId);
     }
+
 
     @Transactional
     public void editContest(long contestId, EditContestDTO editContestDTO) {

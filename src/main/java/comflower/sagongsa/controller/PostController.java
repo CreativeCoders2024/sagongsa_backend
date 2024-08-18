@@ -2,8 +2,10 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.request.CreatePostDTO;
 import comflower.sagongsa.dto.request.EditPostDTO;
+
 import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.dto.response.ErrorType;
+
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.error.*;
 import comflower.sagongsa.service.PostService;
@@ -30,7 +32,6 @@ public class PostController {
     public List<Post> getAllPosts() {
         // 게시글 목록을 가져옴
         List<Post> posts = postService.getAllPosts();
-
         // 게시글이 없을 때 예외를 던지는 대신 빈 리스트를 반환
         return posts;
     }

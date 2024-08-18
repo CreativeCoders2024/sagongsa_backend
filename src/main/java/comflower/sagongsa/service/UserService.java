@@ -17,70 +17,49 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void signup(SignupDTO signupDTO) {
-        validateDuplicateUser(signupDTO);
+    public User signup(SignupDTO signupDTO) {
         User signupUser = User.builder()
                 .id(signupDTO.getId())
                 .pw(signupDTO.getPw())
                 .nickname(signupDTO.getNickname())
                 .email((signupDTO.getEmail()))
                 .build();
-        userRepository.save(signupUser);
+        return userRepository.save(signupUser);
     }
 
-    // 회원가입 - ID 중복 체크
-    private void validateDuplicateUser(SignupDTO signupDTO) {
-        userRepository.findById(signupDTO.getId())
-                .ifPresent(u -> {
-                    throw new IllegalStateException("User with id : " + u.getId() + " already exists");
-                    //여기서 아예 500 에러로 떠버리는데 어떻게 에러 메세지를 보내지?
-                });
+    public boolean isUserPresentById(String id) {
+        return userRepository.findById(id).isPresent();
+        // ID가 있으면 true를 반환함
     }
 
     @Transactional
-    public String login(LoginDTO loginDTO) {
-        Optional<User> findUser = userRepository.findById(loginDTO.getId());
-        if (findUser.isPresent()) {
-            if(findUser.get().getPw().equals(loginDTO.getPw())) {
-                return "Success Login : " + findUser.get().getUserId();
-            }
-            else {
-                return "Wrong Password";
-            }
-        }
-        else {
-            return "User not found : " + loginDTO.getId();
-        }
-        // 이 리턴 처리를 service에서 하는게 맞나?
+    public boolean login(LoginDTO loginDTO, User user) {
+        return user.getPw().equals(loginDTO.getPw());
+    }
+
+    public boolean isUserPresentByUserId(Long userId) {
+        return userRepository.findByUserId(userId).isPresent();
     }
 
     @Transactional
-    public void editUser(EditUserDTO editUserDTO) {
-        User editUser = userRepository.findByUserId(editUserDTO.getUserId()).orElseThrow(() ->
-                new IllegalStateException("User with id : " + editUserDTO.getUserId() + " not found"));
+    public void editUser(EditUserDTO editUserDTO, User editUser) {
         if (editUserDTO.getPw() != null) {
             editUser.setPw(editUserDTO.getPw());
         }
         if (editUserDTO.getNickname() != null) {
             editUser.setNickname(editUserDTO.getNickname());
         }
-        //userRepository.save(editUser);
-        // save를 굳이 안써도 영속성 컨텍스트가 자동으로 변경사항을 인지하여 데이터베이스에 반영
-    }
-
-    // 리턴이나 service 로직 부분 싹 다 내일 깔끔하게 수정!!
-    @Transactional
-    public void inquiryOfUserInfo(Long userId) {
-        Optional<User> findUser = userRepository.findById(userId);
-        // return은 내일
+        userRepository.save(editUser);  // 이거 안써주니까 수정이 안됨
     }
 
     @Transactional
-    public void withDraw(Long userId) {
-        User editUser = userRepository.findByUserId(userId).orElseThrow(() ->
-                new IllegalStateException("User with id : " + userId + " not found"));
-        if (editUser.getUserId().equals(userId)) {
-            editUser.setWithdrawn(true);
-        }
+    public Optional<User> inquiryOfUserInfo(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    @Transactional
+    public void withDraw(User withDrawUser) {
+        withDrawUser.setWithdrawn(true);
+        userRepository.save(withDrawUser); // 얘도
     }
 }

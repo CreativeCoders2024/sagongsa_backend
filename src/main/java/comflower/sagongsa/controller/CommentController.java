@@ -2,6 +2,7 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.request.CreateCommentDTO;
 import comflower.sagongsa.dto.request.EditCommentDTO;
+
 import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.dto.response.ErrorType;
 import comflower.sagongsa.entity.Comment;
@@ -12,9 +13,11 @@ import comflower.sagongsa.service.CommentService;
 import comflower.sagongsa.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 
 @RequiredArgsConstructor
@@ -52,7 +55,7 @@ public class CommentController {
         validateEditCommentDTO(editCommentDTO);
 
         // 3. 댓글 수정 로직
-        commentService.editComment(postId, commentId, editCommentDTO);
+        commentService.editComment(commentId, editCommentDTO);
 
         return "Comment edited successfully";
     }
@@ -74,7 +77,7 @@ public class CommentController {
             throw new PostNotFoundException(postId);
         }
         // 2. 해당 게시글의 댓글 리스트 반환
-        return commentService.getComment(postId);
+        return commentService.getComments(postId);
     }
 
     @ExceptionHandler(PostNotFoundException.class)

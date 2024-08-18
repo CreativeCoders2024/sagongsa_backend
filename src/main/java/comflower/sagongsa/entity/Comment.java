@@ -36,6 +36,4 @@ public class Comment {
 
     @Column(nullable = true)
     private Long parentId;
-    
-
 }
