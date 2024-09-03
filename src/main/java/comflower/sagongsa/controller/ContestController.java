@@ -50,15 +50,14 @@ public class ContestController {
 
     // 유효성 검사 메서드 추가
     private void validateCreateContestDTO(CreateContestDTO createContestDTO) {
-
         if (createContestDTO.getTitle() == null || createContestDTO.getTitle().isEmpty()) {
-            throw new InvalidContestDataException("Title is required");
+            throw new InvalidContestDataException();
         }
         if (createContestDTO.getStartedAt() == null) {
-            throw new InvalidContestDataException("Start date is required");
+            throw new InvalidContestDataException();
         }
         if (createContestDTO.getEndedAt() == null) {
-            throw new InvalidContestDataException("End date is required");
+            throw new InvalidContestDataException();
         }
 //        if (createContestDTO.getUserId() == null) {
 //            throw new InvalidContestDataException("User ID is required");
@@ -67,14 +66,13 @@ public class ContestController {
 
     private void validateEditContestDTO(EditContestDTO editContestDTO) {
         if (editContestDTO.getTitle() == null || editContestDTO.getTitle().isEmpty()) {
-            throw new InvalidContestEditDataException("Title is required");
+            throw new InvalidContestEditDataException();
         }
         if (editContestDTO.getPrize() == null || editContestDTO.getPrize().isEmpty()) {
-            throw new InvalidContestEditDataException("Prize is required");
+            throw new InvalidContestEditDataException();
         }
         // 추가적인 유효성 검사가 필요한 경우 여기에 추가
     }
-
 
     @ExceptionHandler(InvalidContestDataException.class)
     public ResponseEntity<ErrorResponse> handleInvalidContestDataException() {
@@ -88,6 +86,6 @@ public class ContestController {
 
     @ExceptionHandler(InvalidContestEditDataException.class)
     public ResponseEntity<ErrorResponse> handleInvalidContestEditDataException() {
-        return ErrorResponse.entity(ErrorType.INVALID_CONTEST_Edit_DATA);
+        return ErrorResponse.entity(ErrorType.INVALID_CONTEST_EDIT_DATA);
     }
 }

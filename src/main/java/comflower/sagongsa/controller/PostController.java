@@ -106,7 +106,6 @@ public class PostController {
             throw new InvalidPostDataException();
         }
         // 일단 예시로 공모전과 제목이 널일 때만
-
     }
 
     private void validateEditPostDTO(EditPostDTO editPostDTO) {

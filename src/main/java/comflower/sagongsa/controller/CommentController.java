@@ -74,13 +74,13 @@ public class CommentController {
 
     private void validateCreateCommentDTO(CreateCommentDTO createCommentDTO) {
         if (createCommentDTO.getContent() == null || createCommentDTO.getContent().isEmpty()) {
-            throw new InvalidCommentDataException("Comment content is required");
+            throw new InvalidCommentDataException();
         }
     }
 
     private void validateEditCommentDTO(EditCommentDTO editCommentDTO) {
         if (editCommentDTO.getContent() == null || editCommentDTO.getContent().isEmpty()) {
-            throw new InvalidCommentDataException("Comment content is required");
+            throw new InvalidCommentDataException();
         }
     }
 }
