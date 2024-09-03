@@ -13,13 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.net.URI;
-
 
 @RestController
 @RequiredArgsConstructor //얘 찾아보기
-@RestControllerAdvice//모든 Controller에 대해 ExceptionHandler를 설정합니다.
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
