@@ -3,7 +3,7 @@ package comflower.sagongsa.error;
 import lombok.Getter;
 
 @Getter
-public class ContestNotFoundException extends RuntimeException {
+public class ContestNotFoundException extends IllegalArgumentException {
     private final Long contestId;
 
     public ContestNotFoundException(Long contestId) {

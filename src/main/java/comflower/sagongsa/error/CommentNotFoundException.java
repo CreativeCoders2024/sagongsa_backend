@@ -3,7 +3,7 @@ package comflower.sagongsa.error;
 import lombok.Getter;
 
 @Getter
-public class CommentNotFoundException extends RuntimeException {
+public class CommentNotFoundException extends IllegalArgumentException {
     private final Long commentId;
 
     public CommentNotFoundException(Long commentId) {
