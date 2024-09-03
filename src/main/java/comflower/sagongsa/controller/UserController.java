@@ -62,8 +62,7 @@ public class UserController {
             throw new InvalidPasswordException(loginDTO.getPw());
         }
 
-        return SignupResponse
-               .builder()
+        return SignupResponse.builder()
                 .userId(findLoginUser.getUserId())
                 .token("JWT Token")
                 .build();
