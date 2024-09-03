@@ -1,4 +1,8 @@
 package comflower.sagongsa.error;
+
+import lombok.Getter;
+
+@Getter
 public class PostNotFoundException extends RuntimeException {
     private final Long postId;
 
@@ -7,9 +11,6 @@ public class PostNotFoundException extends RuntimeException {
         this.postId = postId;
     }
 
-    public Long getPostId() {
-        return postId;
-    }
     public String getMessage() {
         return "Post not found with id: " + postId;
     }

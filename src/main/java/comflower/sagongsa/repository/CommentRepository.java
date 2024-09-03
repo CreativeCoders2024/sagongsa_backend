@@ -8,11 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
-    public interface CommentRepository extends JpaRepository<Comment, Long> {
-        Optional<Comment> findByCommentId(Long commentId);
-        List<Comment> findByPostId(Long postId);
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+    Optional<Comment> findByCommentId(Long commentId);
 
-    }
+    List<Comment> findByPostId(Long postId);
 
+}
