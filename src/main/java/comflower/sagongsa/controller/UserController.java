@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequiredArgsConstructor  //얘 찾아보기
+@RequiredArgsConstructor //얘 찾아보기
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
@@ -62,8 +62,7 @@ public class UserController {
             throw new InvalidPasswordException(loginDTO.getPw());
         }
 
-        return SignupResponse
-               .builder()
+        return SignupResponse.builder()
                 .userId(findLoginUser.getUserId())
                 .token("JWT Token")
                 .build();
