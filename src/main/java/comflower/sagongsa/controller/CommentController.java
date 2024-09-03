@@ -6,6 +6,7 @@ import comflower.sagongsa.dto.request.EditCommentDTO;
 import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.dto.response.ErrorType;
 import comflower.sagongsa.entity.Comment;
+import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.error.CommentNotFoundException;
 import comflower.sagongsa.error.InvalidCommentDataException;
 import comflower.sagongsa.error.PostNotFoundException;
@@ -25,58 +26,35 @@ public class CommentController {
     private final PostService postService;
 
     @PostMapping("/posts/{postId}/comments")
-    public String createComment(@PathVariable long postId, @RequestBody CreateCommentDTO createCommentDTO) {
-        // 게시글 존재 여부 확인
-        if (!postService.existsById(postId)) {
-            throw new PostNotFoundException(postId);
-        }
-
-        // 댓글 데이터 유효성 검증
+    public Comment createComment(@PathVariable long postId, @RequestBody CreateCommentDTO createCommentDTO) {
+        Post post = postService.getPost(postId);
         validateCreateCommentDTO(createCommentDTO);
 
         // 부모 댓글이 존재하는지 확인 (대댓글인 경우)
-        if (createCommentDTO.getParentId() != null && !commentService.existsById(createCommentDTO.getParentId())) {
-            throw new CommentNotFoundException(createCommentDTO.getParentId());
+        if (createCommentDTO.getParentId() != null) {
+            commentService.getComment(createCommentDTO.getParentId());
         }
 
-        // 댓글 생성 로직
-        commentService.createComment(postId, createCommentDTO);
-        return "Comment created successfully";
+        return commentService.createComment(post.getPostId(), createCommentDTO);
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")
-    public String editComment(@PathVariable long postId, @PathVariable long commentId, @RequestBody EditCommentDTO editCommentDTO) {
-        // 1. 댓글이 존재하는지 확인
-        Comment comment = commentService.getCommentById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException(commentId));
-
-        // 2. 댓글 내용 유효성 검증
+    public Comment editComment(@PathVariable long postId, @PathVariable long commentId, @RequestBody EditCommentDTO editCommentDTO) {
+        Comment comment = commentService.getComment(commentId);
         validateEditCommentDTO(editCommentDTO);
-
-        // 3. 댓글 수정 로직
-        commentService.editComment(commentId, editCommentDTO);
-
-        return "Comment edited successfully";
+        return commentService.editComment(comment, editCommentDTO);
     }
 
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
-    public String deleteComment(@PathVariable long postId, @PathVariable long commentId) {
-        // 1. 댓글이 존재하는지 확인
-        Comment comment = commentService.getCommentById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException(commentId));
-
-        // 2. 댓글 삭제 로직
-        commentService.deleteComment(commentId);
-        return "Success: Deleted comment with id: " + commentId;
+    public void deleteComment(@PathVariable long postId, @PathVariable long commentId) {
+        Comment comment = commentService.getComment(commentId);
+        commentService.deleteComment(comment);
     }
+
     @GetMapping("/posts/{postId}/comments")
     public List<Comment> getCommentsByPostId(@PathVariable long postId) {
-        // 1. 게시글이 존재하는지 확인
-        if (!postService.existsById(postId)) {
-            throw new PostNotFoundException(postId);
-        }
-        // 2. 해당 게시글의 댓글 리스트 반환
-        return commentService.getComments(postId);
+        Post post = postService.getPost(postId);
+        return commentService.getCommentsByPostId(post);
     }
 
     @ExceptionHandler(PostNotFoundException.class)
@@ -90,14 +68,16 @@ public class CommentController {
     }
 
     @ExceptionHandler(InvalidCommentDataException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCommentDataException(InvalidCommentDataException e) {
+    public ResponseEntity<ErrorResponse> handleInvalidCommentDataException() {
         return ErrorResponse.entity(ErrorType.INVALID_COMMENT_DATA);
     }
+
     private void validateCreateCommentDTO(CreateCommentDTO createCommentDTO) {
         if (createCommentDTO.getContent() == null || createCommentDTO.getContent().isEmpty()) {
             throw new InvalidCommentDataException("Comment content is required");
         }
     }
+
     private void validateEditCommentDTO(EditCommentDTO editCommentDTO) {
         if (editCommentDTO.getContent() == null || editCommentDTO.getContent().isEmpty()) {
             throw new InvalidCommentDataException("Comment content is required");

@@ -3,24 +3,29 @@ package comflower.sagongsa.service;
 import comflower.sagongsa.dto.request.CreateContestDTO;
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.dto.request.EditContestDTO;
+import comflower.sagongsa.error.ContestNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import comflower.sagongsa.repository.ContestRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ContestService {
     private final ContestRepository contestRepository;
 
+    public Contest getContest(Long contestId) {
+        return contestRepository.findById(contestId).orElseThrow(() -> new ContestNotFoundException(contestId));
+    }
+
     @Transactional
-    public void createContest(CreateContestDTO createContestDTO) {
+    public Contest createContest(long userId, CreateContestDTO createContestDTO) {
         //승희 일해요 부분
         Contest contest = Contest.builder()
-                .userId(0L)
+                .userId(userId)
                 .title(createContestDTO.getTitle())
                 .img(createContestDTO.getImg())
                 .prize(createContestDTO.getPrize())
@@ -29,20 +34,11 @@ public class ContestService {
                 .link(createContestDTO.getLink())
                 .field(createContestDTO.getField())
                 .build();
-        contestRepository.save(contest);
+        return contestRepository.save(contest);
     }
 
     @Transactional
-    public Optional<Contest> getContestById(Long contestId) {
-        return contestRepository.findById(contestId);
-    }
-
-
-    @Transactional
-    public void editContest(long contestId, EditContestDTO editContestDTO) {
-        Contest contest = contestRepository.findById(contestId)
-                .orElseThrow(() -> new IllegalStateException("Contest with id : " + contestId + " not found"));
-
+    public Contest editContest(Contest contest, EditContestDTO editContestDTO) {
         contest.setTitle(editContestDTO.getTitle());
         contest.setImg(editContestDTO.getImg());
         contest.setPrize(editContestDTO.getPrize());
@@ -50,17 +46,16 @@ public class ContestService {
         contest.setEndedAt(editContestDTO.getEndedAt());
         contest.setLink(editContestDTO.getLink());
         contest.setField(editContestDTO.getField());
+        return contestRepository.save(contest);
     }
 
     @Transactional
-    public void deleteContest(Long contestId) {
-        Contest deletcontest = contestRepository.findById(contestId)
-                .orElseThrow(() -> new IllegalStateException("Contest with id : " + contestId + " not found"));
-        contestRepository.delete(deletcontest);
+    public void deleteContest(Contest contest) {
+        contestRepository.delete(contest);
     }
 
-     @Transactional(readOnly = true)
-     public List<Contest> getAllContests() {
-         return contestRepository.findAll();
-     }
+    @Transactional(readOnly = true)
+    public List<Contest> getAllContests() {
+        return contestRepository.findAll();
+    }
 }

@@ -21,27 +21,20 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")
-    public String createPost(@RequestBody CreatePostDTO createPostDTO) {
-        // 입력 데이터 검증
+    public Post createPost(@RequestBody CreatePostDTO createPostDTO) {
         validateCreatePostDTO(createPostDTO);
-        postService.createPost(createPostDTO);
-        return  "Success: Post created with title - " + createPostDTO.getTitle();
+        return postService.createPost(1L, createPostDTO);
     }
 
     @GetMapping("/posts")
     public List<Post> getAllPosts() {
-        // 게시글 목록을 가져옴
-        List<Post> posts = postService.getAllPosts();
-        // 게시글이 없을 때 예외를 던지는 대신 빈 리스트를 반환
-        return posts;
+        return postService.getAllPosts();
     }
 
     @GetMapping("/posts/{id}")
     public Post getPostById(@PathVariable("id") Long postId) {
-        return postService.getPostById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
+        return postService.getPost(postId);
     }
-
 
 //    @PutMapping("/posts/{id}")
 //    public String editPost(@PathVariable("id") Long postId, @RequestBody EditPostDTO editPostDTO ) {
@@ -54,28 +47,25 @@ public class PostController {
 //        throw new UnauthorizedAccessException("You do not have permission to edit this post.");
 //    }
 
-@PutMapping("/posts/{id}")
-public String editPost(@PathVariable("id") Long postId, @RequestBody EditPostDTO editPostDTO) {
-    validateEditPostDTO(editPostDTO);
+    @PutMapping("/posts/{id}")
+    public Post editPost(@PathVariable("id") Long postId, @RequestBody EditPostDTO editPostDTO) {
+        Post post = postService.getPost(postId);
 
-    Post post = postService.getPostById(postId)
-            .orElseThrow(() -> new PostNotFoundException(postId));
+        validateEditPostDTO(editPostDTO);
 
-    if (!userHasPermission(post, editPostDTO.getUserId())) {
-        throw new UnauthorizedAccessException("You do not have permission to edit this post.");
+        if (!userHasPermission(post, editPostDTO.getUserId())) {
+            throw new UnauthorizedAccessException("You do not have permission to edit this post.");
+        }
+
+        return postService.editPost(post, editPostDTO);
     }
-
-    postService.editPost(postId, editPostDTO);
-    return "Success: Post edited successfully";
-}
 
     @DeleteMapping("/posts/{id}")
-    public String deletePost(@PathVariable("id") Long postId) {
-        Post post = postService.getPostById(postId)
-                .orElseThrow(() -> new PostNotFoundException(postId));
-        postService.deletePost(postId);
-        return "Success: Post deleted successfully";
+    public void deletePost(@PathVariable("id") Long postId) {
+        Post post = postService.getPost(postId);
+        postService.deletePost(post);
     }
+
 //    @DeleteMapping("/posts/{id}")
 //    public String deletePost(@PathVariable("id") Long postId) {
 //        // 1. 게시글 존재 여부 확인
@@ -89,7 +79,6 @@ public String editPost(@PathVariable("id") Long postId, @RequestBody EditPostDTO
 //        return "Success: Post deleted successfully";
 //    }
 
-
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
         return ErrorResponse.entity(ErrorType.POST_NOT_FOUND, e.getPostId());
@@ -99,6 +88,7 @@ public String editPost(@PathVariable("id") Long postId, @RequestBody EditPostDTO
     public ResponseEntity<ErrorResponse> handleInvalidPostDataException() {
         return ErrorResponse.entity(ErrorType.INVALID_POST_DATA);
     }
+
     @ExceptionHandler(UnauthorizedAccessException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedAccessException(UnauthorizedAccessException e) {
         return ErrorResponse.entity(ErrorType.UNAUTHORIZED_ACCESS, e.getMessage());
@@ -118,6 +108,7 @@ public String editPost(@PathVariable("id") Long postId, @RequestBody EditPostDTO
         // 일단 예시로 공모전과 제목이 널일 때만
 
     }
+
     private void validateEditPostDTO(EditPostDTO editPostDTO) {
         if (editPostDTO.getTitle() == null || editPostDTO.getTitle().isEmpty()) {
             throw new InvalidPostDataException("Title is required");
@@ -126,6 +117,7 @@ public String editPost(@PathVariable("id") Long postId, @RequestBody EditPostDTO
             throw new InvalidPostDataException("Content is required");
         }
     }
+
     private boolean userHasPermission(Post post, Long userId) {
         // 사용자가 해당 게시글을 수정할 권한이 있는지 확인하는 로직
         return post.getUserId().equals(userId); // 예시로 .

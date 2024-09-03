@@ -10,6 +10,7 @@ import comflower.sagongsa.service.ContestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -17,55 +18,36 @@ import java.util.List;
 public class ContestController {
     private final ContestService contestService;
 
+    @GetMapping("/contests")
+    public List<Contest> getAllContests() {
+        return contestService.getAllContests();
+    }
+
     @PostMapping("/contests")
-    public String createContest(@RequestBody CreateContestDTO createContestDTO) {
-        // 입력 데이터 유효성 검사
+    public Contest createContest(@RequestBody CreateContestDTO createContestDTO) {
         validateCreateContestDTO(createContestDTO);
         long userId = 1L; //유저
-
-        // 공모전 생성 로직 실행
-        contestService.createContest(createContestDTO);
-        return "Success Signup : " + userId + " return"; //createContestDTO.getUserId() -> 임의로 userId
+        return contestService.createContest(userId, createContestDTO);
     }
+
     @GetMapping("/contests/{id}")
     public Contest getContest(@PathVariable("id") Long contestId) {
-        return contestService.getContestById(contestId)
-                .orElseThrow(() -> new ContestNotFoundException(contestId));
+        return contestService.getContest(contestId);
     }
 
     @PutMapping("/contests/{id}")
-    public String editContest(@PathVariable("id") Long contestId, @RequestBody EditContestDTO editContestDTO) {
-        // 1. 공모전 존재 여부 확인
-        long userId = 1L; //유저
-        Contest contest = contestService.getContestById(contestId)
-                .orElseThrow(() -> new ContestEditNotFoundException(contestId));
-
-        // 2. 입력 데이터 유효성 검사
+    public Contest editContest(@PathVariable("id") Long contestId, @RequestBody EditContestDTO editContestDTO) {
+        Contest contest = contestService.getContest(contestId);
         validateEditContestDTO(editContestDTO);
-
-        // 3. 공모전 수정
-        contestService.editContest(contestId, editContestDTO);
-
-        return "Success Edit Contest : " + userId + " return"; //editContestDTO.getUserId() 임의로 userId
+        return contestService.editContest(contest, editContestDTO);
     }
+
     @DeleteMapping("/contests/{id}")
-    public String deleteContest(@PathVariable("id") Long contestId) {
-        // 1. 공모전 존재 여부 확인
-        contestService.getContestById(contestId)
-                .orElseThrow(() -> new ContestDeleteFailedException(contestId));
-
-        // 2. 공모전 삭제
-        contestService.deleteContest(contestId);
-
-        return "Success Delete Contest with id: " + contestId;
+    public void deleteContest(@PathVariable("id") Long contestId) {
+        Contest contest = contestService.getContest(contestId);
+        contestService.deleteContest(contest);
     }
 
-    @GetMapping("/contests")
-    public List<Contest> getAllContests() {
-        List<Contest> contests = contestService.getAllContests();
-        return contests;
-
-    }
     // 유효성 검사 메서드 추가
     private void validateCreateContestDTO(CreateContestDTO createContestDTO) {
 
@@ -82,6 +64,7 @@ public class ContestController {
 //            throw new InvalidContestDataException("User ID is required");
 //        }
     }
+
     private void validateEditContestDTO(EditContestDTO editContestDTO) {
         if (editContestDTO.getTitle() == null || editContestDTO.getTitle().isEmpty()) {
             throw new InvalidContestEditDataException("Title is required");
@@ -94,23 +77,17 @@ public class ContestController {
 
 
     @ExceptionHandler(InvalidContestDataException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidContestDataException(InvalidContestDataException e) {
+    public ResponseEntity<ErrorResponse> handleInvalidContestDataException() {
         return ErrorResponse.entity(ErrorType.INVALID_CONTEST_DATA);
     }
+
     @ExceptionHandler(ContestNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleContestNotFoundException(ContestNotFoundException e) {
         return ErrorResponse.entity(ErrorType.CONTEST_NOT_FOUND, e.getContestId());
     }
-    @ExceptionHandler(ContestEditNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleContestEditNotFoundException(ContestEditNotFoundException e) {
-        return ErrorResponse.entity(ErrorType.CONTEST_Edit_NOT_FOUND, e.getContestId());
-    }
+
     @ExceptionHandler(InvalidContestEditDataException.class)
     public ResponseEntity<ErrorResponse> handleInvalidContestEditDataException() {
         return ErrorResponse.entity(ErrorType.INVALID_CONTEST_Edit_DATA);
-    }
-    @ExceptionHandler(ContestDeleteFailedException.class)
-    public ResponseEntity<ErrorResponse> handleContestDeleteFailedException(ContestDeleteFailedException e) {
-        return ErrorResponse.entity(ErrorType.CONTEST_DELETE_FAILED, e.getContestId());
     }
 }
