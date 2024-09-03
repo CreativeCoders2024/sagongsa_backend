@@ -54,7 +54,7 @@ public class PostController {
         validateEditPostDTO(editPostDTO);
 
         if (!userHasPermission(post, editPostDTO.getUserId())) {
-            throw new UnauthorizedAccessException("You do not have permission to edit this post.");
+            throw new UnauthorizedAccessException();
         }
 
         return postService.editPost(post, editPostDTO);
@@ -97,13 +97,13 @@ public class PostController {
 
     private void validateCreatePostDTO(CreatePostDTO createPostDTO) {
         if (createPostDTO.getTitle() == null || createPostDTO.getTitle().isEmpty()) {
-            throw new InvalidPostDataException("Title is required");
+            throw new InvalidPostDataException();
         }
         if (createPostDTO.getContent() == null || createPostDTO.getContent().isEmpty()) {
-            throw new InvalidPostDataException("Content is required");
+            throw new InvalidPostDataException();
         }
         if (createPostDTO.getContestId() == null) {
-            throw new InvalidPostDataException("Contest ID is required");
+            throw new InvalidPostDataException();
         }
         // 일단 예시로 공모전과 제목이 널일 때만
 
@@ -111,10 +111,10 @@ public class PostController {
 
     private void validateEditPostDTO(EditPostDTO editPostDTO) {
         if (editPostDTO.getTitle() == null || editPostDTO.getTitle().isEmpty()) {
-            throw new InvalidPostDataException("Title is required");
+            throw new InvalidPostDataException();
         }
         if (editPostDTO.getContent() == null || editPostDTO.getContent().isEmpty()) {
-            throw new InvalidPostDataException("Content is required");
+            throw new InvalidPostDataException();
         }
     }
 

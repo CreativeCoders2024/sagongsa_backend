@@ -1,7 +1,3 @@
 package comflower.sagongsa.error;
 
-public class UnauthorizedAccessException extends RuntimeException {
-    public UnauthorizedAccessException(String message) {
-        super(message);
-    }
-}
+public class UnauthorizedAccessException extends RuntimeException {}
