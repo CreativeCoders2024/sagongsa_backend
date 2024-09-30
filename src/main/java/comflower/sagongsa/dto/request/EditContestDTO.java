@@ -1,7 +1,6 @@
 package comflower.sagongsa.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -9,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-@Tag(name = "contest")
 @Schema(description = "대회 수정 DTO")
 public class EditContestDTO {
     @Schema(description = "대회 제목", example = "대회 제목")
