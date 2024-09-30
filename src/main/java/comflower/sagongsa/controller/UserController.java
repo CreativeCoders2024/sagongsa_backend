@@ -26,7 +26,7 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor //얘 찾아보기
-@Tag(name = "User", description = "User API")
+@Tag(name = "user")
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;

@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Contest", description = "Contest API")
+@Tag(name = "contest")
 public class ContestController {
     private final ContestService contestService;
 

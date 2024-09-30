@@ -25,7 +25,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Comment", description = "Comment API")
+@Tag(name = "comment")
 public class CommentController {
     private final CommentService commentService;
     private final PostService postService;

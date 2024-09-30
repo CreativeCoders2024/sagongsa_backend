@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Post", description = "Post API")
+@Tag(name = "post")
 public class PostController {
     private final PostService postService;
 
