@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "게시글 생성", description = "게시글을 생성합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "게시글 생성 성공",
@@ -74,6 +76,7 @@ public class PostController {
 //    }
 
     @PutMapping("/posts/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "게시글 수정", description = "게시글을 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "게시글 수정 성공",
@@ -96,6 +99,7 @@ public class PostController {
     }
 
     @DeleteMapping("/posts/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "게시글 삭제 성공",

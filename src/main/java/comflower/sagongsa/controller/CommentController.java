@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class CommentController {
     private final PostService postService;
 
     @PostMapping("/posts/{postId}/comments")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "댓글 생성", description = "댓글을 생성합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "댓글 생성 성공",
@@ -51,6 +53,7 @@ public class CommentController {
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "댓글 수정 성공",
@@ -65,6 +68,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "댓글 삭제 성공",

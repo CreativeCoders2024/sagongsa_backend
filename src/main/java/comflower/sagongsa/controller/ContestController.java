@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,7 @@ public class ContestController {
     }
 
     @PostMapping("/contests")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "콘테스트 생성", description = "콘테스트를 생성합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "콘테스트 생성 성공",
@@ -65,6 +67,7 @@ public class ContestController {
     }
 
     @PutMapping("/contests/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "콘테스트 수정", description = "콘테스트를 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "콘테스트 수정 성공",
@@ -79,6 +82,7 @@ public class ContestController {
     }
 
     @DeleteMapping("/contests/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "콘테스트 삭제", description = "콘테스트를 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "콘테스트 삭제 성공",
