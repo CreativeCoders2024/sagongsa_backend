@@ -8,7 +8,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-@Tags(value = {@Tag(name = "user"), @Tag(name = "auth")})
 @Schema(description = "회원가입 응답 DTO")
 public class SignupResponse {
     @Schema(description = "사용자 ID", example = "1")
