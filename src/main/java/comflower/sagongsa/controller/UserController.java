@@ -55,23 +55,7 @@ public class UserController {
 
 
     // 로그인
-    @PostMapping("/login")
-    public SignupResponse login(@RequestBody LoginDTO loginDTO) {
-        // 객체 반환 여부 판별 후 null 이면 바로 오류 처리 -> ID 판별
-        User findLoginUser = userRepository.findById(loginDTO.getId())
-                .orElseThrow(() -> new InvalidIdException(loginDTO.getId()));
 
-        // PW 판별
-        if (!userService.login(loginDTO, findLoginUser)) {
-            throw new InvalidPasswordException(loginDTO.getPw());
-        }
-
-        return SignupResponse
-               .builder()
-                .userId(findLoginUser.getUserId())
-                .token("JWT Token")
-                .build();
-    }
 
     // 로그인 에러처리
     @ExceptionHandler(InvalidPasswordException.class)

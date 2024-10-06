@@ -5,6 +5,7 @@ import comflower.sagongsa.dto.request.EditCommentDTO;
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.error.CommentNotFoundException;
 import comflower.sagongsa.repository.CommentRepository;
+import comflower.sagongsa.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+
 
     // 댓글 생성
     @Transactional
