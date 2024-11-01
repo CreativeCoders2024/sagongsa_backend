@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 생성해주는 친구
-@AllArgsConstructor  //모든 필드를 매개변수로 가지는 생성자를 생성해주는 친구
+@AllArgsConstructor  // 모든 필드를 매개변수로 가지는 생성자를 생성해주는 친구
 @Builder  // Builder Pattern
 @Getter
 @Setter
@@ -17,7 +17,7 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)  // 유니크한 사용자 ID
     private String id;
 
     @Column(nullable = false)
@@ -45,5 +45,5 @@ public class User {
     private int field;
 
     @Column(nullable = true)
-    private String profileImg;  //blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
+    private String profileImg;  // blob 형식의 프로필 이미지 저장 필드
 }
