@@ -2,7 +2,6 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.request.CreateCommentDTO;
 import comflower.sagongsa.dto.request.EditCommentDTO;
-
 import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.dto.response.ErrorType;
 import comflower.sagongsa.entity.Comment;
@@ -13,20 +12,18 @@ import comflower.sagongsa.service.CommentService;
 import comflower.sagongsa.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
-
+@RestController
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
     private final PostService postService;
 
     @PostMapping("/posts/{postId}/comments")
-    public String createComment(@PathVariable long postId, @RequestBody CreateCommentDTO createCommentDTO) {
+    public String createComment(@PathVariable long postId, @RequestBody CreateCommentDTO createCommentDTO, @RequestHeader("Authorization") String token) {
         // 게시글 존재 여부 확인
         if (!postService.existsById(postId)) {
             throw new PostNotFoundException(postId);
@@ -41,7 +38,7 @@ public class CommentController {
         }
 
         // 댓글 생성 로직
-        commentService.createComment(postId, createCommentDTO);
+        commentService.createComment(postId, createCommentDTO, token);
         return "Comment created successfully";
     }
 
@@ -70,6 +67,7 @@ public class CommentController {
         commentService.deleteComment(commentId);
         return "Success: Deleted comment with id: " + commentId;
     }
+
     @GetMapping("/posts/{postId}/comments")
     public List<Comment> getCommentsByPostId(@PathVariable long postId) {
         // 1. 게시글이 존재하는지 확인
@@ -80,6 +78,7 @@ public class CommentController {
         return commentService.getComments(postId);
     }
 
+    // 예외 처리
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e) {
         return ErrorResponse.entity(ErrorType.POST_NOT_FOUND, e.getPostId());
@@ -94,15 +93,17 @@ public class CommentController {
     public ResponseEntity<ErrorResponse> handleInvalidCommentDataException(InvalidCommentDataException e) {
         return ErrorResponse.entity(ErrorType.INVALID_COMMENT_DATA);
     }
+
+    // 유효성 검사 메서드
     private void validateCreateCommentDTO(CreateCommentDTO createCommentDTO) {
         if (createCommentDTO.getContent() == null || createCommentDTO.getContent().isEmpty()) {
             throw new InvalidCommentDataException("Comment content is required");
         }
     }
+
     private void validateEditCommentDTO(EditCommentDTO editCommentDTO) {
         if (editCommentDTO.getContent() == null || editCommentDTO.getContent().isEmpty()) {
             throw new InvalidCommentDataException("Comment content is required");
         }
     }
 }
-

@@ -1,3 +1,4 @@
+
 package comflower.sagongsa.service;
 
 import comflower.sagongsa.entity.User;
@@ -6,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
@@ -19,8 +19,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 사용자 권한 반환 로직, 현재는 빈 리스트로 설정. 필요에 따라 권한 추가 가능
-        return List.of();
+        return user.getAuthorities(); // User 엔티티에서 권한 가져오기
     }
 
     @Override

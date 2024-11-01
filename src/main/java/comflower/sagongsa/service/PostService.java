@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,19 +19,18 @@ public class PostService {
 
     @Transactional
     public void createPost(CreatePostDTO createPostDTO) {
-        throw new UnsupportedOperationException("승희님 일해요");
-//        Post post = Post.builder()
-//                .userId(0L)
-//                .contestId(createPostDTO.getContestId())
-//                .title(createPostDTO.getTitle())
-//                .content(createPostDTO.getContent())
-//                .max(createPostDTO.getMax())
-//                .ppl(createPostDTO.getPpl())
-//                .desiredField(createPostDTO.getDesired_field())
-//                .createdAt(LocalDateTime.now())
-//                .endedAt(createPostDTO.getEndedAt())
-//                .build();
-//        postRepository.save(post);
+        Post post = Post.builder()
+                .userId(0L)
+                .contestId(createPostDTO.getContestId())
+                .title(createPostDTO.getTitle())
+                .content(createPostDTO.getContent())
+                .max(createPostDTO.getMax())
+                .ppl(createPostDTO.getPpl())
+                .desiredField(createPostDTO.getDesired_field())
+                .createdAt(LocalDateTime.now())
+                .endedAt(createPostDTO.getEndedAt())
+                .build();
+        postRepository.save(post);
     }
 
     @Transactional(readOnly = true)

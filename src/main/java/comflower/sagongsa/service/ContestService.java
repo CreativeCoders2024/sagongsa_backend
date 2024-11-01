@@ -1,5 +1,6 @@
 package comflower.sagongsa.service;
 
+import comflower.sagongsa.config.JwtTokenProvider;
 import comflower.sagongsa.dto.request.CreateContestDTO;
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.dto.request.EditContestDTO;
@@ -15,12 +16,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ContestService {
     private final ContestRepository contestRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public void createContest(CreateContestDTO createContestDTO) {
-        //승희 일해요 부분
+    public void createContest(CreateContestDTO createContestDTO, String token) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token); // JWT에서 사용자 ID 추출
+
         Contest contest = Contest.builder()
-                .userId(0L)
+                .userId(userId) // 동적으로 설정된 userId
                 .title(createContestDTO.getTitle())
                 .img(createContestDTO.getImg())
                 .prize(createContestDTO.getPrize())
@@ -29,8 +32,10 @@ public class ContestService {
                 .link(createContestDTO.getLink())
                 .field(createContestDTO.getField())
                 .build();
+
         contestRepository.save(contest);
     }
+
 
     @Transactional
     public Optional<Contest> getContestById(Long contestId) {
@@ -48,6 +53,7 @@ public class ContestService {
         contest.setPrize(editContestDTO.getPrize());
         contest.setStartedAt(editContestDTO.getStartedAt());
         contest.setEndedAt(editContestDTO.getEndedAt());
+
         contest.setLink(editContestDTO.getLink());
         contest.setField(editContestDTO.getField());
     }

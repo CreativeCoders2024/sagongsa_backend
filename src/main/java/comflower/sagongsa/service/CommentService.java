@@ -1,5 +1,6 @@
 package comflower.sagongsa.service;
 
+import comflower.sagongsa.config.JwtTokenProvider;
 import comflower.sagongsa.dto.request.CreateCommentDTO;
 import comflower.sagongsa.dto.request.EditCommentDTO;
 import comflower.sagongsa.entity.Comment;
@@ -18,14 +19,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
-    // 댓글 생성
     @Transactional
-    public void createComment(Long postId, CreateCommentDTO createCommentDTO) {
+    public void createComment(Long postId, CreateCommentDTO createCommentDTO, String token) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token); // JWT에서 사용자 ID 추출
+
         Comment comment = Comment.builder()
                 .postId(postId)
-                .userId(1L) // 임의로 설정한 userId
+                .userId(userId) // 동적으로 설정된 userId
                 .content(createCommentDTO.getContent())
                 .createdAt(LocalDateTime.now())
                 .parentId(createCommentDTO.getParentId())
@@ -33,6 +36,7 @@ public class CommentService {
 
         commentRepository.save(comment);
     }
+
 
     // 댓글 삭제
     @Transactional

@@ -1,14 +1,14 @@
 package comflower.sagongsa.config;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys; // 추가된 import
+import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.crypto.SecretKey; // 추가된 import
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
@@ -38,19 +38,25 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(secretKey, SignatureAlgorithm.HS256) // 새로운 키와 알고리즘 설정
+                .signWith(secretKey) // SignatureAlgorithm.HS256 제거
                 .compact();
     }
 
     // 토큰에서 사용자 이름 추출
     public String getUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    // JWT 토큰에서 사용자 ID 추출
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        return Long.valueOf(claims.getSubject()); // subject에서 사용자 ID를 추출하여 Long으로 변환
     }
 
     // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;

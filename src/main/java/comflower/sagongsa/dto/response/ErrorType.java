@@ -8,6 +8,7 @@ public enum ErrorType {
     USER_ALREADY_EXISTS(HttpStatus.CONFLICT, 10000, "User already exists"),
     WRONG_PASSWORD(HttpStatus.BAD_REQUEST, 10001, "Wrong Password"),
     WRONG_ID(HttpStatus.BAD_REQUEST, 10002, "Wrong ID"),
+
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, 10003, "User Not Found"),
     ERROR_IN_PROCESSING(HttpStatus.CONFLICT, 10004, "Errors in processing"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, 10009, "Post not found"),
@@ -20,6 +21,7 @@ public enum ErrorType {
     CONTEST_Edit_NOT_FOUND(HttpStatus.NOT_FOUND, 10011, "Contest not found for edit"),
     INVALID_CONTEST_Edit_DATA(HttpStatus.BAD_REQUEST, 10012, "Invalid contest data for edit"),
     CONTEST_DELETE_FAILED(HttpStatus.NOT_FOUND, 10013, "Failed to delete contest");
+
 
     private final HttpStatus httpStatus;
     private final int code;
