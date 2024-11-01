@@ -22,6 +22,8 @@ public class UserService {
                 .id(signupDTO.getId())
                 .pw(signupDTO.getPw())
                 .nickname(signupDTO.getNickname())
+                .username(signupDTO.getUsername())
+                .introduction(signupDTO.getIntroduction())
                 .email(signupDTO.getEmail())
                 .build();
         return userRepository.save(signupUser);

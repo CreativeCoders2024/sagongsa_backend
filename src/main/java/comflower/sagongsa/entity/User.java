@@ -1,6 +1,5 @@
 package comflower.sagongsa.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -26,51 +25,41 @@ public class User {
     private Long userId;
 
     @Column(nullable = false, unique = true)
-    private String id;
+    private String id; // 로그인 ID
 
     @Column(nullable = false)
-    private String pw;  // 비밀번호 필드
+    private String pw; // 비밀번호
 
     @Column(nullable = false)
-    private String nickname;
+    private String nickname; // 별명
 
     @Column(nullable = false)
-    private String email;
+    private String email; // 이메일
+
+    @Column(nullable = false, unique = true)
+    private String username; // 사용자 이름 추가
 
     @Column(nullable = true)
-    private String introduction;
+    private String introduction; // 자기소개
 
     @Column(nullable = false)
     @ColumnDefault("false")
-    private boolean isWithdrawn;
+    private boolean isWithdrawn; // 탈퇴 여부
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private int field;
+    private int field; // 분야
 
     @Column(nullable = true)
-    private String profileImg;
+    private String profileImg; // 프로필 이미지
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<String> roles = new ArrayList<>();
-
-    // 권한을 반환하는 메서드 추가
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
+    // 추가된 메서드
     public String getPassword() {
-        return this.pw;  // 비밀번호 반환
+        return this.pw;
     }
 
-    public String getUsername() {
-        return this.id;  // 사용자 ID 반환
-    }
-
-    public boolean isWithdrawn() {
-        return this.isWithdrawn;  // 탈퇴 여부 반환
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<String> roles = new ArrayList<>(); // roles 필드를 정의해야 함
+        return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 }
