@@ -2,11 +2,21 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.request.CreateContestDTO;
 import comflower.sagongsa.dto.request.EditContestDTO;
+import comflower.sagongsa.dto.response.ErrorDataResponse;
 import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.dto.response.ErrorType;
 import comflower.sagongsa.entity.Contest;
-import comflower.sagongsa.error.*;
+import comflower.sagongsa.error.InvalidContestDataException;
+import comflower.sagongsa.error.InvalidContestEditDataException;
 import comflower.sagongsa.service.ContestService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +25,29 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "contest")
 public class ContestController {
     private final ContestService contestService;
 
     @GetMapping("/contests")
+    @Operation(summary = "모든 콘테스트 조회", description = "모든 콘테스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "모든 콘테스트 조회 성공",
+                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Contest.class)))}),
+    })
     public List<Contest> getAllContests() {
         return contestService.getAllContests();
     }
 
     @PostMapping("/contests")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "콘테스트 생성", description = "콘테스트를 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "콘테스트 생성 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Contest.class))}),
+            @ApiResponse(responseCode = "400", description = "잘못된 콘테스트 데이터",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
+    })
     public Contest createContest(@RequestBody CreateContestDTO createContestDTO) {
         validateCreateContestDTO(createContestDTO);
         long userId = 1L; //유저
@@ -31,11 +55,26 @@ public class ContestController {
     }
 
     @GetMapping("/contests/{id}")
+    @Operation(summary = "콘테스트 조회", description = "콘테스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "콘테스트 조회 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Contest.class))}),
+            @ApiResponse(responseCode = "404", description = "콘테스트 없음",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
+    })
     public Contest getContest(@PathVariable("id") Long contestId) {
         return contestService.getContest(contestId);
     }
 
     @PutMapping("/contests/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "콘테스트 수정", description = "콘테스트를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "콘테스트 수정 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Contest.class))}),
+            @ApiResponse(responseCode = "400", description = "잘못된 콘테스트 데이터",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
+    })
     public Contest editContest(@PathVariable("id") Long contestId, @RequestBody EditContestDTO editContestDTO) {
         Contest contest = contestService.getContest(contestId);
         validateEditContestDTO(editContestDTO);
@@ -43,6 +82,14 @@ public class ContestController {
     }
 
     @DeleteMapping("/contests/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "콘테스트 삭제", description = "콘테스트를 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "콘테스트 삭제 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Contest.class))}),
+            @ApiResponse(responseCode = "404", description = "콘테스트 없음",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDataResponse.class))}),
+    })
     public void deleteContest(@PathVariable("id") Long contestId) {
         Contest contest = contestService.getContest(contestId);
         contestService.deleteContest(contest);
@@ -77,11 +124,6 @@ public class ContestController {
     @ExceptionHandler(InvalidContestDataException.class)
     public ResponseEntity<ErrorResponse> handleInvalidContestDataException() {
         return ErrorResponse.entity(ErrorType.INVALID_CONTEST_DATA);
-    }
-
-    @ExceptionHandler(ContestNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleContestNotFoundException(ContestNotFoundException e) {
-        return ErrorResponse.entity(ErrorType.CONTEST_NOT_FOUND, e.getContestId());
     }
 
     @ExceptionHandler(InvalidContestEditDataException.class)
