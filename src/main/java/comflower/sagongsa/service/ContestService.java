@@ -1,5 +1,6 @@
 package comflower.sagongsa.service;
 
+import comflower.sagongsa.config.JwtTokenProvider;
 import comflower.sagongsa.dto.request.CreateContestDTO;
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.dto.request.EditContestDTO;
@@ -9,33 +10,38 @@ import comflower.sagongsa.repository.ContestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ContestService {
     private final ContestRepository contestRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public void createContest(CreateContestDTO createContestDTO) {
-        throw new UnsupportedOperationException("승희님 일해요");
-//        Contest contest = Contest.builder()
-//                .userId(0L)
-//                .title(createContestDTO.getTitle())
-//                .img(createContestDTO.getImg())
-//                .prize(createContestDTO.getPrize())
-//                .startedAt(createContestDTO.getStartedAt())
-//                .endedAt(createContestDTO.getEndedAt())
-//                .link(createContestDTO.getLink())
-//                .field(createContestDTO.getField())
-//                .build();
-//        contestRepository.save(contest);
+    public void createContest(CreateContestDTO createContestDTO, String token) {
+        Long userId = jwtTokenProvider.getUserIdFromToken(token); // JWT에서 사용자 ID 추출
+
+        Contest contest = Contest.builder()
+                .userId(userId) // 동적으로 설정된 userId
+                .title(createContestDTO.getTitle())
+                .img(createContestDTO.getImg())
+                .prize(createContestDTO.getPrize())
+                .startedAt(createContestDTO.getStartedAt())
+                .endedAt(createContestDTO.getEndedAt())
+                .link(createContestDTO.getLink())
+                .field(createContestDTO.getField())
+                .build();
+
+        contestRepository.save(contest);
     }
 
-    @Transactional(readOnly = true)
-    public Contest getContestById(Long contestId) {
-        return contestRepository.findById(contestId)
-                .orElseThrow(() -> new IllegalStateException("Contest with id : " + contestId + " not found"));
+
+    @Transactional
+    public Optional<Contest> getContestById(Long contestId) {
+        return contestRepository.findById(contestId);
     }
+
 
     @Transactional
     public void editContest(long contestId, EditContestDTO editContestDTO) {
@@ -47,6 +53,7 @@ public class ContestService {
         contest.setPrize(editContestDTO.getPrize());
         contest.setStartedAt(editContestDTO.getStartedAt());
         contest.setEndedAt(editContestDTO.getEndedAt());
+
         contest.setLink(editContestDTO.getLink());
         contest.setField(editContestDTO.getField());
     }

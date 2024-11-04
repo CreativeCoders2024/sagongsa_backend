@@ -16,60 +16,55 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequiredArgsConstructor  //얘 찾아보기
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
-    // 회원가입 -> 여기 회원가입 로직 부분만 보면됨 자준!
+    // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@RequestBody SignupDTO signupDTO) {
-        // 우선, 존재하는 ID인지 확인함
         if (userService.isUserPresentById(signupDTO.getId())) {
-            // 위의 조건문이 true라면 = ID가 이미 존재함 = 중복 ID !! = 에러처리 해야함
-            throw new UserAlreadyExistsException(signupDTO.getId());  // 에러처리를 해주는 함수 실행 (53번 줄) -> 지금 여기서 에러남 ㅠ
+            throw new UserAlreadyExistsException(signupDTO.getId());
         }
 
         User createUser = userService.signup(signupDTO);
-
         SignupResponse body = SignupResponse.builder()
                 .userId(createUser.getUserId())
-                .token("JWT Token")
+                .token("JWT Token") // 이 부분은 로그인 후 실제 토큰으로 대체되어야 함
                 .build();
-        return ResponseEntity
-                .created(URI.create(String.valueOf(createUser.getUserId())))  // header - Location에 추가해줌
-                .body(body);
-    }
 
-    // 회원가입 에러처리
-    @ExceptionHandler(UserAlreadyExistsException.class)  // error/UserAlreadyExistsException.java 파일 같이 보기
-    public ResponseEntity<ErrorResponse> handleIllegalStateException(UserAlreadyExistsException e) {
-        // ErrorType에 있는 USER_ALREADY_EXISTS 를 토대로 반환값이 나옴
-        // code : 10000,
-        // message : User already exists    요런식으로 !
-        return ErrorResponse.entity(ErrorType.USER_ALREADY_EXISTS, e.getId());
+        return ResponseEntity
+                .created(URI.create(String.valueOf(createUser.getUserId())))
+                .body(body);
     }
 
     // 로그인
     @PostMapping("/login")
     public SignupResponse login(@RequestBody LoginDTO loginDTO) {
-        // 객체 반환 여부 판별 후 null 이면 바로 오류 처리 -> ID 판별
-        User findLoginUser = userRepository.findById(loginDTO.getId())
-                .orElseThrow(() -> new InvalidIdException(loginDTO.getId()));
+        User findLoginUser = userRepository.findById(loginDTO.getUsername())
+                .orElseThrow(() -> new InvalidIdException(loginDTO.getUsername()));
 
-        // PW 판별
         if (!userService.login(loginDTO, findLoginUser)) {
-            throw new InvalidPasswordException(loginDTO.getPw());
+            throw new InvalidPasswordException(loginDTO.getPassword());
         }
 
-        return SignupResponse
-               .builder()
+        // JWT 생성
+        String token = "JWT Token"; // JWT 토큰 생성 로직 필요
+
+        return SignupResponse.builder()
                 .userId(findLoginUser.getUserId())
-                .token("JWT Token")
+                .token(token) // 생성된 토큰 반환
                 .build();
     }
 
-    // 로그인 에러처리
+    // 회원가입 에러 처리
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(UserAlreadyExistsException e) {
+        return ErrorResponse.entity(ErrorType.USER_ALREADY_EXISTS, e.getId());
+    }
+
+    // 로그인 에러 처리
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<ErrorResponse> handleWrongPassword(InvalidPasswordException e) {
         return ErrorResponse.entity(ErrorType.WRONG_PASSWORD, e.getPassword());
@@ -83,22 +78,33 @@ public class UserController {
     // 회원 정보 수정
     @PostMapping("/user/edit/info")
     public UserIdResponse editUser(@RequestBody EditUserDTO editUserDTO) {
-        User user = userService.findUserById(editUserDTO.getUserId());
-        userService.editUser(editUserDTO, user);
+        if (!userService.isUserPresentByUserId(editUserDTO.getUserId())) {
+            throw new UserNotFoundException(editUserDTO.getUserId());
+        }
+
+        User findEditUser = userRepository.findByUserId(editUserDTO.getUserId()).get();
+        userService.editUser(editUserDTO, findEditUser);
 
         return UserIdResponse.builder()
                 .userId(editUserDTO.getUserId())
                 .build();
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
+        return ErrorResponse.entity(ErrorType.USER_NOT_FOUND, e.getUserId());
+    }
+
     // 회원 정보 조회
     @PostMapping("/user/inquiry")
     public InquiryOfUserResponse inquiryOfUserInfo(@RequestBody UserIdDTO userIdDTO) {
-        User user = userService.findUserById(userIdDTO.getUserId());
+        User userInfo = userService.inquiryOfUserInfo(userIdDTO.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
+
         return InquiryOfUserResponse.builder()
-                .profile_img(user.getProfileImg())
-                .field(user.getField())
-                .introduction(user.getIntroduction())
+                .profile_img(userInfo.getProfileImg())
+                .field(userInfo.getField())
+                .introduction(userInfo.getIntroduction())
                 .build();
     }
 

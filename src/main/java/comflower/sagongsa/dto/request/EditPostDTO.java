@@ -16,4 +16,5 @@ public class EditPostDTO {
     private Integer ppl;
     private Integer desiredField;
     private LocalDateTime endedAt;
+
 }

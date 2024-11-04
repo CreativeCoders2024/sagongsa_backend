@@ -3,21 +3,18 @@ package comflower.sagongsa.service;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.dto.request.SignupDTO;
-import comflower.sagongsa.error.UserNotFoundException;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.dto.request.LoginDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    public User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-    }
 
     @Transactional
     public User signup(SignupDTO signupDTO) {
@@ -25,19 +22,24 @@ public class UserService {
                 .id(signupDTO.getId())
                 .pw(signupDTO.getPw())
                 .nickname(signupDTO.getNickname())
-                .email((signupDTO.getEmail()))
+                .username(signupDTO.getUsername())
+                .introduction(signupDTO.getIntroduction())
+                .email(signupDTO.getEmail())
                 .build();
         return userRepository.save(signupUser);
     }
 
     public boolean isUserPresentById(String id) {
         return userRepository.findById(id).isPresent();
-        // ID가 있으면 true를 반환함
     }
 
     @Transactional
     public boolean login(LoginDTO loginDTO, User user) {
-        return user.getPw().equals(loginDTO.getPw());
+        return user.getPassword().equals(loginDTO.getPassword());
+    }
+
+    public boolean isUserPresentByUserId(Long userId) {
+        return userRepository.findByUserId(userId).isPresent();
     }
 
     @Transactional
@@ -48,12 +50,17 @@ public class UserService {
         if (editUserDTO.getNickname() != null) {
             editUser.setNickname(editUserDTO.getNickname());
         }
-        userRepository.save(editUser);  // 이거 안써주니까 수정이 안됨
+        userRepository.save(editUser);
+    }
+
+    @Transactional
+    public Optional<User> inquiryOfUserInfo(Long userId) {
+        return userRepository.findById(userId);
     }
 
     @Transactional
     public void withDraw(User withDrawUser) {
         withDrawUser.setWithdrawn(true);
-        userRepository.save(withDrawUser); // 얘도
+        userRepository.save(withDrawUser);
     }
 }

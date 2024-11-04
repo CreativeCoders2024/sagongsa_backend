@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,19 +19,18 @@ public class PostService {
 
     @Transactional
     public void createPost(CreatePostDTO createPostDTO) {
-        throw new UnsupportedOperationException("승희님 일해요");
-//        Post post = Post.builder()
-//                .userId(0L)
-//                .contestId(createPostDTO.getContestId())
-//                .title(createPostDTO.getTitle())
-//                .content(createPostDTO.getContent())
-//                .max(createPostDTO.getMax())
-//                .ppl(createPostDTO.getPpl())
-//                .desiredField(createPostDTO.getDesired_field())
-//                .createdAt(LocalDateTime.now())
-//                .endedAt(createPostDTO.getEndedAt())
-//                .build();
-//        postRepository.save(post);
+        Post post = Post.builder()
+                .userId(0L)
+                .contestId(createPostDTO.getContestId())
+                .title(createPostDTO.getTitle())
+                .content(createPostDTO.getContent())
+                .max(createPostDTO.getMax())
+                .ppl(createPostDTO.getPpl())
+                .desiredField(createPostDTO.getDesired_field())
+                .createdAt(LocalDateTime.now())
+                .endedAt(createPostDTO.getEndedAt())
+                .build();
+        postRepository.save(post);
     }
 
     @Transactional(readOnly = true)
@@ -38,11 +39,9 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Post getPostById(Long postId) {
-        return postRepository.findByPostId(postId)
-                .orElseThrow(() -> new IllegalStateException("Post with id : " + postId + " not found"));
+    public Optional<Post> getPostById(Long postId) {
+        return postRepository.findByPostId(postId);
     }
-
     @Transactional
     public void editPost(long postId, EditPostDTO editPostDTO) {
         Post post = postRepository.findById(postId)
@@ -61,5 +60,9 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalStateException("Post with id : " + postId + " not found"));
         postRepository.delete(post);
+    }
+    // 댓글 생성 게시글 존재하는지 메서드 추가
+    public boolean existsById(Long postId) {
+        return postRepository.existsById(postId);
     }
 }
