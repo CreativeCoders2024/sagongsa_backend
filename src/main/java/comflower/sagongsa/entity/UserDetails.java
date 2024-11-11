@@ -22,5 +22,4 @@ public interface UserDetails extends Serializable {  //쓸때…! build.gradle�
     // 계정이 활성화 되어있는지 리턴 -> true : 활성화 상태를 의미
     boolean isEnabled();
 
-
 }

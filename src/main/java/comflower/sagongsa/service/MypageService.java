@@ -25,7 +25,7 @@ public class MypageService {
 
     @Transactional
     public void editUserManager(User editManageUser) {
-        editManageUser.setManager(true);
+        //editManageUser.setManager(true);
         userRepository.save(editManageUser);
     }
 }
