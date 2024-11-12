@@ -40,10 +40,6 @@ public class User implements UserDetails{
     @Column(nullable = true)
     private String introduction;
 
-//    @Column(nullable = false)
-//    @ColumnDefault("false")
-//    private boolean isManager;
-
     @Column(nullable = false)
     @ColumnDefault("false")
     private boolean isWithdrawn;
