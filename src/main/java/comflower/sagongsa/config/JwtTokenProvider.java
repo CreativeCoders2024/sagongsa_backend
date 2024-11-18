@@ -1,5 +1,24 @@
-//package comflower.sagongsa.config;
-//
+package comflower.sagongsa.config;
+
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.security.Key;
+
+@Slf4j
+@Component
+public class JwtTokenProvider {
+//    private final Key key;
+//    밑에서 오류나서 주석처리 해둠
+//    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+//        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+//        this.key = Keys.hmacShaKeyFor(keyBytes);
+//    }
+}
+
 //import io.jsonwebtoken.*;
 //import io.jsonwebtoken.security.Keys;
 //import jakarta.annotation.PostConstruct;
