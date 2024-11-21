@@ -19,8 +19,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,9 +56,15 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "잘못된 댓글 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public Comment createComment(@PathVariable Long postId, @RequestBody CreateCommentDTO createCommentDTO) {
+    public Comment createComment(
+            @PathVariable Long postId,
+            @RequestBody @Valid CreateCommentDTO createCommentDTO, BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidCommentDataException();
+        }
+
         Post post = postService.getPost(postId);
-        validateCreateCommentDTO(createCommentDTO);
 
         Long parentId = createCommentDTO.getParentId();
         if (parentId != null && !commentService.isCommentPresentById(parentId)) {
@@ -75,9 +83,15 @@ public class CommentController {
             @ApiResponse(responseCode = "400", description = "잘못된 댓글 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public Comment editComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody EditCommentDTO editCommentDTO) {
+    public Comment editComment(
+            @PathVariable Long postId, @PathVariable Long commentId,
+            @RequestBody @Valid EditCommentDTO editCommentDTO, BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidCommentDataException();
+        }
+
         Comment comment = commentService.getComment(commentId);
-        validateEditCommentDTO(editCommentDTO);
         return commentService.editComment(comment, editCommentDTO);
     }
 
@@ -98,18 +112,6 @@ public class CommentController {
     @ExceptionHandler(InvalidCommentDataException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCommentDataException() {
         return ErrorResponse.entity(ErrorType.INVALID_COMMENT_DATA);
-    }
-
-    private void validateCreateCommentDTO(CreateCommentDTO createCommentDTO) {
-        if (createCommentDTO.getContent() == null || createCommentDTO.getContent().isEmpty()) {
-            throw new InvalidCommentDataException();
-        }
-    }
-
-    private void validateEditCommentDTO(EditCommentDTO editCommentDTO) {
-        if (editCommentDTO.getContent() == null || editCommentDTO.getContent().isEmpty()) {
-            throw new InvalidCommentDataException();
-        }
     }
 }
 

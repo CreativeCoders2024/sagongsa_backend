@@ -17,9 +17,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,20 +43,6 @@ public class PostController {
         return postService.getPosts();
     }
 
-    @PostMapping("/posts")
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "게시글 생성", description = "게시글을 생성합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "게시글 생성 성공",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Post.class))}),
-            @ApiResponse(responseCode = "400", description = "잘못된 게시글 데이터",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
-    })
-    public Post createPost(@RequestBody CreatePostDTO createPostDTO) {
-        validateCreatePostDTO(createPostDTO);
-        return postService.createPost(Placeholder.SELF_USER_ID, createPostDTO);
-    }
-
     @GetMapping("/posts/{postId}")
     @Operation(summary = "게시글 조회", description = "게시글을 조회합니다.")
     @ApiResponses(value = {
@@ -65,6 +53,23 @@ public class PostController {
     })
     public Post getPost(@PathVariable Long postId) {
         return postService.getPost(postId);
+    }
+
+    @PostMapping("/posts")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "게시글 생성", description = "게시글을 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "게시글 생성 성공",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Post.class))}),
+            @ApiResponse(responseCode = "400", description = "잘못된 게시글 데이터",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
+    })
+    public Post createPost(@RequestBody @Valid CreatePostDTO createPostDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidPostDataException();
+        }
+
+        return postService.createPost(Placeholder.SELF_USER_ID, createPostDTO);
     }
 
     @PutMapping("/posts/{postId}")
@@ -78,9 +83,12 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "게시글 없음",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-        public Post editPost(@PathVariable Long postId, @RequestBody EditPostDTO editPostDTO) {
+    public Post editPost(@PathVariable Long postId, @RequestBody @Valid EditPostDTO editPostDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidPostDataException();
+        }
+
         Post post = postService.getPost(postId);
-        validateEditPostDTO(editPostDTO);
 
         if (!Objects.equals(post.getAuthorId(), editPostDTO.getAuthorId())) {
             throw new UnauthorizedAccessException();
@@ -111,27 +119,5 @@ public class PostController {
     @ExceptionHandler(UnauthorizedAccessException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedAccessException(UnauthorizedAccessException e) {
         return ErrorResponse.entity(ErrorType.UNAUTHORIZED_ACCESS, e.getMessage());
-    }
-
-    private void validateCreatePostDTO(CreatePostDTO createPostDTO) {
-        if (createPostDTO.getTitle() == null || createPostDTO.getTitle().isEmpty()) {
-            throw new InvalidPostDataException();
-        }
-        if (createPostDTO.getContent() == null || createPostDTO.getContent().isEmpty()) {
-            throw new InvalidPostDataException();
-        }
-        if (createPostDTO.getContestId() == null) {
-            throw new InvalidPostDataException();
-        }
-        // 일단 예시로 공모전과 제목이 널일 때만
-    }
-
-    private void validateEditPostDTO(EditPostDTO editPostDTO) {
-        if (editPostDTO.getTitle() == null || editPostDTO.getTitle().isEmpty()) {
-            throw new InvalidPostDataException();
-        }
-        if (editPostDTO.getContent() == null || editPostDTO.getContent().isEmpty()) {
-            throw new InvalidPostDataException();
-        }
     }
 }

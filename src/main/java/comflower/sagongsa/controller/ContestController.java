@@ -18,9 +18,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,8 +52,11 @@ public class ContestController {
             @ApiResponse(responseCode = "400", description = "잘못된 콘테스트 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public Contest createContest(@RequestBody CreateContestDTO createContestDTO) {
-        validateCreateContestDTO(createContestDTO);
+    public Contest createContest(@RequestBody @Valid CreateContestDTO createContestDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidContestDataException();
+        }
+
         return contestService.createContest(Placeholder.SELF_USER_ID, createContestDTO);
     }
 
@@ -76,9 +81,8 @@ public class ContestController {
             @ApiResponse(responseCode = "400", description = "잘못된 콘테스트 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public Contest editContest(@PathVariable Long contestId, @RequestBody EditContestDTO editContestDTO) {
+    public Contest editContest(@PathVariable Long contestId, @RequestBody @Valid EditContestDTO editContestDTO) {
         Contest contest = contestService.getContest(contestId);
-        validateEditContestDTO(editContestDTO);
         return contestService.editContest(contest, editContestDTO);
     }
 
@@ -94,32 +98,6 @@ public class ContestController {
     public void deleteContest(@PathVariable Long contestId) {
         Contest contest = contestService.getContest(contestId);
         contestService.deleteContest(contest);
-    }
-
-    // 유효성 검사 메서드 추가
-    private void validateCreateContestDTO(CreateContestDTO createContestDTO) {
-        if (createContestDTO.getTitle() == null || createContestDTO.getTitle().isEmpty()) {
-            throw new InvalidContestDataException();
-        }
-        if (createContestDTO.getStartedAt() == null) {
-            throw new InvalidContestDataException();
-        }
-        if (createContestDTO.getEndedAt() == null) {
-            throw new InvalidContestDataException();
-        }
-//        if (createContestDTO.getUserId() == null) {
-//            throw new InvalidContestDataException("User ID is required");
-//        }
-    }
-
-    private void validateEditContestDTO(EditContestDTO editContestDTO) {
-        if (editContestDTO.getTitle() == null || editContestDTO.getTitle().isEmpty()) {
-            throw new InvalidContestEditDataException();
-        }
-        if (editContestDTO.getPrize() == null || editContestDTO.getPrize().isEmpty()) {
-            throw new InvalidContestEditDataException();
-        }
-        // 추가적인 유효성 검사가 필요한 경우 여기에 추가
     }
 
     @ExceptionHandler(InvalidContestDataException.class)
