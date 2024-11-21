@@ -18,8 +18,6 @@ public class Contest {
     @Id //기본키로 설정 자동으로 생성
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long contestId;
-    //nullable이 false면 반드시 값을 가져야 함.
-    //nullable이 true면  값을 가질 수도 있고 아닐 수도 있음
 
     @Column(nullable = false)
     private Long userId;
@@ -27,7 +25,6 @@ public class Contest {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = true)
     private String img;
 
     @Column(nullable = false)
@@ -39,7 +36,6 @@ public class Contest {
     @Column(nullable = false)
     private LocalDateTime endedAt;
 
-    @Column(nullable = true)
     private String link;
 
     @Column(nullable = false)

@@ -2,10 +2,7 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.dto.response.ErrorType;
-import comflower.sagongsa.error.CommentNotFoundException;
-import comflower.sagongsa.error.ContestNotFoundException;
-import comflower.sagongsa.error.PostNotFoundException;
-import comflower.sagongsa.error.UserNotFoundException;
+import comflower.sagongsa.error.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

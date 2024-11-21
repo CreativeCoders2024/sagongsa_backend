@@ -29,7 +29,6 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = true)
     private String introduction;
 
     @Column(nullable = false)
@@ -44,6 +43,5 @@ public class User {
     @ColumnDefault("0")
     private int field;
 
-    @Column(nullable = true)
     private String profileImg;  //blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
 }
