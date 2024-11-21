@@ -1,10 +1,7 @@
 package comflower.sagongsa.config;
 
 import comflower.sagongsa.dto.JwtToken;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -71,12 +68,29 @@ public class JwtTokenProvider {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        UserDetails principal = new User(claims.getSubject(),"", authorities); // spring security에서 지원하는 User Entity
+        UserDetails principal = new User(claims.getSubject(),"", authorities); // spring security에서 지원하는 User Entity -> 이렇게 하라던데... 왜 이렇게 해도 되는거지?
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    // 토큰 정보 검증 메소드 들어갈 자리
-    // ...
+    // 토큰 정보 검증 메소드 들어갈 자리 -> log...
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (SecurityException | MalformedJwtException e) {
+            log.info("Invalid JWT token", e);
+        } catch (ExpiredJwtException e) {
+            log.info("Expired JWT Token", e);
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT Token", e);
+        } catch (IllegalArgumentException e) {
+            log.info("JWT claims string is empty", e);
+        }
+        return false;
+    }
 
     private Claims parseClaims(String accessToken) {
         try {
