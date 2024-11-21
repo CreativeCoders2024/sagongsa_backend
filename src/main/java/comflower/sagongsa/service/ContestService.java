@@ -24,11 +24,11 @@ public class ContestService {
         return contestRepository.findAll();
     }
 
-    public Contest createContest(long userId, CreateContestDTO createContestDTO) {
+    public Contest createContest(Long userId, CreateContestDTO createContestDTO) {
         Contest contest = Contest.builder()
-                .userId(userId)
+                .authorId(userId)
                 .title(createContestDTO.getTitle())
-                .img(createContestDTO.getImg())
+                .thumbnail(createContestDTO.getThumbnail())
                 .prize(createContestDTO.getPrize())
                 .startedAt(createContestDTO.getStartedAt())
                 .endedAt(createContestDTO.getEndedAt())
@@ -41,7 +41,7 @@ public class ContestService {
     @Transactional
     public Contest editContest(Contest contest, EditContestDTO editContestDTO) {
         contest.setTitle(editContestDTO.getTitle());
-        contest.setImg(editContestDTO.getImg());
+        contest.setThumbnail(editContestDTO.getThumbnail());
         contest.setPrize(editContestDTO.getPrize());
         contest.setStartedAt(editContestDTO.getStartedAt());
         contest.setEndedAt(editContestDTO.getEndedAt());

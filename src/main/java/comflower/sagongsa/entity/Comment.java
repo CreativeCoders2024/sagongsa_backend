@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id //기본키로 설정 자동으로 생성
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long id;
 
     @Column(nullable = false)
     private Long postId;
 
     @Column(nullable = false)
-    private Long userId;
+    private Long authorId;
 
     @Column(nullable = false)
     private String content;

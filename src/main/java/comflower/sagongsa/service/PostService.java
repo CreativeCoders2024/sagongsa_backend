@@ -25,15 +25,15 @@ public class PostService {
         return postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
     }
 
-    public Post createPost(long userId, CreatePostDTO createPostDTO) {
+    public Post createPost(Long authorId, CreatePostDTO createPostDTO) {
         Post post = Post.builder()
-                .userId(userId)
+                .authorId(authorId)
                 .contestId(createPostDTO.getContestId())
                 .title(createPostDTO.getTitle())
                 .content(createPostDTO.getContent())
-                .max(createPostDTO.getMax())
-                .ppl(createPostDTO.getPpl())
-                .desiredField(createPostDTO.getDesired_field())
+                .maxMemberCount(createPostDTO.getMaxMemberCount())
+                .memberCount(createPostDTO.getMemberCount())
+                .desiredField(createPostDTO.getDesiredField())
                 .createdAt(LocalDateTime.now())
                 .endedAt(createPostDTO.getEndedAt())
                 .build();
@@ -44,8 +44,8 @@ public class PostService {
     public Post editPost(Post post, EditPostDTO editPostDTO) {
         post.setTitle(editPostDTO.getTitle());
         post.setContent(editPostDTO.getContent());
-        post.setPpl(editPostDTO.getPpl());
-        post.setMax(editPostDTO.getMax());
+        post.setMemberCount(editPostDTO.getMemberCount());
+        post.setMaxMemberCount(editPostDTO.getMaxMemberCount());
         post.setDesiredField(editPostDTO.getDesiredField());
         post.setEndedAt(editPostDTO.getEndedAt());
         return postRepository.save(post);

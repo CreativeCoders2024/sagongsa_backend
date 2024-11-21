@@ -82,7 +82,7 @@ public class PostController {
         Post post = postService.getPost(postId);
         validateEditPostDTO(editPostDTO);
 
-        if (!Objects.equals(post.getUserId(), editPostDTO.getUserId())) {
+        if (!Objects.equals(post.getAuthorId(), editPostDTO.getAuthorId())) {
             throw new UnauthorizedAccessException();
         }
 

@@ -14,19 +14,19 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
 
-    public boolean isUserPresentById(String id) {
-        return userRepository.findById(id).isPresent();
+    public boolean isUserPresentByUsername(String username) {
+        return userRepository.findByUsername(username).isPresent();
     }
 
     public User findUserByUserId(Long userId) {
-        return userRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     @Transactional
     public User signup(SignupDTO signupDTO) {
         User signupUser = User.builder()
-                .id(signupDTO.getId())
-                .pw(signupDTO.getPw())
+                .username(signupDTO.getUsername())
+                .password(signupDTO.getPassword())
                 .nickname(signupDTO.getNickname())
                 .email((signupDTO.getEmail()))
                 .build();

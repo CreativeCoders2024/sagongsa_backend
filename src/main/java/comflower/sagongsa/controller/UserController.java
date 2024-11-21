@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor //얘 찾아보기
@@ -44,17 +45,17 @@ public class UserController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public ResponseEntity<SignupResponse> signup(@RequestBody SignupDTO signupDTO) {
-        if (userService.isUserPresentById(signupDTO.getId())) {
-            throw new UserAlreadyExistsException(signupDTO.getId());
+        if (userService.isUserPresentByUsername(signupDTO.getUsername())) {
+            throw new UserAlreadyExistsException(signupDTO.getUsername());
         }
 
         User createdUser = userService.signup(signupDTO);
         SignupResponse body = SignupResponse.builder()
-                .userId(createdUser.getUserId())
+                .userId(createdUser.getId())
                 .token(Placeholder.JWT_TOKEN)
                 .build();
         return ResponseEntity
-                .created(URI.create(createdUser.getUserId().toString()))  // header - Location에 추가해줌
+                .created(URI.create(createdUser.getId().toString()))  // header - Location에 추가해줌
                 .body(body);
     }
 
@@ -69,16 +70,16 @@ public class UserController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public SignupResponse login(@RequestBody LoginDTO loginDTO) {
-        User user = userRepository.findById(loginDTO.getId())
+        User user = userRepository.findByUsername(loginDTO.getId())
                 .orElseThrow(InvalidCredentialsException::new);
 
         // TODO: Encrypt password
-        if (user.getPw().equals(loginDTO.getPw())) {
+        if (Objects.equals(user.getPassword(), loginDTO.getPassword())) {
             throw new InvalidCredentialsException();
         }
 
         return SignupResponse.builder()
-                .userId(user.getUserId())
+                .userId(user.getId())
                 .token(Placeholder.JWT_TOKEN)
                 .build();
     }
@@ -123,7 +124,7 @@ public class UserController {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleIllegalStateException(UserAlreadyExistsException e) {
-        return ErrorResponse.entity(ErrorType.USER_ALREADY_EXISTS, e.getId());
+        return ErrorResponse.entity(ErrorType.USER_ALREADY_EXISTS, e.getUsername());
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)

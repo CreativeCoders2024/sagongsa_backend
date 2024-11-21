@@ -17,11 +17,11 @@ public class CreatePostDTO {
     @Schema(description = "게시글 내용", example = "게시글 내용")
     private String content;
     @Schema(description = "최대 인원", example = "10")
-    private int max;
+    private int maxMemberCount;
     @Schema(description = "현재 인원", example = "5")
-    private int ppl;
+    private int memberCount;
     @Schema(description = "원하는 분야", example = "1")
-    private int desired_field;
+    private int desiredField;
     @Schema(description = "게시글 종료 시간", example = "2024-01-01 00:00:00")
     private LocalDateTime endedAt;
 }

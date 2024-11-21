@@ -1,5 +1,6 @@
 package comflower.sagongsa.controller;
 
+import comflower.sagongsa.Placeholder;
 import comflower.sagongsa.dto.request.CreateCommentDTO;
 import comflower.sagongsa.dto.request.EditCommentDTO;
 import comflower.sagongsa.dto.response.ErrorResponse;
@@ -62,7 +63,7 @@ public class CommentController {
             throw new CommentNotFoundException(parentId);
         }
 
-        return commentService.createComment(post.getPostId(), createCommentDTO);
+        return commentService.createComment(Placeholder.SELF_USER_ID, post.getId(), createCommentDTO);
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")

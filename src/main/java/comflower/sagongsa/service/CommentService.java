@@ -26,18 +26,17 @@ public class CommentService {
     }
 
     public List<Comment> getCommentsByPost(Post post) {
-        return commentRepository.findByPostId(post.getPostId());
+        return commentRepository.findByPostId(post.getId());
     }
 
-    public Comment createComment(Long postId, CreateCommentDTO createCommentDTO) {
+    public Comment createComment(Long authorId, Long postId, CreateCommentDTO createCommentDTO) {
         Comment comment = Comment.builder()
                 .postId(postId)
-                .userId(1L) // 임의로 설정한 userId
+                .authorId(authorId)
                 .content(createCommentDTO.getContent())
                 .createdAt(LocalDateTime.now())
                 .parentId(createCommentDTO.getParentId())
                 .build();
-
         return commentRepository.save(comment);
     }
 

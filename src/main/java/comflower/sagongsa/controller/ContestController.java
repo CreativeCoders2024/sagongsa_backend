@@ -37,7 +37,7 @@ public class ContestController {
             @ApiResponse(responseCode = "200", description = "모든 콘테스트 조회 성공",
                     content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Contest.class)))}),
     })
-    public List<Contest> getAllContests() {
+    public List<Contest> getContests() {
         return contestService.getAllContests();
     }
 

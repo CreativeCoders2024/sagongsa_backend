@@ -13,7 +13,7 @@ public class EditContestDTO {
     @Schema(description = "대회 제목", example = "대회 제목")
     private String title;
     @Schema(description = "대회 이미지", example = "대회 이미지")
-    private String img;
+    private String thumbnail;
     @Schema(description = "대회 상금", example = "대회 상금")
     private String prize;
     @Schema(description = "대회 시작 시간", example = "2024-01-01 00:00:00")
