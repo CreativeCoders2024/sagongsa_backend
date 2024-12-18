@@ -11,7 +11,7 @@ import lombok.Getter;
 @Tags(value = {@Tag(name = "user"), @Tag(name = "auth")})
 @Schema(description = "로그인 DTO")
 public class LoginDTO {
-    @Schema(description = "사용자 ID", example = "1")
+    @Schema(description = "사용자 ID", example = "abc123")
     private String id;
     private String pw;
 }

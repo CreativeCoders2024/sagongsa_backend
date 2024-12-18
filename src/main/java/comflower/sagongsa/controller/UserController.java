@@ -1,5 +1,6 @@
 package comflower.sagongsa.controller;
 
+import comflower.sagongsa.dto.JwtToken;
 import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.dto.request.LoginDTO;
 import comflower.sagongsa.dto.request.SignupDTO;
@@ -46,15 +47,16 @@ public class UserController {
         // 우선, 존재하는 ID인지 확인함
         if (userService.isUserPresentById(signupDTO.getId())) {
             // 위의 조건문이 true라면 = ID가 이미 존재함 = 중복 ID !! = 에러처리 해야함
-            throw new UserAlreadyExistsException(signupDTO.getId());  // 에러처리를 해주는 함수 실행 (53번 줄) -> 지금 여기서 에러남 ㅠ
+            throw new UserAlreadyExistsException(signupDTO.getId());
         }
 
         User createUser = userService.signup(signupDTO);
 
         SignupResponse body = SignupResponse.builder()
                 .userId(createUser.getUserId())
-                .token("JWT Token")
+                .token(null)
                 .build();
+
         return ResponseEntity
                 .created(URI.create(String.valueOf(createUser.getUserId())))  // header - Location에 추가해줌
                 .body(body);
@@ -80,31 +82,25 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "회원 없음",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public SignupResponse login(@RequestBody LoginDTO loginDTO) {
-        // 객체 반환 여부 판별 후 null 이면 바로 오류 처리 -> ID 판별
-        User findLoginUser = userRepository.findById(loginDTO.getId())
-                .orElseThrow(() -> new InvalidIdException(loginDTO.getId()));
+    public ResponseEntity<JwtToken> login(@RequestBody LoginDTO loginDTO) {  // GPT
+        JwtToken jwtToken = userService.login(loginDTO);
 
-        // PW 판별
-        if (!userService.login(loginDTO, findLoginUser)) {
-            throw new InvalidPasswordException(loginDTO.getPw());
-        }
-
-        return SignupResponse.builder()
-                .userId(findLoginUser.getUserId())
-                .token("JWT Token")
+        JwtToken response = JwtToken.builder()
+                .accessToken(jwtToken.getAccessToken())
+                .refreshToken(jwtToken.getRefreshToken())
                 .build();
+
+        return ResponseEntity.ok(response);
     }
 
     // 로그인 에러처리
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<ErrorResponse> handleWrongPassword(InvalidPasswordException e) {
-        return ErrorResponse.entity(ErrorType.WRONG_PASSWORD, e.getPassword());
-    }
-
     @ExceptionHandler(InvalidIdException.class)
     public ResponseEntity<ErrorResponse> handleWrongId(InvalidIdException e) {
         return ErrorResponse.entity(ErrorType.WRONG_ID, e.getId());
+    }
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleWrongPassword(InvalidPasswordException e) {
+        return ErrorResponse.entity(ErrorType.WRONG_PASSWORD, e.getPassword());
     }
 
     // 회원 정보 수정
@@ -159,7 +155,7 @@ public class UserController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public UserIdResponse withDraw(@RequestBody UserIdDTO userIdDTO) {
-        User withDrawUser = userRepository.findByUserId(userIdDTO.getUserId())
+        User withDrawUser = userRepository.getByUserId(userIdDTO.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(userIdDTO.getUserId()));
         userService.withDraw(withDrawUser);
 

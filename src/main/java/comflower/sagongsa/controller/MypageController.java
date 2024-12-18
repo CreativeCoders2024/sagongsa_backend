@@ -124,7 +124,7 @@ public class MypageController {
     public UserFieldResponse setField(@RequestBody EditUserFieldDTO editFieldDTO) {
         // Use user id from authentication
         long userId = 1L;
-        User findEditUserField = userRepository.findByUserId(userId)
+        User findEditUserField = userRepository.getByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         mypageService.setField(findEditUserField, editFieldDTO.getField());
 

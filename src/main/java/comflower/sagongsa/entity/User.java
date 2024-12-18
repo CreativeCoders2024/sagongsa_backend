@@ -47,10 +47,10 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private int field;
+    private int field;  // blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
 
     @Column(nullable = true)
-    private String profileImg;  //blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
+    private String profileImg;  // img
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
