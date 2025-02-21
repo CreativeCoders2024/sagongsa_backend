@@ -14,14 +14,13 @@ import org.hibernate.annotations.ColumnDefault;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
+    private Long id;
 
     @Column(nullable = false)
-    private String id;
+    private String username;
 
     @Column(nullable = false)
-    private String pw;
+    private String password;
 
     @Column(nullable = false)
     private String nickname;
@@ -29,7 +28,6 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = true)
     private String introduction;
 
     @Column(nullable = false)
@@ -44,6 +42,5 @@ public class User {
     @ColumnDefault("0")
     private int field;
 
-    @Column(nullable = true)
     private String profileImg;  //blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
 }

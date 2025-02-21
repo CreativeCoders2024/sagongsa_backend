@@ -1,14 +1,13 @@
 package comflower.sagongsa.service;
 
 import comflower.sagongsa.dto.request.CreateContestDTO;
-import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.dto.request.EditContestDTO;
+import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.error.ContestNotFoundException;
-import org.springframework.transaction.annotation.Transactional;
 import comflower.sagongsa.repository.ContestRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,13 +20,15 @@ public class ContestService {
         return contestRepository.findById(contestId).orElseThrow(() -> new ContestNotFoundException(contestId));
     }
 
-    @Transactional
-    public Contest createContest(long userId, CreateContestDTO createContestDTO) {
-        //승희 일해요 부분
+    public List<Contest> getAllContests() {
+        return contestRepository.findAll();
+    }
+
+    public Contest createContest(Long userId, CreateContestDTO createContestDTO) {
         Contest contest = Contest.builder()
-                .userId(userId)
+                .authorId(userId)
                 .title(createContestDTO.getTitle())
-                .img(createContestDTO.getImg())
+                .thumbnail(createContestDTO.getThumbnail())
                 .prize(createContestDTO.getPrize())
                 .startedAt(createContestDTO.getStartedAt())
                 .endedAt(createContestDTO.getEndedAt())
@@ -40,7 +41,7 @@ public class ContestService {
     @Transactional
     public Contest editContest(Contest contest, EditContestDTO editContestDTO) {
         contest.setTitle(editContestDTO.getTitle());
-        contest.setImg(editContestDTO.getImg());
+        contest.setThumbnail(editContestDTO.getThumbnail());
         contest.setPrize(editContestDTO.getPrize());
         contest.setStartedAt(editContestDTO.getStartedAt());
         contest.setEndedAt(editContestDTO.getEndedAt());
@@ -49,13 +50,7 @@ public class ContestService {
         return contestRepository.save(contest);
     }
 
-    @Transactional
     public void deleteContest(Contest contest) {
         contestRepository.delete(contest);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Contest> getAllContests() {
-        return contestRepository.findAll();
     }
 }

@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 public class Post {
     @Id  // 기본키로 설정 자동으로 생성
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long id;
 
     @Column(nullable = false)
-    private Long userId;
+    private Long authorId;
 
     @Column(nullable = false)
     private Long contestId;
@@ -30,10 +30,10 @@ public class Post {
     private String content;
 
     @Column(nullable = false)
-    private int max;
+    private int maxMemberCount;
 
     @Column(nullable = false)
-    private int ppl;
+    private int memberCount;
 
     @Column(nullable = false)
     private int desiredField;
