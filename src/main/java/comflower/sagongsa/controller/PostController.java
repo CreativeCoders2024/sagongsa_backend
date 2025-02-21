@@ -1,13 +1,13 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.Placeholder;
 import comflower.sagongsa.dto.request.CreatePostDTO;
 import comflower.sagongsa.dto.request.EditPostDTO;
 import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.dto.response.ErrorType;
+import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.error.InvalidPostDataException;
-import comflower.sagongsa.error.UnauthorizedAccessException;
+import comflower.sagongsa.error.UnauthorizedException;
+import comflower.sagongsa.security.UserDetailsImpl;
 import comflower.sagongsa.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,12 +65,15 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "잘못된 게시글 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public Post createPost(@RequestBody @Valid CreatePostDTO createPostDTO, BindingResult bindingResult) {
+    public Post createPost(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody @Valid CreatePostDTO createPostDTO, BindingResult bindingResult
+    ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidPostDataException();
         }
 
-        return postService.createPost(Placeholder.SELF_USER_ID, createPostDTO);
+        return postService.createPost(userDetails.getId(), createPostDTO);
     }
 
     @PutMapping("/posts/{postId}")
@@ -91,7 +95,7 @@ public class PostController {
         Post post = postService.getPost(postId);
 
         if (!Objects.equals(post.getAuthorId(), editPostDTO.getAuthorId())) {
-            throw new UnauthorizedAccessException();
+            throw new UnauthorizedException();
         }
 
         return postService.editPost(post, editPostDTO);
@@ -116,8 +120,8 @@ public class PostController {
         return ErrorResponse.entity(ErrorType.INVALID_POST_DATA);
     }
 
-    @ExceptionHandler(UnauthorizedAccessException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorizedAccessException(UnauthorizedAccessException e) {
-        return ErrorResponse.entity(ErrorType.UNAUTHORIZED_ACCESS, e.getMessage());
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedAccessException(UnauthorizedException e) {
+        return ErrorResponse.entity(ErrorType.UNAUTHORIZED, e.getMessage());
     }
 }

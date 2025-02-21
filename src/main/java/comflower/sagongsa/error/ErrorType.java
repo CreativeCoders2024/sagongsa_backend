@@ -1,4 +1,4 @@
-package comflower.sagongsa.dto.response;
+package comflower.sagongsa.error;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,7 @@ public enum ErrorType {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, 10003, "User Not Found"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, 10009, "Post not found"),
     INVALID_POST_DATA(HttpStatus.BAD_REQUEST, 10005, "Invalid post data"),
-    UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, 10006, "Unauthorized access"),
+    UNAUTHORIZED(HttpStatus.FORBIDDEN, 10006, "Unauthorized"),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, 10007, "Comment not found"),
     INVALID_COMMENT_DATA(HttpStatus.BAD_REQUEST, 10008, "Invalid comment data"),
     INVALID_CONTEST_DATA(HttpStatus.BAD_REQUEST, 10009, "Invalid contest data"),

@@ -1,7 +1,7 @@
 package comflower.sagongsa.controller;
 
 import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.dto.response.ErrorType;
+import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
