@@ -3,11 +3,11 @@ package comflower.sagongsa.controller;
 import comflower.sagongsa.dto.request.CreatePostDTO;
 import comflower.sagongsa.dto.request.EditPostDTO;
 import comflower.sagongsa.dto.response.ErrorResponse;
+import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.error.InvalidPostDataException;
 import comflower.sagongsa.error.UnauthorizedException;
-import comflower.sagongsa.security.UserDetailsImpl;
 import comflower.sagongsa.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -66,14 +66,14 @@ public class PostController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public Post createPost(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal User user,
             @RequestBody @Valid CreatePostDTO createPostDTO, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidPostDataException();
         }
 
-        return postService.createPost(userDetails.getId(), createPostDTO);
+        return postService.createPost(user.getId(), createPostDTO);
     }
 
     @PutMapping("/posts/{postId}")

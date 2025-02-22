@@ -4,14 +4,13 @@ import comflower.sagongsa.dto.request.EditUserDTO;
 import comflower.sagongsa.dto.request.LoginDTO;
 import comflower.sagongsa.dto.request.SignupDTO;
 import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.dto.response.SignupResponse;
 import comflower.sagongsa.entity.User;
+import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.InvalidCredentialsException;
 import comflower.sagongsa.error.UserAlreadyExistsException;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.security.JwtHelper;
-import comflower.sagongsa.security.UserDetailsImpl;
 import comflower.sagongsa.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -110,8 +109,8 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = User.class))}),
     })
-    public User getUserSelf(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return userDetails.getUser();
+    public User getUserSelf(@AuthenticationPrincipal User user) {
+        return user;
     }
 
     @PutMapping("/users/@me")
@@ -123,8 +122,8 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "잘못된 회원 정보 수정 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public User editUser(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody EditUserDTO editUserDTO) {
-        return userService.editUser(userDetails.getUser(), editUserDTO);
+    public User editUser(@AuthenticationPrincipal User user, @RequestBody EditUserDTO editUserDTO) {
+        return userService.editUser(user, editUserDTO);
     }
 
     @DeleteMapping("/users/@me")
@@ -134,8 +133,8 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "회원 탈퇴 성공"),
     })
-    public void withDraw(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        userService.withDraw(userDetails.getUser());
+    public void deleteUser(@AuthenticationPrincipal User user) {
+        userService.deleteUser(user);
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)

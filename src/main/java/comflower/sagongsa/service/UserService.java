@@ -50,7 +50,7 @@ public class UserService {
     }
 
     @Transactional
-    public void withDraw(User withDrawUser) {
+    public void deleteUser(User withDrawUser) {
         withDrawUser.setWithdrawn(true);
         userRepository.save(withDrawUser); // 얘도
     }

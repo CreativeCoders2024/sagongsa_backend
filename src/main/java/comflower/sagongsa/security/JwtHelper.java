@@ -1,6 +1,8 @@
 package comflower.sagongsa.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
@@ -35,13 +37,12 @@ public class JwtHelper {
                 .compact();
     }
 
-    public Long parseUserId(String token) {
+    public Jws<Claims> parse(String token) {
         var key = Keys.hmacShaKeyFor(Encoders.BASE64.encode(jwtSecret.getBytes()).getBytes());
         var parser = Jwts.parser().verifyWith(key).build();
 
         try {
-            var claims = parser.parseSignedClaims(token).getPayload();
-            return Long.valueOf(claims.getSubject());
+            return parser.parseSignedClaims(token);
         } catch (SignatureException e) {
             logger.debug("Invalid JWT submitted", e);
         } catch (ExpiredJwtException e) {

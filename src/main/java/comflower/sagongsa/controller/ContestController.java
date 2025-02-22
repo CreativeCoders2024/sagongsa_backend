@@ -4,11 +4,11 @@ import comflower.sagongsa.dto.request.CreateContestDTO;
 import comflower.sagongsa.dto.request.EditContestDTO;
 import comflower.sagongsa.dto.response.ErrorDataResponse;
 import comflower.sagongsa.dto.response.ErrorResponse;
+import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.error.InvalidContestDataException;
 import comflower.sagongsa.error.InvalidContestEditDataException;
-import comflower.sagongsa.security.UserDetailsImpl;
 import comflower.sagongsa.service.ContestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -54,14 +54,14 @@ public class ContestController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public Contest createContest(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal User user,
             @RequestBody @Valid CreateContestDTO createContestDTO, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidContestDataException();
         }
 
-        return contestService.createContest(userDetails.getId(), createContestDTO);
+        return contestService.createContest(user.getId(), createContestDTO);
     }
 
     @GetMapping("/contests/{contestId}")

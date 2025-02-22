@@ -6,8 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,6 +18,8 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
     private final JwtHelper jwtHelper;
     private final UserService userService;
 
@@ -26,33 +29,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String jwt = parseJwtFromHeader(request);
-        if (jwt == null) {
+        var bearerToken = request.getHeader("Authorization");
+        if (bearerToken == null) {
+            logger.debug("Authorization header not provided");
             filterChain.doFilter(request, response);
             return;
         }
 
-        Long userId = jwtHelper.parseUserId(jwt);
-        if (userId == null) {
+        if (!bearerToken.startsWith("Bearer ")) {
+            logger.debug("Malformed Authorization header provided");
             filterChain.doFilter(request, response);
             return;
         }
 
+        var jwt = bearerToken.substring(7);
+        var claims = jwtHelper.parse(jwt);
+        if (claims == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        var userId = Long.valueOf(claims.getPayload().getSubject());
         var user = userService.findUserById(userId);
-        var userDetails = new UserDetailsImpl(user);
-        var authentication =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(user));
 
         filterChain.doFilter(request, response);
-    }
-
-    private String parseJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-
-        return null;
     }
 }

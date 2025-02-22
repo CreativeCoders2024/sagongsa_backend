@@ -3,12 +3,12 @@ package comflower.sagongsa.controller;
 import comflower.sagongsa.dto.request.CreateCommentDTO;
 import comflower.sagongsa.dto.request.EditCommentDTO;
 import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.entity.Post;
+import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.CommentNotFoundException;
+import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.InvalidCommentDataException;
-import comflower.sagongsa.security.UserDetailsImpl;
 import comflower.sagongsa.service.CommentService;
 import comflower.sagongsa.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,7 +58,7 @@ public class CommentController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public Comment createComment(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @AuthenticationPrincipal User user,
             @PathVariable Long postId,
             @RequestBody @Valid CreateCommentDTO createCommentDTO, BindingResult bindingResult
     ) {
@@ -73,7 +73,7 @@ public class CommentController {
             throw new CommentNotFoundException(parentId);
         }
 
-        return commentService.createComment(userDetails.getId(), post.getId(), createCommentDTO);
+        return commentService.createComment(user.getId(), post.getId(), createCommentDTO);
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")
