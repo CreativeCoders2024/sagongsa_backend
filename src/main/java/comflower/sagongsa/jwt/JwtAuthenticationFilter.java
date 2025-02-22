@@ -1,27 +1,23 @@
-package comflower.sagongsa.security;
+package comflower.sagongsa.jwt;
 
-import comflower.sagongsa.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
-
-    private final JwtHelper jwtHelper;
-    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     protected void doFilterInternal(
@@ -31,27 +27,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         var bearerToken = request.getHeader("Authorization");
         if (bearerToken == null) {
-            logger.debug("Authorization header not provided");
+            log.debug("Authorization header not provided");
             filterChain.doFilter(request, response);
             return;
         }
 
         if (!bearerToken.startsWith("Bearer ")) {
-            logger.debug("Malformed Authorization header provided");
+            log.debug("Malformed Authorization header provided");
             filterChain.doFilter(request, response);
             return;
         }
 
         var jwt = bearerToken.substring(7);
-        var claims = jwtHelper.parse(jwt);
-        if (claims == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
-        var userId = Long.valueOf(claims.getPayload().getSubject());
-        var user = userService.findUserById(userId);
-        SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(user));
+        var authenticationToken = new JwtAuthenticationToken(jwt);
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+        var authentication = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }

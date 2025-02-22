@@ -10,7 +10,7 @@ import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.InvalidCredentialsException;
 import comflower.sagongsa.error.UserAlreadyExistsException;
 import comflower.sagongsa.repository.UserRepository;
-import comflower.sagongsa.security.JwtHelper;
+import comflower.sagongsa.jwt.JwtHelper;
 import comflower.sagongsa.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

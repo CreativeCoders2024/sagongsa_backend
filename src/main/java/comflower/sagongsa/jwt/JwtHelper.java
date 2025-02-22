@@ -1,4 +1,4 @@
-package comflower.sagongsa.security;
+package comflower.sagongsa.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -7,17 +7,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtHelper {
-    private final Logger logger = LoggerFactory.getLogger(JwtHelper.class);
-
     @Value("${jwt.secret}")
     private String jwtSecret;
 
@@ -44,13 +42,13 @@ public class JwtHelper {
         try {
             return parser.parseSignedClaims(token);
         } catch (SignatureException e) {
-            logger.debug("Invalid JWT submitted", e);
+            log.debug("Invalid JWT submitted", e);
         } catch (ExpiredJwtException e) {
-            logger.debug("Expired JWT submitted (Expired at {})", e.getClaims().getExpiration());
+            log.debug("Expired JWT submitted (Expired at {})", e.getClaims().getExpiration());
         } catch (NumberFormatException e) {
-            logger.debug("JWT subject is not a number", e);
+            log.debug("JWT subject is not a number", e);
         } catch (Exception e) {
-            logger.error("Failed to parse JWT token", e);
+            log.error("Failed to parse JWT token", e);
         }
 
         return null;
