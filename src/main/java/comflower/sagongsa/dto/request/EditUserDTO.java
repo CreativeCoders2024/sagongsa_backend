@@ -6,7 +6,6 @@ import lombok.Getter;
 
 @Getter
 @Builder
-
 @Schema(description = "사용자 수정 DTO")
 public class EditUserDTO {
     @Schema(description = "사용자 닉네임", example = "닉네임")
