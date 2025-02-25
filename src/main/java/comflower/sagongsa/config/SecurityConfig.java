@@ -22,6 +22,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .anonymous(AbstractHttpConfigurer::disable)
                 .addFilterAfter(jwtAuthenticationFilter(authenticationManager(http)), SecurityContextHolderFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/@me").authenticated()
