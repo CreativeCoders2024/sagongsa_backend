@@ -18,19 +18,20 @@ public class UserService {
         return userRepository.findByUsername(username).isPresent();
     }
 
-    public User findUserByUserId(Long userId) {
+    public User findUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
     @Transactional
     public User signup(SignupDTO signupDTO) {
-        User signupUser = User.builder()
+        User user = User.builder()
                 .username(signupDTO.getUsername())
-                .password(signupDTO.getPassword())
+                .password(signupDTO.getPassword()) // TODO: Encrypt password
                 .nickname(signupDTO.getNickname())
-                .email((signupDTO.getEmail()))
+                .email(signupDTO.getEmail())
                 .build();
-        return userRepository.save(signupUser);
+
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -49,7 +50,7 @@ public class UserService {
     }
 
     @Transactional
-    public void withDraw(User withDrawUser) {
+    public void deleteUser(User withDrawUser) {
         withDrawUser.setWithdrawn(true);
         userRepository.save(withDrawUser); // 얘도
     }

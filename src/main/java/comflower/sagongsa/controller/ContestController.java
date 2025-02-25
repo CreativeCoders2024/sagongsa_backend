@@ -1,11 +1,11 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.Placeholder;
 import comflower.sagongsa.dto.request.CreateContestDTO;
 import comflower.sagongsa.dto.request.EditContestDTO;
 import comflower.sagongsa.dto.response.ErrorDataResponse;
 import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.dto.response.ErrorType;
+import comflower.sagongsa.entity.User;
+import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.error.InvalidContestDataException;
 import comflower.sagongsa.error.InvalidContestEditDataException;
@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,12 +53,15 @@ public class ContestController {
             @ApiResponse(responseCode = "400", description = "잘못된 콘테스트 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public Contest createContest(@RequestBody @Valid CreateContestDTO createContestDTO, BindingResult bindingResult) {
+    public Contest createContest(
+            @AuthenticationPrincipal User user,
+            @RequestBody @Valid CreateContestDTO createContestDTO, BindingResult bindingResult
+    ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidContestDataException();
         }
 
-        return contestService.createContest(Placeholder.SELF_USER_ID, createContestDTO);
+        return contestService.createContest(user.getId(), createContestDTO);
     }
 
     @GetMapping("/contests/{contestId}")

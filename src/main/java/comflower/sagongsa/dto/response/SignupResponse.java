@@ -1,8 +1,6 @@
 package comflower.sagongsa.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.Builder;
 import lombok.Getter;
 

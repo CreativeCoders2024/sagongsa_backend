@@ -1,5 +1,6 @@
 package comflower.sagongsa.dto.response;
 
+import comflower.sagongsa.error.ErrorType;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 

@@ -1,4 +1,4 @@
-package comflower.sagongsa.dto.response;
+package comflower.sagongsa.error;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -10,12 +10,13 @@ public enum ErrorType {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, 10003, "User Not Found"),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, 10009, "Post not found"),
     INVALID_POST_DATA(HttpStatus.BAD_REQUEST, 10005, "Invalid post data"),
-    UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, 10006, "Unauthorized access"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, 10006, "You should be logged in to access this resource"),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, 10007, "Comment not found"),
     INVALID_COMMENT_DATA(HttpStatus.BAD_REQUEST, 10008, "Invalid comment data"),
     INVALID_CONTEST_DATA(HttpStatus.BAD_REQUEST, 10009, "Invalid contest data"),
     CONTEST_NOT_FOUND(HttpStatus.NOT_FOUND, 100010, "Contest not found"),
-    INVALID_CONTEST_EDIT_DATA(HttpStatus.BAD_REQUEST, 10011, "Invalid contest data for edit");
+    INVALID_CONTEST_EDIT_DATA(HttpStatus.BAD_REQUEST, 10011, "Invalid contest data for edit"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, 10012, "You do not have permission to access this resource"),;
 
     private final HttpStatus httpStatus;
     private final int code;

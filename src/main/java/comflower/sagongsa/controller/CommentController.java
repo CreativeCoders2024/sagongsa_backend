@@ -1,13 +1,13 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.Placeholder;
 import comflower.sagongsa.dto.request.CreateCommentDTO;
 import comflower.sagongsa.dto.request.EditCommentDTO;
 import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.dto.response.ErrorType;
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.entity.Post;
+import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.CommentNotFoundException;
+import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.InvalidCommentDataException;
 import comflower.sagongsa.service.CommentService;
 import comflower.sagongsa.service.PostService;
@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +58,7 @@ public class CommentController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public Comment createComment(
+            @AuthenticationPrincipal User user,
             @PathVariable Long postId,
             @RequestBody @Valid CreateCommentDTO createCommentDTO, BindingResult bindingResult
     ) {
@@ -71,7 +73,7 @@ public class CommentController {
             throw new CommentNotFoundException(parentId);
         }
 
-        return commentService.createComment(Placeholder.SELF_USER_ID, post.getId(), createCommentDTO);
+        return commentService.createComment(user.getId(), post.getId(), createCommentDTO);
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")
