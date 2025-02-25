@@ -7,7 +7,7 @@ import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.error.InvalidPostDataException;
-import comflower.sagongsa.error.UnauthorizedAccessException;
+import comflower.sagongsa.error.UnauthorizedException;
 import comflower.sagongsa.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -95,7 +95,7 @@ public class PostController {
         Post post = postService.getPost(postId);
 
         if (!Objects.equals(post.getAuthorId(), editPostDTO.getAuthorId())) {
-            throw new UnauthorizedAccessException();
+            throw new UnauthorizedException();
         }
 
         return postService.editPost(post, editPostDTO);
@@ -118,10 +118,5 @@ public class PostController {
     @ExceptionHandler(InvalidPostDataException.class)
     public ResponseEntity<ErrorResponse> handleInvalidPostDataException() {
         return ErrorResponse.entity(ErrorType.INVALID_POST_DATA);
-    }
-
-    @ExceptionHandler(UnauthorizedAccessException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorizedAccessException(UnauthorizedAccessException e) {
-        return ErrorResponse.entity(ErrorType.UNAUTHORIZED, e.getMessage());
     }
 }

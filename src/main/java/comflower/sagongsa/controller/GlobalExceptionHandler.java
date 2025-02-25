@@ -28,4 +28,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCommentNotFound(CommentNotFoundException e) {
         return ErrorResponse.entity(ErrorType.COMMENT_NOT_FOUND, e.getCommentId());
     }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException e) {
+        return ErrorResponse.entity(ErrorType.UNAUTHORIZED, e.getMessage());
+    }
 }
