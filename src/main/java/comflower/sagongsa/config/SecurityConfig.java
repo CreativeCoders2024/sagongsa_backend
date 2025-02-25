@@ -10,13 +10,17 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final AccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,6 +28,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .anonymous(AbstractHttpConfigurer::disable)
                 .addFilterAfter(jwtAuthenticationFilter(authenticationManager(http)), SecurityContextHolderFilter.class)
+                .exceptionHandling(e -> {
+                    e.authenticationEntryPoint(authenticationEntryPoint);
+                    e.accessDeniedHandler(accessDeniedHandler);
+                })
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/users/@me").authenticated()
                         .requestMatchers(HttpMethod.POST, "/contests").authenticated()
