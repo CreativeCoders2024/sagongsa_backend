@@ -75,7 +75,7 @@ public class UserController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public SignupResponse login(@RequestBody LoginDTO loginDTO) {
-        User user = userRepository.findByUsername(loginDTO.getUsername())
+        User user = userRepository.findByUsername(loginDTO.getId())
                 .orElseThrow(InvalidCredentialsException::new);
 
         // TODO: Encrypt password
