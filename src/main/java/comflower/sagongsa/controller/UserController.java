@@ -83,10 +83,10 @@ public class UserController {
             throw new InvalidCredentialsException();
         }
 
-        String jwtToken = jwtHelper.generateToken(user.getId());
+        String jwt = jwtHelper.generateToken(user.getId());
         return SignupResponse.builder()
                 .userId(user.getId())
-                .token(jwtToken)
+                .token(jwt)
                 .build();
     }
 
