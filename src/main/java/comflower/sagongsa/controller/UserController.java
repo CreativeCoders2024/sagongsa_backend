@@ -1,16 +1,15 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.request.EditUserDTO;
-import comflower.sagongsa.dto.request.LoginDTO;
-import comflower.sagongsa.dto.request.SignupDTO;
-import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.dto.response.SignupResponse;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.InvalidCredentialsException;
 import comflower.sagongsa.error.UserAlreadyExistsException;
 import comflower.sagongsa.jwt.JwtHelper;
-import comflower.sagongsa.repository.UserRepository;
+import comflower.sagongsa.request.EditUserRequest;
+import comflower.sagongsa.request.LoginRequest;
+import comflower.sagongsa.request.SignupRequest;
+import comflower.sagongsa.response.ErrorResponse;
+import comflower.sagongsa.response.SignupResponse;
 import comflower.sagongsa.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,46 +20,34 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor //얘 찾아보기
 @Tag(name = "user")
 public class UserController {
     private final UserService userService;
-    private final UserRepository userRepository;
     private final JwtHelper jwtHelper;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> signup(@RequestBody SignupDTO signupDTO) {
-        if (userService.isUserPresentByUsername(signupDTO.getUsername())) {
-            throw new UserAlreadyExistsException(signupDTO.getUsername());
-        }
-
-        User createdUser = userService.signup(signupDTO);
-
-        String jwtToken = jwtHelper.generateToken(createdUser.getId());
-        SignupResponse body = SignupResponse.builder()
-                .userId(createdUser.getId())
-                .token(jwtToken)
-                .build();
+    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request) {
+        User user = userService.createUser(request);
+        String jwt = jwtHelper.generateToken(user.getId());
 
         return ResponseEntity
-                .created(URI.create(createdUser.getId().toString()))  // header - Location에 추가해줌
-                .body(body);
+                .created(URI.create(String.valueOf(user.getId())))  // header - Location에 추가해줌
+                .body(
+                        SignupResponse.builder()
+                                .userId(user.getId())
+                                .token(jwt)
+                                .build()
+                );
     }
 
     @PostMapping("/login")
-    public SignupResponse login(@RequestBody LoginDTO loginDTO) {
-        User user = userRepository.findByUsername(loginDTO.getUsername())
-                .orElseThrow(InvalidCredentialsException::new);
-
-        // TODO: Encrypt password
-        if (!Objects.equals(user.getPassword(), loginDTO.getPassword())) {
-            throw new InvalidCredentialsException();
-        }
-
+    public SignupResponse login(@RequestBody LoginRequest request) {
+        User user = userService.loginUser(request);
         String jwt = jwtHelper.generateToken(user.getId());
+
         return SignupResponse.builder()
                 .userId(user.getId())
                 .token(jwt)
@@ -80,8 +67,8 @@ public class UserController {
 
     @PutMapping("/users/@me")
     @SecurityRequirement(name = "bearerAuth")
-    public User editUser(@AuthenticationPrincipal User user, @RequestBody EditUserDTO editUserDTO) {
-        return userService.editUser(user, editUserDTO);
+    public User editUser(@AuthenticationPrincipal User user, @RequestBody EditUserRequest request) {
+        return userService.editUser(user, request);
     }
 
     @DeleteMapping("/users/@me")

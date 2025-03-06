@@ -1,13 +1,13 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.request.CreateContestDTO;
-import comflower.sagongsa.dto.request.EditContestDTO;
-import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.InvalidContestDataException;
 import comflower.sagongsa.error.InvalidContestEditDataException;
+import comflower.sagongsa.request.CreateContestRequest;
+import comflower.sagongsa.request.EditContestRequest;
+import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.service.ContestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -47,13 +47,13 @@ public class ContestController {
     @SecurityRequirement(name = "bearerAuth")
     public Contest createContest(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreateContestDTO createContestDTO, BindingResult bindingResult
+            @RequestBody @Valid CreateContestRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidContestDataException();
         }
 
-        return contestService.createContest(user.getId(), createContestDTO);
+        return contestService.createContest(user.getId(), request);
     }
 
     @GetMapping("/contests/{contestId}")
@@ -63,17 +63,15 @@ public class ContestController {
 
     @PutMapping("/contests/{contestId}")
     @SecurityRequirement(name = "bearerAuth")
-    public Contest editContest(@PathVariable Long contestId, @RequestBody @Valid EditContestDTO editContestDTO) {
-        Contest contest = contestService.getContest(contestId);
-        return contestService.editContest(contest, editContestDTO);
+    public Contest editContest(@PathVariable Long contestId, @RequestBody @Valid EditContestRequest request) {
+        return contestService.editContest(contestId, request);
     }
 
     @DeleteMapping("/contests/{contestId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "bearerAuth")
     public void deleteContest(@PathVariable Long contestId) {
-        Contest contest = contestService.getContest(contestId);
-        contestService.deleteContest(contest);
+        contestService.deleteContest(contestId);
     }
 
     @ExceptionHandler(InvalidContestDataException.class)

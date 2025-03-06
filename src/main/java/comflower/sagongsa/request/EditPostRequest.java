@@ -1,4 +1,4 @@
-package comflower.sagongsa.dto.request;
+package comflower.sagongsa.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Schema(description = "게시글 수정 DTO")
-public class EditPostDTO {
+public class EditPostRequest {
     @NotBlank
     @Schema(description = "게시글 제목", example = "게시글 제목")
     private String title;

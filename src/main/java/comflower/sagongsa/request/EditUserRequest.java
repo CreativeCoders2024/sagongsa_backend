@@ -1,4 +1,4 @@
-package comflower.sagongsa.dto.request;
+package comflower.sagongsa.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @Schema(description = "사용자 수정 DTO")
-public class EditUserDTO {
+public class EditUserRequest {
     @Schema(description = "사용자 닉네임", example = "닉네임")
     private String nickname;
     @Schema(description = "사용자 분야", example = "1")

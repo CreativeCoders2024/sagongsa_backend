@@ -1,4 +1,4 @@
-package comflower.sagongsa.dto.response;
+package comflower.sagongsa.response;
 
 import comflower.sagongsa.error.ErrorType;
 import lombok.Getter;

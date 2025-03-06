@@ -1,7 +1,7 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.dto.request.CreateContestDTO;
-import comflower.sagongsa.dto.request.EditContestDTO;
+import comflower.sagongsa.request.CreateContestRequest;
+import comflower.sagongsa.request.EditContestRequest;
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.error.ContestNotFoundException;
 import comflower.sagongsa.repository.ContestRepository;
@@ -24,33 +24,35 @@ public class ContestService {
         return contestRepository.findAll();
     }
 
-    public Contest createContest(Long userId, CreateContestDTO createContestDTO) {
+    public Contest createContest(Long userId, CreateContestRequest request) {
         Contest contest = Contest.builder()
                 .authorId(userId)
-                .title(createContestDTO.getTitle())
-                .thumbnail(createContestDTO.getThumbnail())
-                .prize(createContestDTO.getPrize())
-                .startedAt(createContestDTO.getStartedAt())
-                .endedAt(createContestDTO.getEndedAt())
-                .link(createContestDTO.getLink())
-                .field(createContestDTO.getField())
+                .title(request.getTitle())
+                .thumbnail(request.getThumbnail())
+                .prize(request.getPrize())
+                .startedAt(request.getStartedAt())
+                .endedAt(request.getEndedAt())
+                .link(request.getLink())
+                .field(request.getField())
                 .build();
         return contestRepository.save(contest);
     }
 
     @Transactional
-    public Contest editContest(Contest contest, EditContestDTO editContestDTO) {
-        contest.setTitle(editContestDTO.getTitle());
-        contest.setThumbnail(editContestDTO.getThumbnail());
-        contest.setPrize(editContestDTO.getPrize());
-        contest.setStartedAt(editContestDTO.getStartedAt());
-        contest.setEndedAt(editContestDTO.getEndedAt());
-        contest.setLink(editContestDTO.getLink());
-        contest.setField(editContestDTO.getField());
+    public Contest editContest(Long contestId, EditContestRequest request) {
+        Contest contest = getContest(contestId);
+        contest.setTitle(request.getTitle());
+        contest.setThumbnail(request.getThumbnail());
+        contest.setPrize(request.getPrize());
+        contest.setStartedAt(request.getStartedAt());
+        contest.setEndedAt(request.getEndedAt());
+        contest.setLink(request.getLink());
+        contest.setField(request.getField());
         return contestRepository.save(contest);
     }
 
-    public void deleteContest(Contest contest) {
+    public void deleteContest(Long contestId) {
+        Contest contest = getContest(contestId);
         contestRepository.delete(contest);
     }
 }

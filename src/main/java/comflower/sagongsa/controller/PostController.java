@@ -1,13 +1,12 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.request.CreatePostDTO;
-import comflower.sagongsa.dto.request.EditPostDTO;
-import comflower.sagongsa.dto.response.ErrorResponse;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.InvalidPostDataException;
-import comflower.sagongsa.error.UnauthorizedException;
+import comflower.sagongsa.request.CreatePostRequest;
+import comflower.sagongsa.request.EditPostRequest;
+import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.service.PostService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,37 +40,30 @@ public class PostController {
     @SecurityRequirement(name = "bearerAuth")
     public Post createPost(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreatePostDTO createPostDTO, BindingResult bindingResult
+            @RequestBody @Valid CreatePostRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidPostDataException();
         }
 
-        return postService.createPost(user.getId(), createPostDTO);
+        return postService.createPost(user.getId(), request);
     }
 
     @PutMapping("/posts/{postId}")
     @SecurityRequirement(name = "bearerAuth")
-    public Post editPost(@PathVariable Long postId, @RequestBody @Valid EditPostDTO editPostDTO, BindingResult bindingResult) {
+    public Post editPost(@PathVariable Long postId, @RequestBody @Valid EditPostRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidPostDataException();
         }
 
-        Post post = postService.getPost(postId);
-
-        if (!Objects.equals(post.getAuthorId(), editPostDTO.getAuthorId())) {
-            throw new UnauthorizedException();
-        }
-
-        return postService.editPost(post, editPostDTO);
+        return postService.editPost(postId, request);
     }
 
     @DeleteMapping("/posts/{postId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "bearerAuth")
     public void deletePost(@PathVariable Long postId) {
-        Post post = postService.getPost(postId);
-        postService.deletePost(post);
+        postService.deletePost(postId);
     }
 
     @ExceptionHandler(InvalidPostDataException.class)
