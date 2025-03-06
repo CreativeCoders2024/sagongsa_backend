@@ -1,9 +1,9 @@
 package comflower.sagongsa.service;
 
 import comflower.sagongsa.entity.User;
-import comflower.sagongsa.error.InvalidCredentialsException;
-import comflower.sagongsa.error.UserAlreadyExistsException;
-import comflower.sagongsa.error.UserNotFoundException;
+import comflower.sagongsa.exception.InvalidCredentialsException;
+import comflower.sagongsa.exception.UserAlreadyExistsException;
+import comflower.sagongsa.exception.UnknownUserException;
 import comflower.sagongsa.repository.UserRepository;
 import comflower.sagongsa.request.EditUserRequest;
 import comflower.sagongsa.request.LoginRequest;
@@ -20,13 +20,13 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return userRepository.findById(userId).orElseThrow(UnknownUserException::new);
     }
 
     @Transactional
     public User createUser(SignupRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new UserAlreadyExistsException(request.getUsername());
+            throw new UserAlreadyExistsException();
         }
 
         User user = User.builder()

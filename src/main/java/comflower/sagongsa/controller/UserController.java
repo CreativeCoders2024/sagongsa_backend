@@ -1,14 +1,10 @@
 package comflower.sagongsa.controller;
 
 import comflower.sagongsa.entity.User;
-import comflower.sagongsa.error.ErrorType;
-import comflower.sagongsa.error.InvalidCredentialsException;
-import comflower.sagongsa.error.UserAlreadyExistsException;
 import comflower.sagongsa.jwt.JwtHelper;
 import comflower.sagongsa.request.EditUserRequest;
 import comflower.sagongsa.request.LoginRequest;
 import comflower.sagongsa.request.SignupRequest;
-import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.response.SignupResponse;
 import comflower.sagongsa.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -76,15 +72,5 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     public void deleteUser(@AuthenticationPrincipal User user) {
         userService.deleteUser(user);
-    }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalStateException(UserAlreadyExistsException e) {
-        return ErrorResponse.entity(ErrorType.USER_ALREADY_EXISTS, e.getUsername());
-    }
-
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials() {
-        return ErrorResponse.entity(ErrorType.INVALID_CREDENTIALS);
     }
 }

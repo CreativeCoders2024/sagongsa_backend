@@ -1,8 +1,8 @@
 package comflower.sagongsa.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import comflower.sagongsa.exception.ExceptionType;
 import comflower.sagongsa.response.ErrorResponse;
-import comflower.sagongsa.error.ErrorType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        var responseEntity = ErrorResponse.entity(ErrorType.UNAUTHORIZED);
+        var responseEntity = ErrorResponse.entity(ExceptionType.UNAUTHORIZED);
         response.setStatus(responseEntity.getStatusCode().value());
         objectMapper.writeValue(response.getOutputStream(), responseEntity.getBody());
     }

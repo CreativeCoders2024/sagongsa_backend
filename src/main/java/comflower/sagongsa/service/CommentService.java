@@ -1,8 +1,8 @@
 package comflower.sagongsa.service;
 
 import comflower.sagongsa.entity.Comment;
-import comflower.sagongsa.error.CommentNotFoundException;
-import comflower.sagongsa.error.PostNotFoundException;
+import comflower.sagongsa.exception.UnknownCommentException;
+import comflower.sagongsa.exception.UnknownPostException;
 import comflower.sagongsa.repository.CommentRepository;
 import comflower.sagongsa.repository.PostRepository;
 import comflower.sagongsa.request.CreateCommentRequest;
@@ -21,7 +21,7 @@ public class CommentService {
 
     public List<Comment> getCommentsByPost(Long postId) {
         if (postRepository.findById(postId).isEmpty()) {
-            throw new PostNotFoundException(postId);
+            throw new UnknownPostException();
         }
 
         return commentRepository.findByPostId(postId);
@@ -29,12 +29,12 @@ public class CommentService {
 
     public Comment createComment(Long authorId, Long postId, CreateCommentRequest request) {
         if (postRepository.findById(postId).isEmpty()) {
-            throw new PostNotFoundException(postId);
+            throw new UnknownPostException();
         }
 
         Long parentId = request.getParentId();
         if (parentId != null && commentRepository.findById(request.getParentId()).isEmpty()) {
-            throw new CommentNotFoundException(parentId);
+            throw new UnknownCommentException();
         }
 
         Comment comment = Comment.builder()
@@ -49,7 +49,7 @@ public class CommentService {
 
     public Comment editComment(Long postId, Long commentId, EditCommentRequest request) {
         if (postRepository.findById(postId).isEmpty()) {
-            throw new PostNotFoundException(postId);
+            throw new UnknownPostException();
         }
 
         Comment comment = getComment(commentId);
@@ -61,7 +61,7 @@ public class CommentService {
 
     public void deleteComment(Long postId, Long commentId) {
         if (postRepository.findById(postId).isEmpty()) {
-            throw new PostNotFoundException(postId);
+            throw new UnknownPostException();
         }
 
         Comment comment = getComment(commentId);
@@ -69,6 +69,6 @@ public class CommentService {
     }
 
     private Comment getComment(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId));
+        return commentRepository.findById(commentId).orElseThrow(UnknownCommentException::new);
     }
 }

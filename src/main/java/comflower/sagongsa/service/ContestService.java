@@ -3,7 +3,7 @@ package comflower.sagongsa.service;
 import comflower.sagongsa.request.CreateContestRequest;
 import comflower.sagongsa.request.EditContestRequest;
 import comflower.sagongsa.entity.Contest;
-import comflower.sagongsa.error.ContestNotFoundException;
+import comflower.sagongsa.exception.UnknownContestException;
 import comflower.sagongsa.repository.ContestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class ContestService {
     private final ContestRepository contestRepository;
 
     public Contest getContest(Long contestId) {
-        return contestRepository.findById(contestId).orElseThrow(() -> new ContestNotFoundException(contestId));
+        return contestRepository.findById(contestId).orElseThrow(UnknownContestException::new);
     }
 
     public List<Contest> getAllContests() {

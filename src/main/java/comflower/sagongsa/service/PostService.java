@@ -1,10 +1,10 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.error.UnauthorizedException;
+import comflower.sagongsa.exception.UnauthorizedException;
 import comflower.sagongsa.request.CreatePostRequest;
 import comflower.sagongsa.request.EditPostRequest;
 import comflower.sagongsa.entity.Post;
-import comflower.sagongsa.error.PostNotFoundException;
+import comflower.sagongsa.exception.UnknownPostException;
 import comflower.sagongsa.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class PostService {
     }
 
     public Post getPost(Long postId) {
-        return postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
+        return postRepository.findById(postId).orElseThrow(UnknownPostException::new);
     }
 
     public Post createPost(Long authorId, CreatePostRequest request) {

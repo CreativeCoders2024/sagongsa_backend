@@ -2,21 +2,19 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.entity.User;
-import comflower.sagongsa.error.ErrorType;
-import comflower.sagongsa.error.InvalidCommentDataException;
+import comflower.sagongsa.exception.InvalidFormBodyException;
 import comflower.sagongsa.request.CreateCommentRequest;
 import comflower.sagongsa.request.EditCommentRequest;
-import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.service.CommentService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -38,7 +36,7 @@ public class CommentController {
             @RequestBody @Valid CreateCommentRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            throw new InvalidCommentDataException();
+            throw new InvalidFormBodyException(new HashMap<>());
         }
 
         return commentService.createComment(user.getId(), postId, request);
@@ -51,7 +49,7 @@ public class CommentController {
             @RequestBody @Valid EditCommentRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            throw new InvalidCommentDataException();
+            throw new InvalidFormBodyException(new HashMap<>());
         }
 
         return commentService.editComment(postId, commentId, request);
@@ -61,11 +59,6 @@ public class CommentController {
     @SecurityRequirement(name = "bearerAuth")
     public void deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
         commentService.deleteComment(postId, commentId);
-    }
-
-    @ExceptionHandler(InvalidCommentDataException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCommentDataException() {
-        return ErrorResponse.entity(ErrorType.INVALID_COMMENT_DATA);
     }
 }
 

@@ -2,12 +2,9 @@ package comflower.sagongsa.controller;
 
 import comflower.sagongsa.entity.Contest;
 import comflower.sagongsa.entity.User;
-import comflower.sagongsa.error.ErrorType;
-import comflower.sagongsa.error.InvalidContestDataException;
-import comflower.sagongsa.error.InvalidContestEditDataException;
+import comflower.sagongsa.exception.InvalidFormBodyException;
 import comflower.sagongsa.request.CreateContestRequest;
 import comflower.sagongsa.request.EditContestRequest;
-import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.service.ContestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -20,11 +17,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -50,7 +47,7 @@ public class ContestController {
             @RequestBody @Valid CreateContestRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            throw new InvalidContestDataException();
+            throw new InvalidFormBodyException(new HashMap<>());
         }
 
         return contestService.createContest(user.getId(), request);
@@ -72,15 +69,5 @@ public class ContestController {
     @SecurityRequirement(name = "bearerAuth")
     public void deleteContest(@PathVariable Long contestId) {
         contestService.deleteContest(contestId);
-    }
-
-    @ExceptionHandler(InvalidContestDataException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidContestDataException() {
-        return ErrorResponse.entity(ErrorType.INVALID_CONTEST_DATA);
-    }
-
-    @ExceptionHandler(InvalidContestEditDataException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidContestEditDataException() {
-        return ErrorResponse.entity(ErrorType.INVALID_CONTEST_EDIT_DATA);
     }
 }
