@@ -86,8 +86,7 @@ public class ContestController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public Contest editContest(@PathVariable Long contestId, @RequestBody @Valid EditContestRequest request) {
-        Contest contest = contestService.getContest(contestId);
-        return contestService.editContest(contest, request);
+        return contestService.editContest(contestId, request);
     }
 
     @DeleteMapping("/contests/{contestId}")
@@ -100,8 +99,7 @@ public class ContestController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDataResponse.class))}),
     })
     public void deleteContest(@PathVariable Long contestId) {
-        Contest contest = contestService.getContest(contestId);
-        contestService.deleteContest(contest);
+        contestService.deleteContest(contestId);
     }
 
     @ExceptionHandler(InvalidContestDataException.class)

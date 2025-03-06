@@ -1,16 +1,15 @@
 package comflower.sagongsa.controller;
 
+import comflower.sagongsa.entity.User;
+import comflower.sagongsa.error.ErrorType;
+import comflower.sagongsa.error.InvalidCredentialsException;
+import comflower.sagongsa.error.UserAlreadyExistsException;
+import comflower.sagongsa.jwt.JwtHelper;
 import comflower.sagongsa.request.EditUserRequest;
 import comflower.sagongsa.request.LoginRequest;
 import comflower.sagongsa.request.SignupRequest;
 import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.response.SignupResponse;
-import comflower.sagongsa.entity.User;
-import comflower.sagongsa.error.ErrorType;
-import comflower.sagongsa.error.InvalidCredentialsException;
-import comflower.sagongsa.error.UserAlreadyExistsException;
-import comflower.sagongsa.repository.UserRepository;
-import comflower.sagongsa.jwt.JwtHelper;
 import comflower.sagongsa.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,14 +25,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor //얘 찾아보기
 @Tag(name = "user")
 public class UserController {
     private final UserService userService;
-    private final UserRepository userRepository;
     private final JwtHelper jwtHelper;
 
     @PostMapping("/signup")
@@ -47,18 +44,14 @@ public class UserController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request) {
-        if (userService.isUserPresentByUsername(request.getUsername())) {
-            throw new UserAlreadyExistsException(request.getUsername());
-        }
-
-        User createdUser = userService.signup(request);
-        String jwt = jwtHelper.generateToken(createdUser.getId());
+        User user = userService.createUser(request);
+        String jwt = jwtHelper.generateToken(user.getId());
 
         return ResponseEntity
-                .created(URI.create(createdUser.getId().toString()))  // header - Location에 추가해줌
+                .created(URI.create(String.valueOf(user.getId())))  // header - Location에 추가해줌
                 .body(
                         SignupResponse.builder()
-                                .userId(createdUser.getId())
+                                .userId(user.getId())
                                 .token(jwt)
                                 .build()
                 );
@@ -75,15 +68,9 @@ public class UserController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public SignupResponse login(@RequestBody LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(InvalidCredentialsException::new);
-
-        // TODO: Encrypt password
-        if (!Objects.equals(user.getPassword(), request.getPassword())) {
-            throw new InvalidCredentialsException();
-        }
-
+        User user = userService.loginUser(request);
         String jwt = jwtHelper.generateToken(user.getId());
+
         return SignupResponse.builder()
                 .userId(user.getId())
                 .token(jwt)

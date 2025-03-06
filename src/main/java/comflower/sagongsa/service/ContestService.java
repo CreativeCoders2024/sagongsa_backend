@@ -39,7 +39,8 @@ public class ContestService {
     }
 
     @Transactional
-    public Contest editContest(Contest contest, EditContestRequest request) {
+    public Contest editContest(Long contestId, EditContestRequest request) {
+        Contest contest = getContest(contestId);
         contest.setTitle(request.getTitle());
         contest.setThumbnail(request.getThumbnail());
         contest.setPrize(request.getPrize());
@@ -50,7 +51,8 @@ public class ContestService {
         return contestRepository.save(contest);
     }
 
-    public void deleteContest(Contest contest) {
+    public void deleteContest(Long contestId) {
+        Contest contest = getContest(contestId);
         contestRepository.delete(contest);
     }
 }

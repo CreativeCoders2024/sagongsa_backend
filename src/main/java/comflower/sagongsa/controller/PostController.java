@@ -1,13 +1,12 @@
 package comflower.sagongsa.controller;
 
+import comflower.sagongsa.entity.Post;
+import comflower.sagongsa.entity.User;
+import comflower.sagongsa.error.ErrorType;
+import comflower.sagongsa.error.InvalidPostDataException;
 import comflower.sagongsa.request.CreatePostRequest;
 import comflower.sagongsa.request.EditPostRequest;
 import comflower.sagongsa.response.ErrorResponse;
-import comflower.sagongsa.entity.User;
-import comflower.sagongsa.error.ErrorType;
-import comflower.sagongsa.entity.Post;
-import comflower.sagongsa.error.InvalidPostDataException;
-import comflower.sagongsa.error.UnauthorizedException;
 import comflower.sagongsa.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -26,7 +25,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -92,13 +90,7 @@ public class PostController {
             throw new InvalidPostDataException();
         }
 
-        Post post = postService.getPost(postId);
-
-        if (!Objects.equals(post.getAuthorId(), request.getAuthorId())) {
-            throw new UnauthorizedException();
-        }
-
-        return postService.editPost(post, request);
+        return postService.editPost(postId, request);
     }
 
     @DeleteMapping("/posts/{postId}")
@@ -111,8 +103,7 @@ public class PostController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public void deletePost(@PathVariable Long postId) {
-        Post post = postService.getPost(postId);
-        postService.deletePost(post);
+        postService.deletePost(postId);
     }
 
     @ExceptionHandler(InvalidPostDataException.class)

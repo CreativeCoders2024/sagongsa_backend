@@ -1,5 +1,6 @@
 package comflower.sagongsa.service;
 
+import comflower.sagongsa.error.UnauthorizedException;
 import comflower.sagongsa.request.CreatePostRequest;
 import comflower.sagongsa.request.EditPostRequest;
 import comflower.sagongsa.entity.Post;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +43,13 @@ public class PostService {
     }
 
     @Transactional
-    public Post editPost(Post post, EditPostRequest request) {
+    public Post editPost(Long postId, EditPostRequest request) {
+        Post post = getPost(postId);
+
+        if (!Objects.equals(post.getAuthorId(), request.getAuthorId())) {
+            throw new UnauthorizedException();
+        }
+
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
         post.setMemberCount(request.getMemberCount());
@@ -51,7 +59,8 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public void deletePost(Post post) {
+    public void deletePost(Long postId) {
+        Post post = getPost(postId);
         postRepository.delete(post);
     }
 }

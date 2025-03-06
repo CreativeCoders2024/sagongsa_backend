@@ -1,16 +1,13 @@
 package comflower.sagongsa.controller;
 
+import comflower.sagongsa.entity.Comment;
+import comflower.sagongsa.entity.User;
+import comflower.sagongsa.error.ErrorType;
+import comflower.sagongsa.error.InvalidCommentDataException;
 import comflower.sagongsa.request.CreateCommentRequest;
 import comflower.sagongsa.request.EditCommentRequest;
 import comflower.sagongsa.response.ErrorResponse;
-import comflower.sagongsa.entity.Comment;
-import comflower.sagongsa.entity.Post;
-import comflower.sagongsa.entity.User;
-import comflower.sagongsa.error.CommentNotFoundException;
-import comflower.sagongsa.error.ErrorType;
-import comflower.sagongsa.error.InvalidCommentDataException;
 import comflower.sagongsa.service.CommentService;
-import comflower.sagongsa.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +30,6 @@ import java.util.List;
 @Tag(name = "comment")
 public class CommentController {
     private final CommentService commentService;
-    private final PostService postService;
 
     @GetMapping("/posts/{postId}/comments")
     @Operation(summary = "댓글 조회", description = "댓글을 조회합니다.")
@@ -44,8 +40,7 @@ public class CommentController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
-        Post post = postService.getPost(postId);
-        return commentService.getCommentsByPost(post);
+        return commentService.getCommentsByPost(postId);
     }
 
     @PostMapping("/posts/{postId}/comments")
@@ -66,14 +61,7 @@ public class CommentController {
             throw new InvalidCommentDataException();
         }
 
-        Post post = postService.getPost(postId);
-
-        Long parentId = request.getParentId();
-        if (parentId != null && !commentService.isCommentPresentById(parentId)) {
-            throw new CommentNotFoundException(parentId);
-        }
-
-        return commentService.createComment(user.getId(), post.getId(), request);
+        return commentService.createComment(user.getId(), postId, request);
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")
@@ -93,8 +81,7 @@ public class CommentController {
             throw new InvalidCommentDataException();
         }
 
-        Comment comment = commentService.getComment(commentId);
-        return commentService.editComment(comment, request);
+        return commentService.editComment(postId, commentId, request);
     }
 
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
@@ -107,8 +94,7 @@ public class CommentController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
     public void deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        Comment comment = commentService.getComment(commentId);
-        commentService.deleteComment(comment);
+        commentService.deleteComment(postId, commentId);
     }
 
     @ExceptionHandler(InvalidCommentDataException.class)
