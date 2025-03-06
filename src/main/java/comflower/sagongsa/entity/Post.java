@@ -3,8 +3,6 @@ package comflower.sagongsa.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 생성해주는 친구
 @AllArgsConstructor  // 모든 필드를 매개변수로 받는 생성자를 생성해주는 친구
 @Builder  // 빌더 패턴을 적용
@@ -21,26 +19,23 @@ public class Post {
     private Long authorId;
 
     @Column(nullable = false)
-    private Long contestId;
-
-    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
-    private int maxMemberCount;
-
-    @Column(nullable = false)
     private int memberCount;
 
     @Column(nullable = false)
-    private int desiredField;
+    private int maxMemberCount;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private int topic;
 
     @Column(nullable = false)
-    private LocalDateTime endedAt;
+    private long createdAt;
+
+    @Column(nullable = false)
+    private long endedAt;
 }

@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Builder
 @Schema(description = "대회 생성 DTO")
@@ -23,10 +21,10 @@ public class CreateContestRequest {
     private String prize;
     @NotNull
     @Schema(description = "대회 시작 시간", example = "2024-01-01 00:00:00")
-    private LocalDateTime startedAt; //  String에서 LocalDateTime 타입으로 변경하면 오류 사라짐
+    private long startedAt;
     @NotNull
     @Schema(description = "대회 종료 시간", example = "2024-01-01 00:00:00")
-    private LocalDateTime endedAt;   //  String에서 LocalDateTime 타입으로 변경하면 오류 사라짐
+    private long endedAt;
     @NotBlank
     @Schema(description = "대회 링크", example = "대회 링크")
     private String link;
