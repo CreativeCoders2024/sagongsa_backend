@@ -1,4 +1,4 @@
-package comflower.sagongsa.dto.response;
+package comflower.sagongsa.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

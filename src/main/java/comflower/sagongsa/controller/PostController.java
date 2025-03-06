@@ -1,8 +1,8 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.request.CreatePostDTO;
-import comflower.sagongsa.dto.request.EditPostDTO;
-import comflower.sagongsa.dto.response.ErrorResponse;
+import comflower.sagongsa.request.CreatePostRequest;
+import comflower.sagongsa.request.EditPostRequest;
+import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.entity.Post;
@@ -67,13 +67,13 @@ public class PostController {
     })
     public Post createPost(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreatePostDTO createPostDTO, BindingResult bindingResult
+            @RequestBody @Valid CreatePostRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidPostDataException();
         }
 
-        return postService.createPost(user.getId(), createPostDTO);
+        return postService.createPost(user.getId(), request);
     }
 
     @PutMapping("/posts/{postId}")
@@ -87,18 +87,18 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "게시글 없음",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public Post editPost(@PathVariable Long postId, @RequestBody @Valid EditPostDTO editPostDTO, BindingResult bindingResult) {
+    public Post editPost(@PathVariable Long postId, @RequestBody @Valid EditPostRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidPostDataException();
         }
 
         Post post = postService.getPost(postId);
 
-        if (!Objects.equals(post.getAuthorId(), editPostDTO.getAuthorId())) {
+        if (!Objects.equals(post.getAuthorId(), request.getAuthorId())) {
             throw new UnauthorizedException();
         }
 
-        return postService.editPost(post, editPostDTO);
+        return postService.editPost(post, request);
     }
 
     @DeleteMapping("/posts/{postId}")

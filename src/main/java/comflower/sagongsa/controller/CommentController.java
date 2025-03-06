@@ -1,8 +1,8 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.request.CreateCommentDTO;
-import comflower.sagongsa.dto.request.EditCommentDTO;
-import comflower.sagongsa.dto.response.ErrorResponse;
+import comflower.sagongsa.request.CreateCommentRequest;
+import comflower.sagongsa.request.EditCommentRequest;
+import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.entity.User;
@@ -60,7 +60,7 @@ public class CommentController {
     public Comment createComment(
             @AuthenticationPrincipal User user,
             @PathVariable Long postId,
-            @RequestBody @Valid CreateCommentDTO createCommentDTO, BindingResult bindingResult
+            @RequestBody @Valid CreateCommentRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidCommentDataException();
@@ -68,12 +68,12 @@ public class CommentController {
 
         Post post = postService.getPost(postId);
 
-        Long parentId = createCommentDTO.getParentId();
+        Long parentId = request.getParentId();
         if (parentId != null && !commentService.isCommentPresentById(parentId)) {
             throw new CommentNotFoundException(parentId);
         }
 
-        return commentService.createComment(user.getId(), post.getId(), createCommentDTO);
+        return commentService.createComment(user.getId(), post.getId(), request);
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")
@@ -87,14 +87,14 @@ public class CommentController {
     })
     public Comment editComment(
             @PathVariable Long postId, @PathVariable Long commentId,
-            @RequestBody @Valid EditCommentDTO editCommentDTO, BindingResult bindingResult
+            @RequestBody @Valid EditCommentRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidCommentDataException();
         }
 
         Comment comment = commentService.getComment(commentId);
-        return commentService.editComment(comment, editCommentDTO);
+        return commentService.editComment(comment, request);
     }
 
     @DeleteMapping("/posts/{postId}/comments/{commentId}")

@@ -1,4 +1,4 @@
-package comflower.sagongsa.dto.request;
+package comflower.sagongsa.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Schema(description = "게시글 생성 DTO")
-public class CreatePostDTO {
+public class CreatePostRequest {
     @NotNull
     @Schema(description = "대회 ID", example = "1")
     private Long contestId;

@@ -1,7 +1,7 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.dto.request.EditUserDTO;
-import comflower.sagongsa.dto.request.SignupDTO;
+import comflower.sagongsa.request.EditUserRequest;
+import comflower.sagongsa.request.SignupRequest;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.UserNotFoundException;
 import comflower.sagongsa.repository.UserRepository;
@@ -23,27 +23,27 @@ public class UserService {
     }
 
     @Transactional
-    public User signup(SignupDTO signupDTO) {
+    public User signup(SignupRequest request) {
         User user = User.builder()
-                .username(signupDTO.getUsername())
-                .password(signupDTO.getPassword()) // TODO: Encrypt password
-                .nickname(signupDTO.getNickname())
-                .email(signupDTO.getEmail())
+                .username(request.getUsername())
+                .password(request.getPassword()) // TODO: Encrypt password
+                .nickname(request.getNickname())
+                .email(request.getEmail())
                 .build();
 
         return userRepository.save(user);
     }
 
     @Transactional
-    public User editUser(User user, EditUserDTO editUserDTO) {
-        if (editUserDTO.getNickname() != null) {
-            user.setNickname(editUserDTO.getNickname());
+    public User editUser(User user, EditUserRequest request) {
+        if (request.getNickname() != null) {
+            user.setNickname(request.getNickname());
         }
-        if (editUserDTO.getField() != null) {
-            user.setField(editUserDTO.getField());
+        if (request.getField() != null) {
+            user.setField(request.getField());
         }
-        if (editUserDTO.getIntroduction() != null) {
-            user.setIntroduction(editUserDTO.getIntroduction());
+        if (request.getIntroduction() != null) {
+            user.setIntroduction(request.getIntroduction());
         }
 
         return userRepository.save(user);  // 이거 안써주니까 수정이 안됨

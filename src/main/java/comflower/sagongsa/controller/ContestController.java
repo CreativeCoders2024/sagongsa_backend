@@ -1,9 +1,9 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.request.CreateContestDTO;
-import comflower.sagongsa.dto.request.EditContestDTO;
-import comflower.sagongsa.dto.response.ErrorDataResponse;
-import comflower.sagongsa.dto.response.ErrorResponse;
+import comflower.sagongsa.request.CreateContestRequest;
+import comflower.sagongsa.request.EditContestRequest;
+import comflower.sagongsa.response.ErrorDataResponse;
+import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.entity.Contest;
@@ -55,13 +55,13 @@ public class ContestController {
     })
     public Contest createContest(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreateContestDTO createContestDTO, BindingResult bindingResult
+            @RequestBody @Valid CreateContestRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidContestDataException();
         }
 
-        return contestService.createContest(user.getId(), createContestDTO);
+        return contestService.createContest(user.getId(), request);
     }
 
     @GetMapping("/contests/{contestId}")
@@ -85,9 +85,9 @@ public class ContestController {
             @ApiResponse(responseCode = "400", description = "잘못된 콘테스트 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public Contest editContest(@PathVariable Long contestId, @RequestBody @Valid EditContestDTO editContestDTO) {
+    public Contest editContest(@PathVariable Long contestId, @RequestBody @Valid EditContestRequest request) {
         Contest contest = contestService.getContest(contestId);
-        return contestService.editContest(contest, editContestDTO);
+        return contestService.editContest(contest, request);
     }
 
     @DeleteMapping("/contests/{contestId}")

@@ -1,7 +1,7 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.dto.request.CreateCommentDTO;
-import comflower.sagongsa.dto.request.EditCommentDTO;
+import comflower.sagongsa.request.CreateCommentRequest;
+import comflower.sagongsa.request.EditCommentRequest;
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.error.CommentNotFoundException;
@@ -29,19 +29,19 @@ public class CommentService {
         return commentRepository.findByPostId(post.getId());
     }
 
-    public Comment createComment(Long authorId, Long postId, CreateCommentDTO createCommentDTO) {
+    public Comment createComment(Long authorId, Long postId, CreateCommentRequest body) {
         Comment comment = Comment.builder()
                 .postId(postId)
                 .authorId(authorId)
-                .content(createCommentDTO.getContent())
+                .content(body.getContent())
                 .createdAt(LocalDateTime.now())
-                .parentId(createCommentDTO.getParentId())
+                .parentId(body.getParentId())
                 .build();
         return commentRepository.save(comment);
     }
 
-    public Comment editComment(Comment comment, EditCommentDTO editCommentDTO) {
-        comment.setContent(editCommentDTO.getContent());
+    public Comment editComment(Comment comment, EditCommentRequest body) {
+        comment.setContent(body.getContent());
         comment.setEditedAt(LocalDateTime.now());
         return commentRepository.save(comment);
     }

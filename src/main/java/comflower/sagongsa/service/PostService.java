@@ -1,7 +1,7 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.dto.request.CreatePostDTO;
-import comflower.sagongsa.dto.request.EditPostDTO;
+import comflower.sagongsa.request.CreatePostRequest;
+import comflower.sagongsa.request.EditPostRequest;
 import comflower.sagongsa.entity.Post;
 import comflower.sagongsa.error.PostNotFoundException;
 import comflower.sagongsa.repository.PostRepository;
@@ -25,29 +25,29 @@ public class PostService {
         return postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
     }
 
-    public Post createPost(Long authorId, CreatePostDTO createPostDTO) {
+    public Post createPost(Long authorId, CreatePostRequest request) {
         Post post = Post.builder()
                 .authorId(authorId)
-                .contestId(createPostDTO.getContestId())
-                .title(createPostDTO.getTitle())
-                .content(createPostDTO.getContent())
-                .maxMemberCount(createPostDTO.getMaxMemberCount())
-                .memberCount(createPostDTO.getMemberCount())
-                .desiredField(createPostDTO.getDesiredField())
+                .contestId(request.getContestId())
+                .title(request.getTitle())
+                .content(request.getContent())
+                .maxMemberCount(request.getMaxMemberCount())
+                .memberCount(request.getMemberCount())
+                .desiredField(request.getDesiredField())
                 .createdAt(LocalDateTime.now())
-                .endedAt(createPostDTO.getEndedAt())
+                .endedAt(request.getEndedAt())
                 .build();
         return postRepository.save(post);
     }
 
     @Transactional
-    public Post editPost(Post post, EditPostDTO editPostDTO) {
-        post.setTitle(editPostDTO.getTitle());
-        post.setContent(editPostDTO.getContent());
-        post.setMemberCount(editPostDTO.getMemberCount());
-        post.setMaxMemberCount(editPostDTO.getMaxMemberCount());
-        post.setDesiredField(editPostDTO.getDesiredField());
-        post.setEndedAt(editPostDTO.getEndedAt());
+    public Post editPost(Post post, EditPostRequest request) {
+        post.setTitle(request.getTitle());
+        post.setContent(request.getContent());
+        post.setMemberCount(request.getMemberCount());
+        post.setMaxMemberCount(request.getMaxMemberCount());
+        post.setDesiredField(request.getDesiredField());
+        post.setEndedAt(request.getEndedAt());
         return postRepository.save(post);
     }
 

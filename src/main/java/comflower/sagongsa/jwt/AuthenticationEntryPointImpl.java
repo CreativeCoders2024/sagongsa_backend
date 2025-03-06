@@ -1,7 +1,7 @@
 package comflower.sagongsa.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import comflower.sagongsa.dto.response.ErrorResponse;
+import comflower.sagongsa.response.ErrorResponse;
 import comflower.sagongsa.error.ErrorType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package comflower.sagongsa.dto.request;
+package comflower.sagongsa.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @Schema(description = "회원가입 DTO")
-public class SignupDTO {
+public class SignupRequest {
     @Schema(description = "사용자 이름", example = "john.doe")
     private String username;
     @Schema(description = "사용자 비밀번호", example = "1234")

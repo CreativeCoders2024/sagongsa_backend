@@ -1,10 +1,10 @@
 package comflower.sagongsa.controller;
 
-import comflower.sagongsa.dto.request.EditUserDTO;
-import comflower.sagongsa.dto.request.LoginDTO;
-import comflower.sagongsa.dto.request.SignupDTO;
-import comflower.sagongsa.dto.response.ErrorResponse;
-import comflower.sagongsa.dto.response.SignupResponse;
+import comflower.sagongsa.request.EditUserRequest;
+import comflower.sagongsa.request.LoginRequest;
+import comflower.sagongsa.request.SignupRequest;
+import comflower.sagongsa.response.ErrorResponse;
+import comflower.sagongsa.response.SignupResponse;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.error.ErrorType;
 import comflower.sagongsa.error.InvalidCredentialsException;
@@ -46,22 +46,22 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "회원 중복",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public ResponseEntity<SignupResponse> signup(@RequestBody SignupDTO signupDTO) {
-        if (userService.isUserPresentByUsername(signupDTO.getUsername())) {
-            throw new UserAlreadyExistsException(signupDTO.getUsername());
+    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request) {
+        if (userService.isUserPresentByUsername(request.getUsername())) {
+            throw new UserAlreadyExistsException(request.getUsername());
         }
 
-        User createdUser = userService.signup(signupDTO);
-
-        String jwtToken = jwtHelper.generateToken(createdUser.getId());
-        SignupResponse body = SignupResponse.builder()
-                .userId(createdUser.getId())
-                .token(jwtToken)
-                .build();
+        User createdUser = userService.signup(request);
+        String jwt = jwtHelper.generateToken(createdUser.getId());
 
         return ResponseEntity
                 .created(URI.create(createdUser.getId().toString()))  // header - Location에 추가해줌
-                .body(body);
+                .body(
+                        SignupResponse.builder()
+                                .userId(createdUser.getId())
+                                .token(jwt)
+                                .build()
+                );
     }
 
     @PostMapping("/login")
@@ -74,12 +74,12 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "회원 없음",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public SignupResponse login(@RequestBody LoginDTO loginDTO) {
-        User user = userRepository.findByUsername(loginDTO.getUsername())
+    public SignupResponse login(@RequestBody LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(InvalidCredentialsException::new);
 
         // TODO: Encrypt password
-        if (!Objects.equals(user.getPassword(), loginDTO.getPassword())) {
+        if (!Objects.equals(user.getPassword(), request.getPassword())) {
             throw new InvalidCredentialsException();
         }
 
@@ -122,8 +122,8 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "잘못된 회원 정보 수정 데이터",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
     })
-    public User editUser(@AuthenticationPrincipal User user, @RequestBody EditUserDTO editUserDTO) {
-        return userService.editUser(user, editUserDTO);
+    public User editUser(@AuthenticationPrincipal User user, @RequestBody EditUserRequest request) {
+        return userService.editUser(user, request);
     }
 
     @DeleteMapping("/users/@me")
