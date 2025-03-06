@@ -1,16 +1,15 @@
 package comflower.sagongsa.service;
 
-import comflower.sagongsa.exception.UnauthorizedException;
-import comflower.sagongsa.request.CreatePostRequest;
-import comflower.sagongsa.request.EditPostRequest;
 import comflower.sagongsa.entity.Post;
+import comflower.sagongsa.exception.UnauthorizedException;
 import comflower.sagongsa.exception.UnknownPostException;
 import comflower.sagongsa.repository.PostRepository;
+import comflower.sagongsa.request.CreatePostRequest;
+import comflower.sagongsa.request.EditPostRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,13 +29,12 @@ public class PostService {
     public Post createPost(Long authorId, CreatePostRequest request) {
         Post post = Post.builder()
                 .authorId(authorId)
-                .contestId(request.getContestId())
                 .title(request.getTitle())
                 .content(request.getContent())
-                .maxMemberCount(request.getMaxMemberCount())
                 .memberCount(request.getMemberCount())
-                .desiredField(request.getDesiredField())
-                .createdAt(LocalDateTime.now())
+                .maxMemberCount(request.getMaxMemberCount())
+                .topic(request.getTopic())
+                .createdAt(System.currentTimeMillis())
                 .endedAt(request.getEndedAt())
                 .build();
         return postRepository.save(post);
@@ -54,7 +52,7 @@ public class PostService {
         post.setContent(request.getContent());
         post.setMemberCount(request.getMemberCount());
         post.setMaxMemberCount(request.getMaxMemberCount());
-        post.setDesiredField(request.getDesiredField());
+        post.setTopic(request.getTopic());
         post.setEndedAt(request.getEndedAt());
         return postRepository.save(post);
     }
