@@ -3,8 +3,6 @@ package comflower.sagongsa.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -27,9 +25,9 @@ public class Comment {
     private String content;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private long createdAt;
 
-    private LocalDateTime editedAt;
+    private Long editedAt;
 
     private Long parentId;
 }
