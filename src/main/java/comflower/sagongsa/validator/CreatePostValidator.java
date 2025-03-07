@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
@@ -18,9 +17,12 @@ public class CreatePostValidator implements Validator {
     public void validate(@NonNull Object target, @NonNull Errors errors) {
         CreatePostRequest request = (CreatePostRequest) target;
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "title.required", "제목을 입력해주세요.");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "content", "content.required", "내용을 입력해주세요.");
-
+        if (request.getTitle() == null || request.getTitle().isBlank()) {
+            errors.rejectValue("title", "title.required", "제목을 입력해주세요.");
+        }
+        if (request.getContent() == null || request.getContent().isBlank()) {
+            errors.rejectValue("content", "content.required", "내용을 입력해주세요.");
+        }
         if (request.getMemberCount() < 1) {
             errors.rejectValue("memberCount", "memberCount", "참여 인원은 1명 이상이어야 합니다.");
         }
