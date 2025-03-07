@@ -50,7 +50,7 @@ public class PostController {
             @Validated @RequestBody CreatePostRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            throw new InvalidFormBodyException(new HashMap<>());
+            throw new InvalidFormBodyException(bindingResult);
         }
 
         return postService.createPost(user.getId(), request);

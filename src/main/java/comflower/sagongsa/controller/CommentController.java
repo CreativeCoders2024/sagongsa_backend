@@ -45,7 +45,7 @@ public class CommentController {
             @Validated @RequestBody CreateCommentRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            throw new InvalidFormBodyException(new HashMap<>());
+            throw new InvalidFormBodyException(bindingResult);
         }
 
         return commentService.createComment(user.getId(), postId, request);
