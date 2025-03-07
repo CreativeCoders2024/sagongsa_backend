@@ -5,6 +5,7 @@ import comflower.sagongsa.entity.User;
 import comflower.sagongsa.exception.InvalidFormBodyException;
 import comflower.sagongsa.request.CreateCommentRequest;
 import comflower.sagongsa.request.EditCommentRequest;
+import comflower.sagongsa.response.CommentWithUser;
 import comflower.sagongsa.service.CommentService;
 import comflower.sagongsa.validator.CreateCommentValidator;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -33,8 +34,8 @@ public class CommentController {
     }
 
     @GetMapping("/posts/{postId}/comments")
-    public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
-        return commentService.getCommentsByPost(postId);
+    public List<CommentWithUser> getCommentsByPostId(@PathVariable Long postId) {
+        return commentService.getCommentsWithUserByPost(postId);
     }
 
     @PostMapping("/posts/{postId}/comments")
