@@ -41,7 +41,7 @@ public class CommentService {
                 .postId(postId)
                 .authorId(authorId)
                 .content(request.getContent())
-                .createdAt(LocalDateTime.now())
+                .createdAt(System.currentTimeMillis())
                 .parentId(request.getParentId())
                 .build();
         return commentRepository.save(comment);
@@ -54,7 +54,7 @@ public class CommentService {
 
         Comment comment = getComment(commentId);
         comment.setContent(request.getContent());
-        comment.setEditedAt(LocalDateTime.now());
+        comment.setEditedAt(System.currentTimeMillis());
 
         return commentRepository.save(comment);
     }
