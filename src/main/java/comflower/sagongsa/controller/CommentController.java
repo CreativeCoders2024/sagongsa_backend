@@ -6,12 +6,15 @@ import comflower.sagongsa.exception.InvalidFormBodyException;
 import comflower.sagongsa.request.CreateCommentRequest;
 import comflower.sagongsa.request.EditCommentRequest;
 import comflower.sagongsa.service.CommentService;
+import comflower.sagongsa.validator.CreateCommentValidator;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +25,12 @@ import java.util.List;
 @Tag(name = "comment")
 public class CommentController {
     private final CommentService commentService;
+    private final CreateCommentValidator createPostValidator;
+
+    @InitBinder
+    public void init(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(createPostValidator);
+    }
 
     @GetMapping("/posts/{postId}/comments")
     public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
@@ -33,7 +42,7 @@ public class CommentController {
     public Comment createComment(
             @AuthenticationPrincipal User user,
             @PathVariable Long postId,
-            @RequestBody @Valid CreateCommentRequest request, BindingResult bindingResult
+            @Validated @RequestBody CreateCommentRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidFormBodyException(new HashMap<>());
