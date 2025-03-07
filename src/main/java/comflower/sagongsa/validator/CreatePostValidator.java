@@ -29,7 +29,7 @@ public class CreatePostValidator implements Validator {
         if (request.getMaxMemberCount() < request.getMemberCount()) {
             errors.rejectValue("maxMemberCount", "maxMemberCount", "최대 참여 인원은 현재 참여 인원보다 많아야 합니다.");
         }
-        if (tagHelper.isTag(TagHelper.POST_TAGS, request.getTopic())) {
+        if (!tagHelper.isTag(TagHelper.POST_TAGS, request.getTopic())) {
             errors.rejectValue("topic", "topic.invalid", "올바르지 않은 주제입니다.");
         }
     }
