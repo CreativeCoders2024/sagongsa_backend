@@ -7,9 +7,9 @@ import comflower.sagongsa.request.CreateContestRequest;
 import comflower.sagongsa.request.EditContestRequest;
 import comflower.sagongsa.service.ContestService;
 import comflower.sagongsa.validator.CreateContestValidator;
+import comflower.sagongsa.validator.EditContestValidator;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,12 +25,12 @@ import java.util.List;
 @Tag(name = "contest")
 public class ContestController {
     private final ContestService contestService;
-
     private final CreateContestValidator createContestValidator;
+    private final EditContestValidator editContestValidator;
 
     @InitBinder
     public void init(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(createContestValidator);
+        webDataBinder.addValidators(createContestValidator, editContestValidator);
     }
 
     @GetMapping("/contests")
@@ -58,7 +58,14 @@ public class ContestController {
 
     @PutMapping("/contests/{contestId}")
     @SecurityRequirement(name = "bearerAuth")
-    public Contest editContest(@PathVariable Long contestId, @RequestBody @Valid EditContestRequest request) {
+    public Contest editContest(
+            @PathVariable Long contestId,
+            @Validated @RequestBody EditContestRequest request, BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidFormBodyException(bindingResult);
+        }
+
         return contestService.editContest(contestId, request);
     }
 
