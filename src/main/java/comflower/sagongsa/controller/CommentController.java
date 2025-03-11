@@ -8,6 +8,7 @@ import comflower.sagongsa.request.EditCommentRequest;
 import comflower.sagongsa.response.CommentWithUser;
 import comflower.sagongsa.service.CommentService;
 import comflower.sagongsa.validator.CreateCommentValidator;
+import comflower.sagongsa.validator.EditCommentValidator;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,11 +27,12 @@ import java.util.List;
 @Tag(name = "comment")
 public class CommentController {
     private final CommentService commentService;
-    private final CreateCommentValidator createPostValidator;
+    private final CreateCommentValidator createCommentValidator;
+    private final EditCommentValidator editCommentValidator;
 
     @InitBinder
     public void init(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(createPostValidator);
+        webDataBinder.addValidators(createCommentValidator, editCommentValidator);
     }
 
     @GetMapping("/posts/{postId}/comments")
@@ -56,10 +58,10 @@ public class CommentController {
     @SecurityRequirement(name = "bearerAuth")
     public Comment editComment(
             @PathVariable Long postId, @PathVariable Long commentId,
-            @RequestBody @Valid EditCommentRequest request, BindingResult bindingResult
+            @Validated @RequestBody EditCommentRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            throw new InvalidFormBodyException(new HashMap<>());
+            throw new InvalidFormBodyException(bindingResult);
         }
 
         return commentService.editComment(postId, commentId, request);
