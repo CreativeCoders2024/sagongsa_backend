@@ -7,6 +7,7 @@ import comflower.sagongsa.request.CreatePostRequest;
 import comflower.sagongsa.request.EditPostRequest;
 import comflower.sagongsa.service.PostService;
 import comflower.sagongsa.validator.CreatePostValidator;
+import comflower.sagongsa.validator.EditPostValidator;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,10 +28,11 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     private final CreatePostValidator createPostValidator;
+    private final EditPostValidator editPostValidator;
 
     @InitBinder
     public void init(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(createPostValidator);
+        webDataBinder.addValidators(createPostValidator, editPostValidator);
     }
 
     @GetMapping("/posts")
@@ -58,9 +60,12 @@ public class PostController {
 
     @PutMapping("/posts/{postId}")
     @SecurityRequirement(name = "bearerAuth")
-    public Post editPost(@PathVariable Long postId, @RequestBody @Valid EditPostRequest request, BindingResult bindingResult) {
+    public Post editPost(
+        @PathVariable Long postId,
+        @Validated @RequestBody EditPostRequest request, BindingResult bindingResult
+    ) {
         if (bindingResult.hasErrors()) {
-            throw new InvalidFormBodyException(new HashMap<>());
+            throw new InvalidFormBodyException(bindingResult);
         }
 
         return postService.editPost(postId, request);
