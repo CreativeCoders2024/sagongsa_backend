@@ -2,7 +2,6 @@ package comflower.sagongsa.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 생성해주는 친구
 @AllArgsConstructor  // 모든 필드를 매개변수로 받는 생성자를 생성해주는 친구
@@ -36,6 +35,5 @@ public class Contest {
     private String link;
 
     @Column(nullable = false)
-    @ColumnDefault("0")
-    private Long topic;
+    private int topic;
 }

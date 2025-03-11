@@ -9,7 +9,7 @@ public class CreateContestRequest {
     private String title;
     private String link;
     private String prize;
-    private long topic;
+    private int topic;
     private long startedAt;
     private long endedAt;
     private String thumbnail;
