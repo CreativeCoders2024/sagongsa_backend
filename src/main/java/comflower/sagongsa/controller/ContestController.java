@@ -6,8 +6,7 @@ import comflower.sagongsa.exception.InvalidFormBodyException;
 import comflower.sagongsa.request.CreateContestRequest;
 import comflower.sagongsa.request.EditContestRequest;
 import comflower.sagongsa.service.ContestService;
-import comflower.sagongsa.validator.CreateContestValidator;
-import comflower.sagongsa.validator.EditContestValidator;
+import comflower.sagongsa.request.RequestValidator;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +24,11 @@ import java.util.List;
 @Tag(name = "contest")
 public class ContestController {
     private final ContestService contestService;
-    private final CreateContestValidator createContestValidator;
-    private final EditContestValidator editContestValidator;
+    private final RequestValidator requestValidator;
 
     @InitBinder
     public void init(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(createContestValidator, editContestValidator);
+        webDataBinder.addValidators(requestValidator);
     }
 
     @GetMapping("/contests")

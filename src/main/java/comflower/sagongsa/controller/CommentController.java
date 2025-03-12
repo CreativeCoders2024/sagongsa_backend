@@ -7,11 +7,9 @@ import comflower.sagongsa.request.CreateCommentRequest;
 import comflower.sagongsa.request.EditCommentRequest;
 import comflower.sagongsa.response.CommentWithUser;
 import comflower.sagongsa.service.CommentService;
-import comflower.sagongsa.validator.CreateCommentValidator;
-import comflower.sagongsa.validator.EditCommentValidator;
+import comflower.sagongsa.request.RequestValidator;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -19,7 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -27,12 +24,11 @@ import java.util.List;
 @Tag(name = "comment")
 public class CommentController {
     private final CommentService commentService;
-    private final CreateCommentValidator createCommentValidator;
-    private final EditCommentValidator editCommentValidator;
+    private final RequestValidator requestValidator;
 
     @InitBinder
     public void init(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(createCommentValidator, editCommentValidator);
+        webDataBinder.addValidators(requestValidator);
     }
 
     @GetMapping("/posts/{postId}/comments")
