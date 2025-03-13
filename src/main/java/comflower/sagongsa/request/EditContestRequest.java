@@ -1,15 +1,11 @@
 package comflower.sagongsa.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Getter;
 import org.springframework.validation.Errors;
 
 import java.net.URI;
 
 @Getter
-@Builder
-@Schema(description = "대회 수정 DTO")
 public class EditContestRequest implements Request {
     private String title;
     private String link;

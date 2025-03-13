@@ -1,14 +1,12 @@
 package comflower.sagongsa.request;
 
 import comflower.sagongsa.util.TagHelper;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.validation.Errors;
 
 import java.net.URI;
 
 @Getter
-@Schema(description = "대회 생성 DTO")
 public class CreateContestRequest implements Request {
     private String title;
     private String link;
