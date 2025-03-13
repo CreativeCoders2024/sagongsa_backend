@@ -1,8 +1,8 @@
 package comflower.sagongsa.request;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class SignupRequest implements Request {
     private String username;
     private String password;

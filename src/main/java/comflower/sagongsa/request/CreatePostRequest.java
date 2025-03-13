@@ -1,10 +1,10 @@
 package comflower.sagongsa.request;
 
 import comflower.sagongsa.util.TagHelper;
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.validation.Errors;
 
-@Getter
+@Data
 public class CreatePostRequest implements Request {
     private String title;
     private String content;

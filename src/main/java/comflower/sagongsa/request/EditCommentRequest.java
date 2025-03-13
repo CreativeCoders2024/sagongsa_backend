@@ -1,9 +1,9 @@
 package comflower.sagongsa.request;
 
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.validation.Errors;
 
-@Getter
+@Data
 public class EditCommentRequest implements Request {
     private String content;
 

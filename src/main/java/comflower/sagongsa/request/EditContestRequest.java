@@ -1,11 +1,11 @@
 package comflower.sagongsa.request;
 
-import lombok.Getter;
+import lombok.Data;
 import org.springframework.validation.Errors;
 
 import java.net.URI;
 
-@Getter
+@Data
 public class EditContestRequest implements Request {
     private String title;
     private String link;
