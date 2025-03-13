@@ -3,6 +3,7 @@ package comflower.sagongsa.service;
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.exception.UnknownCommentException;
 import comflower.sagongsa.exception.UnknownPostException;
+import comflower.sagongsa.projection.UserCommentProjection;
 import comflower.sagongsa.repository.CommentRepository;
 import comflower.sagongsa.repository.PostRepository;
 import comflower.sagongsa.request.CreateCommentRequest;
@@ -10,7 +11,6 @@ import comflower.sagongsa.request.EditCommentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,7 +19,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    public List<Comment> getCommentsByPost(Long postId) {
+    public List<UserCommentProjection> getCommentsByPost(Long postId) {
         if (postRepository.findById(postId).isEmpty()) {
             throw new UnknownPostException();
         }
