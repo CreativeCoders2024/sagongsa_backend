@@ -6,22 +6,17 @@ import comflower.sagongsa.exception.InvalidFormBodyException;
 import comflower.sagongsa.request.CreateContestRequest;
 import comflower.sagongsa.request.EditContestRequest;
 import comflower.sagongsa.service.ContestService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import comflower.sagongsa.request.RequestValidator;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -29,13 +24,14 @@ import java.util.List;
 @Tag(name = "contest")
 public class ContestController {
     private final ContestService contestService;
+    private final RequestValidator requestValidator;
+
+    @InitBinder
+    public void init(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(requestValidator);
+    }
 
     @GetMapping("/contests")
-    @Operation(summary = "모든 콘테스트 조회", description = "모든 콘테스트를 조회합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "모든 콘테스트 조회 성공",
-                    content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Contest.class)))}),
-    })
     public List<Contest> getContests() {
         return contestService.getAllContests();
     }
@@ -44,10 +40,10 @@ public class ContestController {
     @SecurityRequirement(name = "bearerAuth")
     public Contest createContest(
             @AuthenticationPrincipal User user,
-            @RequestBody @Valid CreateContestRequest request, BindingResult bindingResult
+            @Validated @RequestBody CreateContestRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
-            throw new InvalidFormBodyException(new HashMap<>());
+            throw new InvalidFormBodyException(bindingResult);
         }
 
         return contestService.createContest(user.getId(), request);
@@ -60,7 +56,14 @@ public class ContestController {
 
     @PutMapping("/contests/{contestId}")
     @SecurityRequirement(name = "bearerAuth")
-    public Contest editContest(@PathVariable Long contestId, @RequestBody @Valid EditContestRequest request) {
+    public Contest editContest(
+            @PathVariable Long contestId,
+            @Validated @RequestBody EditContestRequest request, BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            throw new InvalidFormBodyException(bindingResult);
+        }
+
         return contestService.editContest(contestId, request);
     }
 

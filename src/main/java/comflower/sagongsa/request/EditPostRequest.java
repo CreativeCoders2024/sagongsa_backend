@@ -1,36 +1,35 @@
 package comflower.sagongsa.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
+import comflower.sagongsa.util.TagHelper;
+import lombok.Data;
+import org.springframework.validation.Errors;
 
-@Getter
-@Builder
-@Schema(description = "게시글 수정 DTO")
-public class EditPostRequest {
-    @NotBlank
-    @Schema(description = "게시글 제목", example = "게시글 제목")
+@Data
+public class EditPostRequest implements Request {
     private String title;
-
-    @NotBlank
-    @Schema(description = "게시글 내용", example = "게시글 내용")
     private String content;
-
-    @NotNull
-    @Schema(description = "사용자 ID", example = "1")
-    private Long authorId;
-
-    @Schema(description = "현재 인원", example = "5")
+    private long authorId;
     private int memberCount;
-
-    @Schema(description = "최대 인원", example = "10")
     private int maxMemberCount;
-
-    @Schema(description = "원하는 분야", example = "1")
     private int topic;
-
-    @Schema(description = "게시글 종료 시간", example = "2024-01-01 00:00:00")
     private long endedAt;
+
+    @Override
+    public void validate(Errors errors) {
+        if (title == null || title.isBlank()) {
+            errors.rejectValue("title", "title.required", "제목을 입력해주세요.");
+        }
+        if (content == null || content.isBlank()) {
+            errors.rejectValue("content", "content.required", "내용을 입력해주세요.");
+        }
+        if (memberCount < 1) {
+            errors.rejectValue("memberCount", "memberCount", "참여 인원은 1명 이상이어야 합니다.");
+        }
+        if (maxMemberCount < memberCount) {
+            errors.rejectValue("maxMemberCount", "maxMemberCount", "최대 참여 인원은 현재 참여 인원보다 많아야 합니다.");
+        }
+        if (!TagHelper.isTag(TagHelper.POST_TAGS, topic)) {
+            errors.rejectValue("topic", "topic.invalid", "올바르지 않은 주제입니다.");
+        }
+    }
 }
