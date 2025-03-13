@@ -30,5 +30,5 @@ public class EditContestRequest {
     private String link;
     @NotNull
     @Schema(description = "대회 분야", example = "대회 분야")
-    private Long field;
+    private int topic;
 }

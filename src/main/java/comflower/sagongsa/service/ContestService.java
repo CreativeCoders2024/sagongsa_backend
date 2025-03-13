@@ -33,7 +33,7 @@ public class ContestService {
                 .startedAt(request.getStartedAt())
                 .endedAt(request.getEndedAt())
                 .link(request.getLink())
-                .field(request.getField())
+                .topic(request.getTopic())
                 .build();
         return contestRepository.save(contest);
     }
@@ -47,7 +47,7 @@ public class ContestService {
         contest.setStartedAt(request.getStartedAt());
         contest.setEndedAt(request.getEndedAt());
         contest.setLink(request.getLink());
-        contest.setField(request.getField());
+        contest.setTopic(request.getTopic());
         return contestRepository.save(contest);
     }
 
