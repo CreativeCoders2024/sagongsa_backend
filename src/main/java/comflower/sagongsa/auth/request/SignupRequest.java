@@ -1,19 +1,28 @@
 package comflower.sagongsa.auth.request;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
+import comflower.sagongsa.common.request.Request;
+import lombok.Data;
 
-@Getter
-@Builder
-@Schema(description = "회원가입 DTO")
-public class SignupRequest {
-    @Schema(description = "사용자 이름", example = "john.doe")
+@Data
+public class SignupRequest implements Request {
     private String username;
-    @Schema(description = "사용자 비밀번호", example = "1234")
     private String password;
-    @Schema(description = "사용자 닉네임", example = "닉네임")
     private String nickname;
-    @Schema(description = "사용자 이메일", example = "example@example.com")
     private String email;
+
+    @Override
+    public void validate(org.springframework.validation.Errors errors) {
+        if (username == null || username.isBlank()) {
+            errors.rejectValue("username", "username.required", "아이디를 입력해주세요.");
+        }
+        if (password == null || password.isBlank()) {
+            errors.rejectValue("password", "password.required", "비밀번호를 입력해주세요.");
+        }
+        if (nickname == null || nickname.isBlank()) {
+            errors.rejectValue("nickname", "nickname.required", "닉네임을 입력해주세요.");
+        }
+        if (email == null || email.isBlank()) {
+            errors.rejectValue("email", "email.required", "이메일을 입력해주세요.");
+        }
+    }
 }

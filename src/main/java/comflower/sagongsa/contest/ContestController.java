@@ -3,7 +3,7 @@ package comflower.sagongsa.contest;
 import comflower.sagongsa.common.exception.InvalidFormBodyException;
 import comflower.sagongsa.contest.request.CreateContestRequest;
 import comflower.sagongsa.contest.request.EditContestRequest;
-import comflower.sagongsa.request.RequestValidator;
+import comflower.sagongsa.common.request.RequestValidator;
 import comflower.sagongsa.user.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

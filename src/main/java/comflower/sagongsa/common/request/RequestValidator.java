@@ -1,4 +1,4 @@
-package comflower.sagongsa.request;
+package comflower.sagongsa.common.request;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;

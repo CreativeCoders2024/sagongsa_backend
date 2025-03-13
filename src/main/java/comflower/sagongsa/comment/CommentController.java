@@ -4,7 +4,7 @@ import comflower.sagongsa.comment.projection.UserCommentProjection;
 import comflower.sagongsa.comment.request.CreateCommentRequest;
 import comflower.sagongsa.comment.request.EditCommentRequest;
 import comflower.sagongsa.common.exception.InvalidFormBodyException;
-import comflower.sagongsa.request.RequestValidator;
+import comflower.sagongsa.common.request.RequestValidator;
 import comflower.sagongsa.user.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
