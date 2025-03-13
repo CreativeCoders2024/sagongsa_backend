@@ -1,25 +1,31 @@
 package comflower.sagongsa.service;
 
 import comflower.sagongsa.entity.Comment;
-import comflower.sagongsa.entity.User;
 import comflower.sagongsa.exception.UnknownCommentException;
 import comflower.sagongsa.exception.UnknownPostException;
+import comflower.sagongsa.projection.UserCommentProjection;
 import comflower.sagongsa.repository.CommentRepository;
 import comflower.sagongsa.repository.PostRepository;
 import comflower.sagongsa.request.CreateCommentRequest;
 import comflower.sagongsa.request.EditCommentRequest;
-import comflower.sagongsa.response.CommentWithUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+
+    public List<UserCommentProjection> getCommentsByPost(Long postId) {
+        if (postRepository.findById(postId).isEmpty()) {
+            throw new UnknownPostException();
+        }
+
+        return commentRepository.findByPostId(postId);
+    }
 
     public Comment createComment(Long authorId, Long postId, CreateCommentRequest request) {
         if (postRepository.findById(postId).isEmpty()) {
@@ -64,27 +70,5 @@ public class CommentService {
 
     private Comment getComment(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(UnknownCommentException::new);
-    }
-
-    public List<CommentWithUser> getCommentsWithUserByPost(Long postId) {
-        List<Object[]> results = commentRepository.findWithUserByPostId(postId);
-
-        return results
-                .stream()
-                .map(row -> {
-                    Comment comment = (Comment) row[0];
-                    User user = (User) row[1];
-                    return new CommentWithUser(
-                            comment.getId(),
-                            comment.getPostId(),
-                            comment.getAuthorId(),
-                            comment.getContent(),
-                            comment.getCreatedAt(),
-                            comment.getEditedAt(),
-                            comment.getParentId(),
-                            user
-                    );
-                })
-                .collect(Collectors.toList());
     }
 }
