@@ -10,5 +10,6 @@ public interface UserCommentProjection {
     long getCreatedAt();
     Long getEditedAt();
     Long getParentId();
-    User getUser();
+
+    User getAuthor();
 }
