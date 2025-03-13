@@ -3,6 +3,7 @@ package comflower.sagongsa.controller;
 import comflower.sagongsa.entity.Comment;
 import comflower.sagongsa.entity.User;
 import comflower.sagongsa.exception.InvalidFormBodyException;
+import comflower.sagongsa.projection.UserCommentProjection;
 import comflower.sagongsa.request.CreateCommentRequest;
 import comflower.sagongsa.request.EditCommentRequest;
 import comflower.sagongsa.service.CommentService;
@@ -24,7 +25,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/posts/{postId}/comments")
-    public List<Comment> getCommentsByPostId(@PathVariable Long postId) {
+    public List<UserCommentProjection> getCommentsByPostId(@PathVariable Long postId) {
         return commentService.getCommentsByPost(postId);
     }
 
