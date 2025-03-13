@@ -47,7 +47,7 @@ public class ContestService {
         contest.setStartedAt(request.getStartedAt());
         contest.setEndedAt(request.getEndedAt());
         contest.setLink(request.getLink());
-        contest.setTopic(request.getField());
+        contest.setTopic(request.getTopic());
         return contestRepository.save(contest);
     }
 
