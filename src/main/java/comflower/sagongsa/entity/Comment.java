@@ -3,8 +3,8 @@ package comflower.sagongsa.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
 @Setter
