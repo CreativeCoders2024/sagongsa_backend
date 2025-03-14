@@ -36,7 +36,7 @@ public class CreateContestRequest implements Request {
         if (endedAt < startedAt) {
             errors.rejectValue("endedAt", "endedAt.invalid", "종료일은 시작일보다 미래여야 합니다.");
         }
-        if (ValidationUtils.isBlank(thumbnail) || !ValidationUtils.isURL(thumbnail)) {
+        if (ValidationUtils.isBlank(thumbnail) || !ValidationUtils.isImageURL(thumbnail)) {
             errors.rejectValue("thumbnail", "thumbnail.required", "썸네일을 입력해주세요.");
         }
     }
