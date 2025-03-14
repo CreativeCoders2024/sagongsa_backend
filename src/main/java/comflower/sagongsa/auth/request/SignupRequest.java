@@ -1,6 +1,7 @@
 package comflower.sagongsa.auth.request;
 
 import comflower.sagongsa.common.request.Request;
+import comflower.sagongsa.common.util.ValidationUtils;
 import lombok.Data;
 
 @Data
@@ -12,16 +13,16 @@ public class SignupRequest implements Request {
 
     @Override
     public void validate(org.springframework.validation.Errors errors) {
-        if (username == null || username.isBlank()) {
+        if (ValidationUtils.isBlank(username)) {
             errors.rejectValue("username", "username.required", "아이디를 입력해주세요.");
         }
-        if (password == null || password.isBlank()) {
+        if (ValidationUtils.isBlank(password)) {
             errors.rejectValue("password", "password.required", "비밀번호를 입력해주세요.");
         }
-        if (nickname == null || nickname.isBlank()) {
+        if (ValidationUtils.isBlank(nickname)) {
             errors.rejectValue("nickname", "nickname.required", "닉네임을 입력해주세요.");
         }
-        if (email == null || email.isBlank()) {
+        if (ValidationUtils.isBlank(email)) {
             errors.rejectValue("email", "email.required", "이메일을 입력해주세요.");
         }
     }

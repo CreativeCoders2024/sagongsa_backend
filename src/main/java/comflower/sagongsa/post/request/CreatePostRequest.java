@@ -2,6 +2,7 @@ package comflower.sagongsa.post.request;
 
 import comflower.sagongsa.common.request.Request;
 import comflower.sagongsa.common.util.TagHelper;
+import comflower.sagongsa.common.util.ValidationUtils;
 import lombok.Data;
 import org.springframework.validation.Errors;
 
@@ -16,10 +17,10 @@ public class CreatePostRequest implements Request {
 
     @Override
     public void validate(Errors errors) {
-        if (title == null || title.isBlank()) {
+        if (ValidationUtils.isBlank(title)) {
             errors.rejectValue("title", "title.required", "제목을 입력해주세요.");
         }
-        if (content == null || content.isBlank()) {
+        if (ValidationUtils.isBlank(content)) {
             errors.rejectValue("content", "content.required", "내용을 입력해주세요.");
         }
         if (memberCount < 1) {

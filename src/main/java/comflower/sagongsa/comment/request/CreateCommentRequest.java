@@ -1,6 +1,7 @@
 package comflower.sagongsa.comment.request;
 
 import comflower.sagongsa.common.request.Request;
+import comflower.sagongsa.common.util.ValidationUtils;
 import lombok.Data;
 import org.springframework.validation.Errors;
 
@@ -11,7 +12,7 @@ public class CreateCommentRequest implements Request {
 
     @Override
     public void validate(Errors errors) {
-        if (content == null || content.isBlank()) {
+        if (ValidationUtils.isBlank(content)) {
             errors.rejectValue("content", "content.required", "내용을 입력해주세요.");
         }
 

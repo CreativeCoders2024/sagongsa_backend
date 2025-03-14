@@ -2,10 +2,9 @@ package comflower.sagongsa.contest.request;
 
 import comflower.sagongsa.common.request.Request;
 import comflower.sagongsa.common.util.TagHelper;
+import comflower.sagongsa.common.util.ValidationUtils;
 import lombok.Data;
 import org.springframework.validation.Errors;
-
-import java.net.URI;
 
 @Data
 public class CreateContestRequest implements Request {
@@ -19,13 +18,13 @@ public class CreateContestRequest implements Request {
 
     @Override
     public void validate(Errors errors) {
-        if (title == null || title.isBlank()) {
+        if (ValidationUtils.isBlank(title)) {
             errors.rejectValue("title", "title.required", "제목을 입력해주세요.");
         }
-        if (link == null || link.isBlank() || isMalformedURL(link)) {
+        if (ValidationUtils.isBlank(link) || !ValidationUtils.isURL(link)) {
             errors.rejectValue("link", "link.required", "링크를 입력해주세요.");
         }
-        if (prize == null || prize.isBlank()) {
+        if (ValidationUtils.isBlank(prize)) {
             errors.rejectValue("prize", "prize.required", "상품을 입력해주세요.");
         }
         if (!TagHelper.isTag(TagHelper.CONTEST_TAGS, topic)) {
@@ -37,17 +36,8 @@ public class CreateContestRequest implements Request {
         if (endedAt < startedAt) {
             errors.rejectValue("endedAt", "endedAt.invalid", "종료일은 시작일보다 미래여야 합니다.");
         }
-        if (thumbnail == null || thumbnail.isBlank() || isMalformedURL(thumbnail)) {
+        if (ValidationUtils.isBlank(thumbnail) || !ValidationUtils.isImageURL(thumbnail)) {
             errors.rejectValue("thumbnail", "thumbnail.required", "썸네일을 입력해주세요.");
-        }
-    }
-
-    private boolean isMalformedURL(String url) {
-        try {
-            new URI(url).toURL();
-            return false;
-        } catch (Exception e) {
-            return true;
         }
     }
 }
