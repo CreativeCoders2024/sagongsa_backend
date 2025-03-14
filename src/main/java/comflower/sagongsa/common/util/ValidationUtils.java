@@ -20,7 +20,7 @@ public class ValidationUtils {
                     .uri(URI.create(url))
                     .timeout(Duration.ofSeconds(1))
                     .build();
-            httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            httpClient.send(httpRequest, HttpResponse.BodyHandlers.discarding());
             return true;
         } catch (Exception e) {
             return false;
