@@ -17,7 +17,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "c.createdAt as createdAt, " +
             "c.editedAt as editedAt, " +
             "c.parentId as parentId, " +
-            "u as user " +
+            "u as author " +
             "FROM Comment c LEFT JOIN User u ON c.authorId = u.id WHERE c.postId = :postId")
     List<UserCommentProjection> findByPostId(@Param("postId") Long postId);
 }
