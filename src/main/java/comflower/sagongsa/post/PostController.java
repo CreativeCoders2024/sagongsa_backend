@@ -56,13 +56,14 @@ public class PostController {
     @SecurityRequirement(name = "bearerAuth")
     public Post editPost(
             @PathVariable Long postId,
+            @AuthenticationPrincipal User user,
             @Validated @RequestBody EditPostRequest request, BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             throw new InvalidFormBodyException(bindingResult);
         }
 
-        return postService.editPost(postId, request);
+        return postService.editPost(postId, user, request);
     }
 
     @DeleteMapping("/posts/{postId}")

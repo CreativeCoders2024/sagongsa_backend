@@ -9,7 +9,6 @@ import org.springframework.validation.Errors;
 public class EditPostRequest implements Request {
     private String title;
     private String content;
-    private long authorId;
     private int memberCount;
     private int maxMemberCount;
     private int topic;
