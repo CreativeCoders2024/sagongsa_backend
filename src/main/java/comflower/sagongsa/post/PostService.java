@@ -4,6 +4,7 @@ import comflower.sagongsa.common.exception.UnauthorizedException;
 import comflower.sagongsa.common.exception.UnknownPostException;
 import comflower.sagongsa.post.request.CreatePostRequest;
 import comflower.sagongsa.post.request.EditPostRequest;
+import comflower.sagongsa.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,10 +40,10 @@ public class PostService {
     }
 
     @Transactional
-    public Post editPost(Long postId, EditPostRequest request) {
+    public Post editPost(Long postId, User user, EditPostRequest request) {
         Post post = getPost(postId);
 
-        if (!Objects.equals(post.getAuthorId(), request.getAuthorId())) {
+        if (!Objects.equals(post.getAuthorId(), user.getId())) {
             throw new UnauthorizedException();
         }
 
