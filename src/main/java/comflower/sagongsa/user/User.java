@@ -1,5 +1,6 @@
 package comflower.sagongsa.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -11,6 +12,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Setter
 @Entity
 @Table(name = "user")
+@JsonIgnoreProperties(value = {"avatar"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,5 +44,6 @@ public class User {
     @ColumnDefault("0")
     private int field;
 
-    private String profileImg;  //blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Avatar avatar;
 }
