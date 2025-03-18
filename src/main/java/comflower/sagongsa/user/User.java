@@ -1,6 +1,5 @@
 package comflower.sagongsa.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -12,7 +11,6 @@ import org.hibernate.annotations.ColumnDefault;
 @Setter
 @Entity
 @Table(name = "user")
-@JsonIgnoreProperties(value = {"avatar"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

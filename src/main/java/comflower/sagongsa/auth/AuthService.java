@@ -20,7 +20,7 @@ public class AuthService {
 
     @Transactional
     public User signup(SignupRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new InvalidFormBodyException(new HashMap<>() {{
                 put("username", "이미 사용중인 아이디입니다.");
             }});
