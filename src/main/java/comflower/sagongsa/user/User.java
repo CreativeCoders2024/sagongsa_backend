@@ -42,5 +42,6 @@ public class User {
     @ColumnDefault("0")
     private int field;
 
-    private String profileImg;  //blob 형식을 spring에서 어떻게 쓰는지.. -> 나중에!
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Avatar avatar;
 }

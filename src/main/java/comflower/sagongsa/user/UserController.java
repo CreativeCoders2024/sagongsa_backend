@@ -1,6 +1,7 @@
 package comflower.sagongsa.user;
 
 import comflower.sagongsa.user.request.EditUserRequest;
+import comflower.sagongsa.user.response.UserResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -15,20 +16,22 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/users/{userId}")
-    public User getUser(@PathVariable Long userId) {
-        return userService.findUserById(userId);
+    public UserResponse getUser(@PathVariable Long userId) {
+        var user = userService.findUserById(userId);
+        return new UserResponse(user);
     }
 
     @GetMapping("/users/@me")
     @SecurityRequirement(name = "bearerAuth")
-    public User getUserSelf(@AuthenticationPrincipal User user) {
-        return user;
+    public UserResponse getUserSelf(@AuthenticationPrincipal User user) {
+        return new UserResponse(user);
     }
 
     @PutMapping("/users/@me")
     @SecurityRequirement(name = "bearerAuth")
-    public User editUser(@AuthenticationPrincipal User user, @RequestBody EditUserRequest request) {
-        return userService.editUser(user, request);
+    public UserResponse editUser(@AuthenticationPrincipal User user, @RequestBody EditUserRequest request) {
+        var editedUser = userService.editUser(user, request);
+        return new UserResponse(editedUser);
     }
 
     @DeleteMapping("/users/@me")
