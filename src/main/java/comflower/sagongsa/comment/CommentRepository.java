@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT c as comment, u as author " +
-            "FROM Comment c LEFT JOIN User u ON c.authorId = u.id WHERE c.postId = :postId")
+            "FROM comment c LEFT JOIN user u ON c.authorId = u.id WHERE c.postId = :postId")
     List<UserCommentProjection> findByPostId(@Param("postId") Long postId);
 }
