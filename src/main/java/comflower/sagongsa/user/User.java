@@ -1,8 +1,13 @@
 package comflower.sagongsa.user;
 
+import comflower.sagongsa.comment.Comment;
+import comflower.sagongsa.contest.Contest;
+import comflower.sagongsa.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,4 +49,13 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Avatar avatar;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Contest> contests;
 }

@@ -3,6 +3,7 @@ package comflower.sagongsa.comment;
 import comflower.sagongsa.comment.request.CreateCommentRequest;
 import comflower.sagongsa.comment.request.EditCommentRequest;
 import comflower.sagongsa.comment.response.UserCommentResponse;
+import comflower.sagongsa.comment.response.CommentResponse;
 import comflower.sagongsa.common.exception.InvalidFormBodyException;
 import comflower.sagongsa.common.request.RequestValidator;
 import comflower.sagongsa.user.User;
@@ -34,13 +35,13 @@ public class CommentController {
     public List<UserCommentResponse> getCommentsByPostId(@PathVariable Long postId) {
         var comments = commentService.getCommentsByPost(postId);
         return comments.stream()
-                .map(c -> new UserCommentResponse(c.getComment(), new UserResponse(c.getAuthor())))
+                .map(c -> new UserCommentResponse(new CommentResponse(c.getComment()), new UserResponse(c.getAuthor())))
                 .toList();
     }
 
     @PostMapping("/posts/{postId}/comments")
     @SecurityRequirement(name = "bearerAuth")
-    public Comment createComment(
+    public CommentResponse createComment(
             @AuthenticationPrincipal User user,
             @PathVariable Long postId,
             @Validated @RequestBody CreateCommentRequest request, BindingResult bindingResult
@@ -49,12 +50,12 @@ public class CommentController {
             throw new InvalidFormBodyException(bindingResult);
         }
 
-        return commentService.createComment(user.getId(), postId, request);
+        return new CommentResponse(commentService.createComment(user.getId(), postId, request));
     }
 
     @PutMapping("/posts/{postId}/comments/{commentId}")
     @SecurityRequirement(name = "bearerAuth")
-    public Comment editComment(
+    public CommentResponse editComment(
             @PathVariable Long postId, @PathVariable Long commentId,
             @Validated @RequestBody EditCommentRequest request, BindingResult bindingResult
     ) {
@@ -62,7 +63,7 @@ public class CommentController {
             throw new InvalidFormBodyException(bindingResult);
         }
 
-        return commentService.editComment(postId, commentId, request);
+        return new CommentResponse(commentService.editComment(postId, commentId, request));
     }
 
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
