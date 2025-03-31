@@ -27,7 +27,7 @@ public class PostService {
 
     public Post createPost(Long authorId, CreatePostRequest request) {
         Post post = Post.builder()
-                .authorId(authorId)
+                .author(User.builder().id(authorId).build())
                 .title(request.getTitle())
                 .content(request.getContent())
                 .memberCount(request.getMemberCount())
@@ -43,7 +43,7 @@ public class PostService {
     public Post editPost(Long postId, User user, EditPostRequest request) {
         Post post = getPost(postId);
 
-        if (!Objects.equals(post.getAuthorId(), user.getId())) {
+        if (!Objects.equals(post.getAuthor().getId(), user.getId())) {
             throw new UnauthorizedException();
         }
 

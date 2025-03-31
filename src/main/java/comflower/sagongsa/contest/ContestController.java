@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import comflower.sagongsa.contest.response.ContestResponse;
+
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "contest")
@@ -30,13 +32,15 @@ public class ContestController {
     }
 
     @GetMapping("/contests")
-    public List<Contest> getContests() {
-        return contestService.getAllContests();
+    public List<ContestResponse> getContests() {
+        return contestService.getAllContests().stream()
+                .map(ContestResponse::new)
+                .toList();
     }
 
     @PostMapping("/contests")
     @SecurityRequirement(name = "bearerAuth")
-    public Contest createContest(
+    public ContestResponse createContest(
             @AuthenticationPrincipal User user,
             @Validated @RequestBody CreateContestRequest request, BindingResult bindingResult
     ) {
@@ -44,17 +48,17 @@ public class ContestController {
             throw new InvalidFormBodyException(bindingResult);
         }
 
-        return contestService.createContest(user.getId(), request);
+        return new ContestResponse(contestService.createContest(user.getId(), request));
     }
 
     @GetMapping("/contests/{contestId}")
-    public Contest getContest(@PathVariable Long contestId) {
-        return contestService.getContest(contestId);
+    public ContestResponse getContest(@PathVariable Long contestId) {
+        return new ContestResponse(contestService.getContest(contestId));
     }
 
     @PutMapping("/contests/{contestId}")
     @SecurityRequirement(name = "bearerAuth")
-    public Contest editContest(
+    public ContestResponse editContest(
             @PathVariable Long contestId,
             @Validated @RequestBody EditContestRequest request, BindingResult bindingResult
     ) {
@@ -62,7 +66,7 @@ public class ContestController {
             throw new InvalidFormBodyException(bindingResult);
         }
 
-        return contestService.editContest(contestId, request);
+        return new ContestResponse(contestService.editContest(contestId, request));
     }
 
     @DeleteMapping("/contests/{contestId}")

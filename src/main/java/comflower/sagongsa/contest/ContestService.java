@@ -3,6 +3,7 @@ package comflower.sagongsa.contest;
 import comflower.sagongsa.contest.request.CreateContestRequest;
 import comflower.sagongsa.contest.request.EditContestRequest;
 import comflower.sagongsa.common.exception.UnknownContestException;
+import comflower.sagongsa.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ public class ContestService {
 
     public Contest createContest(Long userId, CreateContestRequest request) {
         Contest contest = Contest.builder()
-                .authorId(userId)
+                .author(User.builder().id(userId).build())
                 .title(request.getTitle())
                 .thumbnail(request.getThumbnail())
                 .prize(request.getPrize())

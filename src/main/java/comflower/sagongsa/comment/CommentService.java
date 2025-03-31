@@ -3,9 +3,11 @@ package comflower.sagongsa.comment;
 import comflower.sagongsa.common.exception.UnknownCommentException;
 import comflower.sagongsa.common.exception.UnknownPostException;
 import comflower.sagongsa.comment.projection.UserCommentProjection;
+import comflower.sagongsa.post.Post;
 import comflower.sagongsa.post.PostRepository;
 import comflower.sagongsa.comment.request.CreateCommentRequest;
 import comflower.sagongsa.comment.request.EditCommentRequest;
+import comflower.sagongsa.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +38,11 @@ public class CommentService {
         }
 
         Comment comment = Comment.builder()
-                .postId(postId)
-                .authorId(authorId)
+                .post(Post.builder().id(postId).build())
+                .author(User.builder().id(authorId).build())
                 .content(request.getContent())
                 .createdAt(System.currentTimeMillis())
-                .parentId(request.getParentId())
+                .parent(Comment.builder().id(request.getParentId()).build())
                 .build();
         return commentRepository.save(comment);
     }

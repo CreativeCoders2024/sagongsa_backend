@@ -1,7 +1,12 @@
 package comflower.sagongsa.post;
 
+import comflower.sagongsa.comment.Comment;
+import comflower.sagongsa.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,8 +20,9 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long authorId;
+    @ManyToOne
+    @JoinColumn(name = "author_id", insertable = false, updatable = false, nullable = false)
+    private User author;
 
     @Column(nullable = false)
     private String title;
@@ -38,4 +44,7 @@ public class Post {
 
     @Column(nullable = false)
     private long endedAt;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 }

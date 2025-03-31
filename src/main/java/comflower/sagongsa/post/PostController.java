@@ -4,6 +4,7 @@ import comflower.sagongsa.common.exception.InvalidFormBodyException;
 import comflower.sagongsa.post.request.CreatePostRequest;
 import comflower.sagongsa.post.request.EditPostRequest;
 import comflower.sagongsa.common.request.RequestValidator;
+import comflower.sagongsa.post.response.PostResponse;
 import comflower.sagongsa.user.User;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,18 +31,20 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<Post> getPosts() {
-        return postService.getPosts();
+    public List<PostResponse> getPosts() {
+        return postService.getPosts().stream()
+                .map(PostResponse::new)
+                .toList();
     }
 
     @GetMapping("/posts/{postId}")
-    public Post getPost(@PathVariable Long postId) {
-        return postService.getPost(postId);
+    public PostResponse getPost(@PathVariable Long postId) {
+        return new PostResponse(postService.getPost(postId));
     }
 
     @PostMapping("/posts")
     @SecurityRequirement(name = "bearerAuth")
-    public Post createPost(
+    public PostResponse createPost(
             @AuthenticationPrincipal User user,
             @Validated @RequestBody CreatePostRequest request, BindingResult bindingResult
     ) {
@@ -49,12 +52,12 @@ public class PostController {
             throw new InvalidFormBodyException(bindingResult);
         }
 
-        return postService.createPost(user.getId(), request);
+        return new PostResponse(postService.createPost(user.getId(), request));
     }
 
     @PutMapping("/posts/{postId}")
     @SecurityRequirement(name = "bearerAuth")
-    public Post editPost(
+    public PostResponse editPost(
             @PathVariable Long postId,
             @AuthenticationPrincipal User user,
             @Validated @RequestBody EditPostRequest request, BindingResult bindingResult
@@ -63,7 +66,7 @@ public class PostController {
             throw new InvalidFormBodyException(bindingResult);
         }
 
-        return postService.editPost(postId, user, request);
+        return new PostResponse(postService.editPost(postId, user, request));
     }
 
     @DeleteMapping("/posts/{postId}")
