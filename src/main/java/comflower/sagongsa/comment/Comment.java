@@ -21,7 +21,7 @@ public class Comment {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", insertable = false, updatable = false, nullable = false)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @ManyToOne
