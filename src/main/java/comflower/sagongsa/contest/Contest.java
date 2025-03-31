@@ -17,7 +17,7 @@ public class Contest {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", insertable = false, updatable = false, nullable = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
     @Column(nullable = false)
