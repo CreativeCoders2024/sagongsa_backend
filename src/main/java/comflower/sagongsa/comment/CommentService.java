@@ -42,7 +42,7 @@ public class CommentService {
                 .author(User.builder().id(authorId).build())
                 .content(request.getContent())
                 .createdAt(System.currentTimeMillis())
-                .parent(Comment.builder().id(request.getParentId()).build())
+                .parent(parentId != null ? Comment.builder().id(parentId).build() : null)
                 .build();
         return commentRepository.save(comment);
     }
