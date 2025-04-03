@@ -21,7 +21,7 @@ public class Post {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "fk_post_author"))
     private User author;
 
     @Column(nullable = false)

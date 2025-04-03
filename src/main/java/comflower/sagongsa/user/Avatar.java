@@ -20,6 +20,6 @@ public class Avatar {
     private byte[] data;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_avatar_user"))
     private User user;
 }
