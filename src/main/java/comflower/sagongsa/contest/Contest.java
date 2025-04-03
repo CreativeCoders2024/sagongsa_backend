@@ -17,7 +17,7 @@ public class Contest {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contest_author"))
     private User author;
 
     @Column(nullable = false)
